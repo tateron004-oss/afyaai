@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>AfyaAI Evaluation Consortium — Demo Platform (Single File)</title>
+
+  <!-- CDN deps (kept simple) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#0f766e; --primary-light:#14b8a6; --accent:#f59e0b; --danger:#ef4444; --success:#10b981;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Inter','Noto Sans',sans-serif;
+      background:linear-gradient(135deg,#f0fdfa 0%,#ecfdf5 100%);
+      min-height:100vh;
+    }
+    .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;direction:ltr}
+    .glass{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.3)}
+    .glass-dark{background:rgba(15,23,42,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse-ring{0%{transform:scale(.8);opacity:.5}100%{transform:scale(1.3);opacity:0}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .animate-slide-in{animation:slideIn .6s ease-out forwards}
+    .animate-float{animation:float 3s ease-in-out infinite}
+    .pulse-ring::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--success);animation:pulse-ring 2s ease-out infinite}
+
+    ::-webkit-scrollbar{width:8px}
+    ::-webkit-scrollbar-track{background:#f1f5f9}
+    ::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:4px}
+    ::-webkit-scrollbar-thumb:hover{background:#64748b}
+
+    .country-path{fill:#e2e8f0;stroke:#94a3b8;stroke-width:1;transition:all .3s ease;cursor:pointer}
+    .country-path:hover{fill:var(--primary-light);transform:scale(1.02)}
+    .country-path.active{fill:var(--primary)}
+    .country-path.pilot{fill:rgba(245,158,11,.65)}
+    .country-path.planned{fill:#cbd5e1}
+
+    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+    .status-live{background:var(--success);box-shadow:0 0 8px var(--success)}
+    .status-pending{background:var(--accent)}
+    .status-offline{background:var(--danger)}
+
+    .hover-lift{transition:transform .3s ease,box-shadow .3s ease}
+    .hover-lift:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.1)}
+
+    .lang-btn{transition:all .2s ease;border:2px solid transparent}
+    .lang-btn.active{background:var(--primary);color:white;border-color:var(--primary)}
+    .heatmap-cell{aspect-ratio:1;border-radius:4px;transition:all .2s ease;cursor:pointer}
+    .heatmap-cell:hover{transform:scale(1.08);z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+
+    /* Toasts */
+    #toast{
+      position:fixed; right:16px; bottom:16px;
+      display:flex; flex-direction:column; gap:10px;
+      z-index:9999;
+      max-width:min(420px,calc(100vw - 32px));
+      pointer-events:none;
+    }
+    .toast-item{
+      pointer-events:auto;
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px 14px;
+      border-radius:16px;
+      background:rgba(15,23,42,.92);
+      color:#e2e8f0;
+      border:1px solid rgba(148,163,184,.25);
+      box-shadow:0 18px 42px rgba(0,0,0,.22);
+      transform:translateY(0);
+    }
+
+    /* Printing (optional) */
+    @media print {
+      nav, #toast { display:none !important; }
+      body { background:white !important; }
+      .glass { background:white !important; border:1px solid #e2e8f0 !important; }
+    }
+  </style>
+
+  <!-- Make anchor links not open new tabs -->
+  <base target="_self">
+</head>
+
+<body class="text-slate-800">
+  <!-- Navigation -->
+  <nav class="glass fixed w-full z-50 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-teal-600 to-teal-800 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">AfyaAI</h1>
+            <p class="text-xs text-slate-500 font-medium">Evaluation Consortium</p>
+          </div>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#dashboard" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_dashboard">Dashboard</a>
+          <a href="#deployments" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_deployments">Deployments</a>
+          <a href="#analytics" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_analytics">Analytics</a>
+          <a href="#partners" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_partners">Partners</a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <!-- Language Switcher -->
+          <div class="relative group">
+            <button class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors">
+              <i class="fas fa-globe-africa text-teal-600"></i>
+              <span id="current-lang" class="text-sm font-medium">English</span>
+              <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+            <div class="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right z-50">
+              <div class="p-2 space-y-1">
+                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2 active" data-lang="en">
+                  <span>🇬🇧</span><span>English</span>
+                </button>
+                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" data-lang="sw">
+                  <span>🇰🇪</span><span>Kiswahili</span>
+                </button>
+                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" data-lang="ha">
+                  <span>🇳🇬</span><span>Hausa</span>
+                </button>
+                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" data-lang="yo">
+                  <span>🇳🇬</span><span>Yorùbá</span>
+                </button>
+                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" data-lang="am">
+                  <span>🇪🇹</span><span>አማርኛ</span>
+                </button>
+                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" data-lang="zu">
+                  <span>🇿🇦</span><span>isiZulu</span>
+                </button>
+                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" data-lang="fr">
+                  <span>🇫🇷</span><span>Français</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button id="btnNewEval" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-teal-600/30">
+            <i class="fas fa-plus mr-2"></i><span data-key="btn_new_evaluation">New Evaluation</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="dashboard" class="pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Status / "Offline demo" bar (single-file demo — not a real PWA cache) -->
+    <div id="demoBar" class="mb-6 hidden">
+      <div class="glass rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border border-slate-200">
+        <div class="flex items-center gap-3">
+          <div id="netDot" class="w-3 h-3 rounded-full bg-green-500"></div>
+          <div>
+            <div class="font-semibold text-slate-900">Connectivity</div>
+            <div id="netText" class="text-sm text-slate-600">Online</div>
+            <div class="text-xs text-slate-400">Single-file demo: offline toggle is simulated (no service worker).</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btnOfflineToggle" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm">
+            <i class="fas fa-plug-circle-xmark mr-2"></i>Offline Demo Toggle
+          </button>
+          <button id="btnResetLocal" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm">
+            <i class="fas fa-rotate-left mr-2"></i>Reset Demo Data
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="mb-8 animate-slide-in">
+      <div class="glass rounded-2xl p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-400/20 to-blue-500/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        <div class="relative z-10">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h2 class="text-3xl font-bold text-slate-900 mb-2" data-key="hero_title">
+                Real-World Evaluation Infrastructure for African Health AI
+              </h2>
+              <p class="text-slate-600 max-w-2xl" data-key="hero_subtitle">
+                Bridging the gap between AI potential and patient impact through rigorous clinical decision support evaluation across Kenya, Nigeria, Rwanda, and South Africa.
+              </p>
+            </div>
+            <div class="hidden lg:block animate-float">
+              <div class="w-32 h-32 bg-gradient-to-br from-teal-500 to-teal-700 rounded-2xl flex items-center justify-center text-white shadow-2xl">
+                <i class="fas fa-stethoscope text-5xl"></i>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-4 mt-6">
+            <div class="flex items-center space-x-2 text-sm text-slate-600">
+              <span class="status-dot status-live"></span>
+              <span id="heroActiveCount" data-key="status_live">12 Active Evaluations</span>
+            </div>
+            <div class="flex items-center space-x-2 text-sm text-slate-600">
+              <i class="fas fa-hospital text-teal-600"></i>
+              <span id="heroFacilities" data-key="status_facilities">47 Partner Facilities</span>
+            </div>
+            <div class="flex items-center space-x-2 text-sm text-slate-600">
+              <i class="fas fa-users text-teal-600"></i>
+              <span id="heroPatients" data-key="status_patients">128,450 Patients Enrolled</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay: .1s">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-3 bg-teal-100 rounded-lg"><i class="fas fa-chart-line text-teal-600 text-xl"></i></div>
+          <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">+16%</span>
+        </div>
+        <h3 class="text-2xl font-bold text-slate-900">94.2%</h3>
+        <p class="text-sm text-slate-600 mt-1" data-key="metric_accuracy">Diagnostic Accuracy Improvement</p>
+      </div>
+
+      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay: .2s">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-3 bg-amber-100 rounded-lg"><i class="fas fa-clock text-amber-600 text-xl"></i></div>
+          <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">-23%</span>
+        </div>
+        <h3 class="text-2xl font-bold text-slate-900">12.4min</h3>
+        <p class="text-sm text-slate-600 mt-1" data-key="metric_time">Avg. Consultation Time</p>
+      </div>
+
+      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay: .3s">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-3 bg-blue-100 rounded-lg"><i class="fas fa-user-md text-blue-600 text-xl"></i></div>
+          <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">+89%</span>
+        </div>
+        <h3 class="text-2xl font-bold text-slate-900">342</h3>
+        <p class="text-sm text-slate-600 mt-1" data-key="metric_clinicians">Clinicians Trained</p>
+      </div>
+
+      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay: .4s">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-3 bg-purple-100 rounded-lg"><i class="fas fa-shield-alt text-purple-600 text-xl"></i></div>
+          <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-full">0</span>
+        </div>
+        <h3 class="text-2xl font-bold text-slate-900">Zero</h3>
+        <p class="text-sm text-slate-600 mt-1" data-key="metric_safety">Serious Safety Events</p>
+      </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div id="deployments" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- Map -->
+      <div class="lg:col-span-2 glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.5s">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-bold text-slate-900" data-key="map_title">Deployment Coverage</h3>
+          <div class="flex space-x-2">
+            <button class="map-filter px-3 py-1 text-xs rounded-full bg-teal-600 text-white" data-filter="all">All</button>
+            <button class="map-filter px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300" data-filter="active">Active</button>
+            <button class="map-filter px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300" data-filter="pilot">Pilot</button>
+            <button class="map-filter px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300" data-filter="planned">Planned</button>
+          </div>
+        </div>
+
+        <div class="relative h-96 bg-slate-50 rounded-xl overflow-hidden">
+          <svg viewBox="0 0 800 600" class="w-full h-full">
+            <!-- Kenya -->
+            <path id="kenya" class="country-path active" d="M 420 280 L 450 270 L 480 280 L 490 320 L 470 350 L 430 340 L 410 310 Z" />
+            <!-- Nigeria -->
+            <path id="nigeria" class="country-path active" d="M 280 260 L 320 250 L 340 280 L 330 320 L 290 330 L 270 300 Z" />
+            <!-- Rwanda -->
+            <path id="rwanda" class="country-path active" d="M 380 320 L 400 315 L 405 330 L 395 340 L 385 335 Z" />
+            <!-- South Africa -->
+            <path id="sa" class="country-path active" d="M 350 450 L 400 440 L 420 480 L 400 520 L 360 510 L 340 480 Z" />
+            <!-- Ethiopia -->
+            <path id="ethiopia" class="country-path pilot" d="M 440 220 L 480 210 L 500 250 L 480 270 L 450 260 L 435 240 Z" />
+            <!-- Ghana -->
+            <path id="ghana" class="country-path planned" d="M 250 290 L 270 285 L 275 305 L 260 315 L 245 305 Z" />
+          </svg>
+
+          <div class="absolute bottom-4 left-4 bg-white/90 p-3 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-4 text-xs">
+              <div class="flex items-center"><span class="w-3 h-3 bg-teal-600 rounded-full mr-1"></span> Active</div>
+              <div class="flex items-center"><span class="w-3 h-3 bg-amber-500 rounded-full mr-1"></span> Pilot</div>
+              <div class="flex items-center"><span class="w-3 h-3 bg-slate-300 rounded-full mr-1"></span> Planned</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evaluations -->
+      <div class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.6s">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <h3 class="text-lg font-bold text-slate-900" data-key="evaluations_title">Active Evaluations</h3>
+          <button id="btnRefreshHeatmap" class="text-xs px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">
+            <i class="fas fa-arrows-rotate mr-1"></i>Refresh Heatmap
+          </button>
+        </div>
+
+        <div class="flex gap-2 mb-3">
+          <button class="eval-filter px-3 py-1 text-xs rounded-full bg-teal-600 text-white" data-status="all">All</button>
+          <button class="eval-filter px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300" data-status="Live">Live</button>
+          <button class="eval-filter px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300" data-status="Pilot">Pilot</button>
+          <button class="eval-filter px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300" data-status="Setup">Setup</button>
+          <button class="eval-filter px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300" data-status="Planned">Planned</button>
+        </div>
+
+        <div class="relative mb-3">
+          <i class="fas fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input id="evalSearch" class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500"
+            placeholder="Search evaluations..." />
+        </div>
+
+        <div id="evaluationsList" class="space-y-4 max-h-96 overflow-y-auto">
+          <!-- generated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div id="analytics" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.7s">
+        <h3 class="text-lg font-bold text-slate-900 mb-4" data-key="chart_outcomes">Clinical Outcomes Comparison</h3>
+        <div class="h-64"><canvas id="outcomesChart"></canvas></div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.8s">
+        <h3 class="text-lg font-bold text-slate-900 mb-4" data-key="chart_adoption">Clinician Adoption Rates</h3>
+        <div class="h-64"><canvas id="adoptionChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Safety + Heatmap -->
+    <div class="glass rounded-2xl p-6 mb-8 animate-slide-in" style="animation-delay:.9s">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-lg font-bold text-slate-900" data-key="safety_title">Real-Time Safety Monitoring</h3>
+        <div class="flex items-center space-x-2">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          </span>
+          <span class="text-sm text-slate-600">System Operational</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl p-4 border border-slate-200">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-medium text-slate-600">Alert Override Rate</span>
+            <i class="fas fa-exclamation-triangle text-amber-500"></i>
+          </div>
+          <div class="text-2xl font-bold text-slate-900">12.4%</div>
+          <div class="text-xs text-slate-500 mt-1">Target: &lt;15%</div>
+          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-amber-500 rounded-full" style="width:82%"></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-4 border border-slate-200">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-medium text-slate-600">Response Time</span>
+            <i class="fas fa-clock text-teal-600"></i>
+          </div>
+          <div class="text-2xl font-bold text-slate-900">2.3s</div>
+          <div class="text-xs text-slate-500 mt-1">Avg. AI recommendation display</div>
+          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-teal-600 rounded-full" style="width:95%"></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-4 border border-slate-200">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-medium text-slate-600">Data Quality Score</span>
+            <i class="fas fa-check-circle text-green-500"></i>
+          </div>
+          <div class="text-2xl font-bold text-slate-900">94.7%</div>
+          <div class="text-xs text-slate-500 mt-1">Completeness & validity</div>
+          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-green-500 rounded-full" style="width:94.7%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h4 class="text-sm font-medium text-slate-600 mb-3">Weekly Activity Heatmap</h4>
+        <div class="grid grid-cols-7 gap-1" id="heatmap"></div>
+        <div class="flex justify-between text-xs text-slate-400 mt-2">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FHIR + Compliance (single-file modules) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- FHIR mock -->
+      <section class="glass rounded-2xl p-6">
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">FHIR Integration (Mock)</h3>
+            <p class="text-sm text-slate-600">Sandbox Patient search + FHIR resource viewer + CDS request preview.</p>
+          </div>
+          <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">Sandbox</span>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-3 mb-4">
+          <div class="flex-1 relative">
+            <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input id="fhirSearch" class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500"
+                   placeholder="Search: Amina, Chinedu, P-1002, Observation..." />
+          </div>
+          <button id="btnFHIRSearch" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white">
+            <i class="fas fa-magnifying-glass mr-2"></i>Search
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold text-slate-900">Results</div>
+              <button id="btnLoadFHIRSamples" class="text-xs px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">
+                Load Samples
+              </button>
+            </div>
+            <div id="fhirResults" class="space-y-2 text-sm text-slate-700">
+              <div class="text-slate-500 text-sm">Click “Load Samples”, then search.</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold text-slate-900">Selected Resource</div>
+              <button id="btnFHIRSendCDS" class="text-xs px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">
+                Send CDS Request (Mock)
+              </button>
+            </div>
+            <pre id="fhirResourceView" class="text-xs bg-slate-50 rounded-xl p-3 overflow-auto max-h-64 border border-slate-200">Select a resource…</pre>
+          </div>
+        </div>
+
+        <div class="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="font-semibold text-slate-900">CDS Request Preview</div>
+            <button id="btnCopyCDS" class="text-xs px-2 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700">
+              <i class="fas fa-copy mr-1"></i>Copy
+            </button>
+          </div>
+          <pre id="cdsPreview" class="text-xs overflow-auto max-h-56">Click “Send CDS Request (Mock)” to generate payload.</pre>
+        </div>
+      </section>
+
+      <!-- Compliance -->
+      <section class="glass rounded-2xl p-6">
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Regulatory Compliance Tracking</h3>
+            <p class="text-sm text-slate-600">Checklist + evidence + audit trail (saved in your browser).</p>
+          </div>
+          <button id="btnExportCompliance" class="text-xs px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">
+            <i class="fas fa-file-export mr-1"></i>Export
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Framework</label>
+            <select id="complianceFramework" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500">
+              <option value="who_gdp">WHO – Digital Health Guidance (Mock)</option>
+              <option value="iso_13485">ISO 13485 – QMS (Mock)</option>
+              <option value="gdpr">GDPR – Data Protection (Mock)</option>
+              <option value="hipaa">HIPAA – Privacy & Security (Mock)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Applies To Evaluation</label>
+            <select id="complianceEvalSelect" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500">
+              <!-- populated by JS -->
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="font-semibold text-slate-900">Checklist</div>
+            <div class="text-xs text-slate-500">Autosaves</div>
+          </div>
+          <div id="complianceChecklist" class="space-y-3"></div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl border border-slate-200 p-4">
+            <div class="font-semibold text-slate-900 mb-2">Evidence Attachments (Local)</div>
+            <input id="evidenceFile" type="file" class="block w-full text-sm text-slate-700" />
+            <button id="btnAttachEvidence" class="mt-3 px-3 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm">
+              <i class="fas fa-paperclip mr-2"></i>Attach
+            </button>
+            <div id="evidenceList" class="mt-3 space-y-2 text-sm text-slate-700"></div>
+            <p class="text-xs text-slate-400 mt-2">Demo only. Don’t store PHI in browser storage.</p>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-semibold text-slate-900">Audit Trail</div>
+              <button id="btnClearAudit" class="text-xs px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">
+                Clear
+              </button>
+            </div>
+            <div id="auditLog" class="text-xs text-slate-700 space-y-2 max-h-44 overflow-auto"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Partners -->
+    <div id="partners" class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay: 1s">
+      <h3 class="text-lg font-bold text-slate-900 mb-6" data-key="partners_title">Consortium Partners</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
+            <i class="fas fa-hospital text-2xl text-slate-400 group-hover:text-teal-600"></i>
+          </div>
+          <span class="text-xs font-medium text-slate-700 text-center">Penda Health</span>
+          <span class="text-xs text-slate-400">Kenya</span>
+        </div>
+
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
+            <i class="fas fa-baby text-2xl text-slate-400 group-hover:text-teal-600"></i>
+          </div>
+          <span class="text-xs font-medium text-slate-700 text-center">Ubenwa</span>
+          <span class="text-xs text-slate-400">Nigeria</span>
+        </div>
+
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
+            <i class="fas fa-heartbeat text-2xl text-slate-400 group-hover:text-teal-600"></i>
+          </div>
+          <span class="text-xs font-medium text-slate-700 text-center">Babylon</span>
+          <span class="text-xs text-slate-400">Rwanda</span>
+        </div>
+
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
+            <i class="fas fa-x-ray text-2xl text-slate-400 group-hover:text-teal-600"></i>
+          </div>
+          <span class="text-xs font-medium text-slate-700 text-center">Qure.ai</span>
+          <span class="text-xs text-slate-400">South Africa</span>
+        </div>
+
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
+            <i class="fas fa-university text-2xl text-slate-400 group-hover:text-teal-600"></i>
+          </div>
+          <span class="text-xs font-medium text-slate-700 text-center">Univ. of Cape Town</span>
+          <span class="text-xs text-slate-400">Research</span>
+        </div>
+
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
+          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
+            <i class="fas fa-landmark text-2xl text-slate-400 group-hover:text-teal-600"></i>
+          </div>
+          <span class="text-xs font-medium text-slate-700 text-center">Min. of Health</span>
+          <span class="text-xs text-slate-400">Kenya</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Evaluation Modal (View/Edit) -->
+  <div id="evaluationModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all">
+      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+        <div>
+          <h3 id="modalTitle" class="text-xl font-bold text-slate-900">Evaluation Details</h3>
+          <p id="modalMeta" class="text-xs text-slate-500 mt-1"></p>
+        </div>
+        <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <div id="modalContent" class="p-6"></div>
+
+      <div class="p-6 border-t border-slate-200 flex flex-col md:flex-row gap-2 md:justify-between">
+        <div class="flex gap-2">
+          <button id="btnSaveEval" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm">
+            <i class="fas fa-floppy-disk mr-2"></i>Save
+          </button>
+          <button id="btnPrintEval" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm">
+            <i class="fas fa-print mr-2"></i>Print
+          </button>
+        </div>
+        <button id="btnDeleteEval" class="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-sm border border-red-200">
+          <i class="fas fa-trash mr-2"></i>Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    /***********************
+     * Small utilities
+     ***********************/
+    const LANG_LABEL = { en:"English", sw:"Kiswahili", ha:"Hausa", yo:"Yorùbá", am:"አማርኛ", zu:"isiZulu", fr:"Français" };
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+        .replaceAll('"','&quot;').replaceAll("'","&#039;");
+    }
+    function toast(message, icon='check', timeout=2500){
+      const root = document.getElementById('toast');
+      const item = document.createElement('div');
+      item.className = 'toast-item';
+      item.innerHTML = `<div class="mt-0.5 text-teal-300"><i class="fas fa-${icon}"></i></div><div class="text-sm leading-snug">${escapeHtml(message)}</div>`;
+      root.appendChild(item);
+      setTimeout(()=>{
+        item.style.opacity='0';
+        item.style.transform='translateY(6px)';
+        item.style.transition='all 180ms ease';
+        setTimeout(()=>item.remove(), 200);
+      }, timeout);
+    }
+    function formatNumber(n){ return Number(n||0).toLocaleString(); }
+
+    /***********************
+     * Translations (kept from your original; fixed encoding issues)
+     ***********************/
+    const translations = {
+      en: {
+        nav_dashboard:"Dashboard", nav_deployments:"Deployments", nav_analytics:"Analytics", nav_partners:"Partners",
+        btn_new_evaluation:"New Evaluation",
+        hero_title:"Real-World Evaluation Infrastructure for African Health AI",
+        hero_subtitle:"Bridging the gap between AI potential and patient impact through rigorous clinical decision support evaluation across Kenya, Nigeria, Rwanda, and South Africa.",
+        status_live:"12 Active Evaluations", status_facilities:"47 Partner Facilities", status_patients:"128,450 Patients Enrolled",
+        metric_accuracy:"Diagnostic Accuracy Improvement", metric_time:"Avg. Consultation Time", metric_clinicians:"Clinicians Trained", metric_safety:"Serious Safety Events",
+        map_title:"Deployment Coverage", evaluations_title:"Active Evaluations",
+        chart_outcomes:"Clinical Outcomes Comparison", chart_adoption:"Clinician Adoption Rates",
+        safety_title:"Real-Time Safety Monitoring", partners_title:"Consortium Partners"
+      },
+      sw: {
+        nav_dashboard:"Dashibodi", nav_deployments:"Utekelezaji", nav_analytics:"Takwimu", nav_partners:"Washirika",
+        btn_new_evaluation:"Tathmini Mpya",
+        hero_title:"Miundombinu ya Tathmini ya AI ya Afya Afrika",
+        hero_subtitle:"Kuziba pengo kati ya uwezo wa AI na athari kwa wagonjwa kupitia tathmini ya teknolojia ya kusaidia uamuzi wa kliniki nchini Kenya, Nigeria, Rwanda, na Afrika Kusini.",
+        status_live:"Tathmini 12 Zinazoendelea", status_facilities:"Vituo 47 vya Washirika", status_patients:"Wagonjwa 128,450 Wamesajiliwa",
+        metric_accuracy:"Uboreshaji wa Usahihi wa Utambuzi", metric_time:"Wakati wastani wa Ushauri", metric_clinicians:"Waganga Waliopatiwa Mafunzo", metric_safety:"Matukio Makubwa ya Usalama",
+        map_title:"Maeneo ya Utekelezaji", evaluations_title:"Tathmini Zinazoendelea",
+        chart_outcomes:"Ulinganisho wa Matokeo ya Kliniki", chart_adoption:"Kiwango cha Kukubaliwa na Waganga",
+        safety_title:"Ufuatiliaji wa Usalama wa Wakati Halisi", partners_title:"Washirika wa Muungano"
+      },
+      ha: {
+        nav_dashboard:"Dashboard", nav_deployments:"Aiwatar da", nav_analytics:"Bincike", nav_partners:"Abokan hulɗa",
+        btn_new_evaluation:"Sabon Gwaji",
+        hero_title:"Kayan Aikin Kimar AI na Lafiya a Afrika",
+        hero_subtitle:"Rufe bakan tsakanin yadda AI zai iya taimakawa da amfanin da yake da shi ga marasa lafiya a Kenya, Nigeria, Rwanda, da Afirka ta Kudu.",
+        status_live:"Gwaje-gwaje 12 Masu Aiki", status_facilities:"Cibiyoyi 47 na Abokan Hulɗa", status_patients:"Marasa lafiya 128,450 Sun Yi Rajista",
+        metric_accuracy:"Inganta Daidaiton Ganowa", metric_time:"Matsakaicin Lokacin Shawara", metric_clinicians:"Likitocin da aka horar", metric_safety:"Manyan Abubuwan Tsaro",
+        map_title:"Yankunan Aiwatarwa", evaluations_title:"Gwaje-gwaje Masu Aiki",
+        chart_outcomes:"Kwatanta Sakamakon Asibiti", chart_adoption:"Yawan Karɓuwar Likitoci",
+        safety_title:"Sa Ido Kan Tsaro a Lokaci-lokaci", partners_title:"Abokan Hulɗar Consortium"
+      },
+      yo: {
+        nav_dashboard:"Dasibodu", nav_deployments:"Igbesẹ", nav_analytics:"Onínọmbà", nav_partners:"Alábàáṣiṣẹ́pọ̀",
+        btn_new_evaluation:"Atunyẹwo Tuntun",
+        hero_title:"Ilana Atunyẹwo AI Ilera fun Afrika",
+        hero_subtitle:"Dínà ààrin agbára AI àti ipa ààbò fún àwọn aláìsàn ní Kenya, Nàìjíríà, Ruwanda, àti Gúúsù Áfíríkà.",
+        status_live:"Atunyẹwo 12 Ti ńṣiṣẹ́", status_facilities:"Ilé-iṣẹ́ 47 Alábàáṣiṣẹ́pọ̀", status_patients:"Àwọn Aláìsàn 128,450 ti Forúkọsílẹ̀",
+        metric_accuracy:"Ilọsiwaju ìtóye ìdánimọ̀", metric_time:"Àkókò ìmòràn apapọ̀", metric_clinicians:"Àwọn oníṣègùn tí a kọ́", metric_safety:"Ìṣẹ̀lẹ̀ ààbò pataki",
+        map_title:"Ìkójọpọ̀ Igbesẹ", evaluations_title:"Atunyẹwo Ti ńṣiṣẹ́",
+        chart_outcomes:"Àfíwéyà Esi Kliniki", chart_adoption:"Ìgbàgbọ́ àwọn oníṣègùn",
+        safety_title:"Atunṣe Ààbò Ní Akókò Gidi", partners_title:"Àwọn Alábàáṣiṣẹ́pọ̀ Ẹgbẹ́"
+      },
+      am: {
+        nav_dashboard:"ዳሽቦርድ", nav_deployments:"ተግባራዊነት", nav_analytics:"ትንተና", nav_partners:"አጋሮች",
+        btn_new_evaluation:"አዲስ ግምገማ",
+        hero_title:"የአፍሪካ ጤና AI እውነተኛ ዓለም ግምገማ መሰረተ ልማት",
+        hero_subtitle:"በኬንያ፣ ናይጄሪያ፣ ሩዋንዳ እና ደቡብ አፍሪካ የሚገኙ የህክምና ውሳኔ ድጋፍ ጥቅም ላይ የዋሉ ደህንነታቸው የተጠበቀ ግምገማዎች።",
+        status_live:"12 ንቁ ግምገማዎች", status_facilities:"47 የአጋር ተቋማት", status_patients:"128,450 ታማሚዎች ተመዝግበዋል",
+        metric_accuracy:"የደህና ምርመራ ለውጥ", metric_time:"አማካይ ምክር ጊዜ", metric_clinicians:"የሰለጠኑ ክሊኒከልስ", metric_safety:"ከባድ የደህንነት ክስተቶች",
+        map_title:"የተግባራዊነት ሽፋን", evaluations_title:"ንቁ ግምገማዎች",
+        chart_outcomes:"የክሊኒካል ውጤቶች ንፅፅር", chart_adoption:"የክሊኒሽያን የመቀበል መጠኖች",
+        safety_title:"የበጎ ጊዜ ደህንነት ክትትል", partners_title:"የኮንሶርቲየም አጋሮች"
+      },
+      zu: {
+        nav_dashboard:"Ideshibhodi", nav_deployments:"Ukuhambisa", nav_analytics:"Uhlaziyo", nav_partners:"Abalingani",
+        btn_new_evaluation:"Ukuhlola Okusha",
+        hero_title:"Isakhiwo Sokuhlola AI Yezokwelapha Yase-Afrika",
+        hero_subtitle:"Ukuvala igebe phakathi kwamandla e-AI nomthelela wesiguli ngokuhlola okucophelela ukwesekwa kwesinqumo sokwelapha eKenya, Nigeria, Rwanda, naseNingizimu Afrika.",
+        status_live:"Ukuhlola 12 Osebenzayo", status_facilities:"Izakhiwo 47 Zabalingani", status_patients:"Amalungu 128,450 Abhalisiwe",
+        metric_accuracy:"Ukuthuthukiswa Kokunemba Kokuthola", metric_time:"Isikhathi Esijwayelekile Sokululeka", metric_clinicians:"Abelaphi Abaqeqeshiwe", metric_safety:"Izehlakalo Ezinkulu Zokuphepha",
+        map_title:"Ukusakazwa Kokuhambisa", evaluations_title:"Ukuhlola Osebenzayo",
+        chart_outcomes:"Ukuqhathaniswa Kweziphumo Zekliniki", chart_adoption:"Amazinga Okuthathwa Kwabelaphi",
+        safety_title:"Ukuqapha Ukuphepha Ngesikhathi Sangempela", partners_title:"Abalingani Be-Consortium"
+      },
+      fr: {
+        nav_dashboard:"Tableau de bord", nav_deployments:"Déploiements", nav_analytics:"Analytiques", nav_partners:"Partenaires",
+        btn_new_evaluation:"Nouvelle évaluation",
+        hero_title:"Infrastructure d'évaluation réelle pour l'IA santé africaine",
+        hero_subtitle:"Combler le fossé entre le potentiel de l'IA et l'impact patient grâce à une évaluation rigoureuse du support décisionnel clinique au Kenya, Nigeria, Rwanda et Afrique du Sud.",
+        status_live:"12 évaluations actives", status_facilities:"47 établissements partenaires", status_patients:"128 450 patients inscrits",
+        metric_accuracy:"Amélioration du diagnostic", metric_time:"Temps moyen de consultation", metric_clinicians:"Cliniciens formés", metric_safety:"Événements indésirables graves",
+        map_title:"Couverture de déploiement", evaluations_title:"Évaluations actives",
+        chart_outcomes:"Comparaison des résultats cliniques", chart_adoption:"Taux d'adoption des cliniciens",
+        safety_title:"Surveillance de sécurité en temps réel", partners_title:"Partenaires du consortium"
+      }
+    };
+
+    let currentLang = 'en';
+    function setLanguage(lang){
+      currentLang = translations[lang] ? lang : 'en';
+      const t = translations[currentLang];
+
+      document.querySelectorAll('[data-key]').forEach(el=>{
+        const key = el.getAttribute('data-key');
+        if(t[key]){
+          if(currentLang==='am') el.classList.add('amharic-text');
+          else el.classList.remove('amharic-text');
+          el.textContent = t[key];
+        }
+      });
+
+      document.getElementById('current-lang').textContent = LANG_LABEL[currentLang] || 'English';
+
+      document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLang);
+      });
+
+      localStorage.setItem('afyaai-lang', currentLang);
+      toast(`Language: ${LANG_LABEL[currentLang] || 'English'}`, 'globe');
+    }
+
+    /***********************
+     * Charts
+     ***********************/
+    function initCharts(){
+      const ctx1 = document.getElementById('outcomesChart').getContext('2d');
+      new Chart(ctx1,{
+        type:'bar',
+        data:{
+          labels:['Diagnostic Error','Treatment Error','Adverse Events','Mortality'],
+          datasets:[
+            {label:'Without AI', data:[18.5,14.2,8.3,3.2], backgroundColor:'rgba(148,163,184,.8)', borderRadius:6},
+            {label:'With AI Support', data:[15.6,12.4,6.8,2.8], backgroundColor:'rgba(13,148,136,.8)', borderRadius:6},
+          ]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{legend:{position:'bottom'}},
+          scales:{
+            y:{beginAtZero:true, grid:{color:'rgba(0,0,0,.05)'}},
+            x:{grid:{display:false}}
+          }
+        }
+      });
+
+      const ctx2 = document.getElementById('adoptionChart').getContext('2d');
+      new Chart(ctx2,{
+        type:'line',
+        data:{
+          labels:['Week 1','Week 2','Week 4','Week 6','Week 8','Week 12'],
+          datasets:[{
+            label:'Daily Active Users',
+            data:[45,62,78,85,89,94],
+            borderColor:'rgb(13,148,136)',
+            backgroundColor:'rgba(13,148,136,.1)',
+            tension:.4,
+            fill:true
+          }]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{legend:{display:false}},
+          scales:{
+            y:{beginAtZero:true, max:100},
+            x:{grid:{display:false}}
+          }
+        }
+      });
+    }
+
+    /***********************
+     * Heatmap (deterministic-ish)
+     ***********************/
+    function generateHeatmap(seed=Math.random()){
+      const container = document.getElementById('heatmap');
+      container.innerHTML = '';
+      let x = Math.floor(seed*1e9) || 123456;
+      const rand = () => (x = (x*1664525 + 1013904223) % 4294967296) / 4294967296;
+
+      const weeks = 12, days = 7;
+      for(let w=0; w<weeks; w++){
+        for(let d=0; d<days; d++){
+          const cell = document.createElement('button');
+          cell.type = 'button';
+          cell.className = 'heatmap-cell';
+          const intensity = rand();
+          let color;
+          if(intensity < .3) color = '#e2e8f0';
+          else if(intensity < .6) color = '#99f6e4';
+          else if(intensity < .8) color = '#2dd4bf';
+          else color = '#0f766e';
+          cell.style.backgroundColor = color;
+          const pct = Math.round(intensity*100);
+          cell.title = `Week ${w+1}, Day ${d+1}: ${pct}% activity`;
+          cell.addEventListener('click',()=>toast(cell.title,'chart-simple'));
+          container.appendChild(cell);
+        }
+      }
+    }
+
+    /***********************
+     * Evaluations (local CRUD)
+     ***********************/
+    const STORAGE_KEY = 'afyaai-evals-demo-v1';
+    const seedEvaluations = [
+      { id:'penda', name:'Penda Health CDSS', country:'kenya', countryLabel:'Kenya', status:'Live', summary:'Primary care diagnostic support', patients:39849, facilities:12, updatedAt:Date.now() },
+      { id:'ubenwa', name:'Ubenwa Birth Asphyxia', country:'nigeria', countryLabel:'Nigeria', status:'Pilot', summary:'Neonatal cry analysis', patients:2400, facilities:8, updatedAt:Date.now() },
+      { id:'babylon', name:'Babylon Triage', country:'rwanda', countryLabel:'Rwanda', status:'Live', summary:'AI symptom checker', patients:15600, facilities:5, updatedAt:Date.now() },
+      { id:'qure', name:'Qure.ai CXR', country:'sa', countryLabel:'South Africa', status:'Setup', summary:'Tuberculosis screening', patients:8200, facilities:3, updatedAt:Date.now() }
+    ];
+
+    function loadEvaluations(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return structuredClone(seedEvaluations);
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : structuredClone(seedEvaluations);
+      }catch{
+        return structuredClone(seedEvaluations);
+      }
+    }
+    function saveEvaluations(list){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    let evaluations = loadEvaluations();
+    let evalStatusFilter = 'all';
+    let activeEvalId = null;
+
+    function statusPill(status){
+      const map = {
+        Live:'bg-green-100 text-green-700',
+        Pilot:'bg-amber-100 text-amber-700',
+        Setup:'bg-blue-100 text-blue-700',
+        Planned:'bg-slate-100 text-slate-700'
+      };
+      return map[status] || 'bg-slate-100 text-slate-700';
+    }
+
+    function computeHeroTotals(){
+      const liveCount = evaluations.filter(e=>e.status==='Live').length;
+      const facilities = evaluations.reduce((a,e)=>a+(Number(e.facilities)||0),0);
+      const patients = evaluations.reduce((a,e)=>a+(Number(e.patients)||0),0);
+      document.getElementById('heroActiveCount').textContent = `${liveCount} Active Evaluations`;
+      document.getElementById('heroFacilities').textContent = `${formatNumber(facilities)} Partner Facilities`;
+      document.getElementById('heroPatients').textContent = `${formatNumber(patients)} Patients Enrolled`;
+    }
+
+    function renderEvaluations(){
+      const list = document.getElementById('evaluationsList');
+      const q = (document.getElementById('evalSearch').value || '').toLowerCase().trim();
+      let rows = evaluations.slice();
+
+      if(evalStatusFilter !== 'all') rows = rows.filter(e=>e.status===evalStatusFilter);
+      if(q) rows = rows.filter(e =>
+        (e.name||'').toLowerCase().includes(q) ||
+        (e.summary||'').toLowerCase().includes(q) ||
+        (e.countryLabel||'').toLowerCase().includes(q)
+      );
+
+      const order = { Live:0, Pilot:1, Setup:2, Planned:3 };
+      rows.sort((a,b)=>(order[a.status]??9)-(order[b.status]??9) || (b.updatedAt||0)-(a.updatedAt||0));
+
+      list.innerHTML = rows.map(e=>`
+        <div class="evaluation-card p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer"
+             data-eval-id="${escapeHtml(e.id)}">
+          <div class="flex justify-between items-start mb-2">
+            <span class="px-2 py-1 ${statusPill(e.status)} text-xs rounded-full font-medium">${escapeHtml(e.status)}</span>
+            <span class="text-xs text-slate-400">${escapeHtml(e.countryLabel||'')}</span>
+          </div>
+          <h4 class="font-semibold text-slate-900 mb-1">${escapeHtml(e.name)}</h4>
+          <p class="text-xs text-slate-600 mb-2">${escapeHtml(e.summary)}</p>
+          <div class="flex items-center text-xs text-slate-500">
+            <i class="fas fa-users mr-1"></i> ${formatNumber(e.patients)} patients
+            <span class="mx-2">•</span>
+            <i class="fas fa-hospital mr-1"></i> ${formatNumber(e.facilities)} facilities
+          </div>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.evaluation-card').forEach(card=>{
+        card.addEventListener('click', ()=>showEvaluationDetail(card.getAttribute('data-eval-id')));
+      });
+
+      populateComplianceEvalSelect();
+      computeHeroTotals();
+    }
+
+    function showEvaluationDetail(id){
+      const evalObj = evaluations.find(e=>e.id===id);
+      if(!evalObj) return;
+      activeEvalId = id;
+
+      document.getElementById('modalTitle').textContent = evalObj.name;
+      document.getElementById('modalMeta').textContent = `${evalObj.countryLabel} • ${evalObj.status} • Updated ${new Date(evalObj.updatedAt||Date.now()).toLocaleString()}`;
+
+      document.getElementById('modalContent').innerHTML = `
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="bg-slate-50 rounded-xl p-3"><div class="text-xs text-slate-500">Patients</div><div class="text-xl font-bold">${formatNumber(evalObj.patients)}</div></div>
+            <div class="bg-slate-50 rounded-xl p-3"><div class="text-xs text-slate-500">Facilities</div><div class="text-xl font-bold">${formatNumber(evalObj.facilities)}</div></div>
+            <div class="bg-slate-50 rounded-xl p-3"><div class="text-xs text-slate-500">Status</div><div class="text-sm font-semibold inline-block px-2 py-1 rounded-full ${statusPill(evalObj.status)}">${escapeHtml(evalObj.status)}</div></div>
+          </div>
+
+          <div>
+            <div class="text-sm font-semibold text-slate-900 mb-2">Summary</div>
+            <textarea id="editSummary" class="w-full px-3 py-2 rounded-xl border border-slate-200" rows="3">${escapeHtml(evalObj.summary)}</textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Patients</label>
+              <input id="editPatients" type="number" min="0" class="w-full px-3 py-2 rounded-xl border border-slate-200" value="${Number(evalObj.patients||0)}" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Facilities</label>
+              <input id="editFacilities" type="number" min="0" class="w-full px-3 py-2 rounded-xl border border-slate-200" value="${Number(evalObj.facilities||0)}" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+            <select id="editStatus" class="w-full px-3 py-2 rounded-xl border border-slate-200">
+              ${['Live','Pilot','Setup','Planned'].map(s=>`<option ${s===evalObj.status?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      `;
+
+      const modal = document.getElementById('evaluationModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal(){
+      const modal = document.getElementById('evaluationModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      activeEvalId = null;
+    }
+
+    function saveActiveEvalEdits(){
+      if(!activeEvalId) return;
+      const idx = evaluations.findIndex(e=>e.id===activeEvalId);
+      if(idx === -1) return;
+
+      const summary = document.getElementById('editSummary')?.value ?? evaluations[idx].summary;
+      const patients = Number(document.getElementById('editPatients')?.value ?? evaluations[idx].patients);
+      const facilities = Number(document.getElementById('editFacilities')?.value ?? evaluations[idx].facilities);
+      const status = document.getElementById('editStatus')?.value ?? evaluations[idx].status;
+
+      evaluations[idx] = {
+        ...evaluations[idx],
+        summary,
+        patients: Math.max(0, patients || 0),
+        facilities: Math.max(0, facilities || 0),
+        status,
+        updatedAt: Date.now()
+      };
+
+      saveEvaluations(evaluations);
+      renderEvaluations();
+      toast('Evaluation saved', 'floppy-disk');
+    }
+
+    function deleteActiveEval(){
+      if(!activeEvalId) return;
+      const idx = evaluations.findIndex(e=>e.id===activeEvalId);
+      if(idx === -1) return;
+      const name = evaluations[idx].name;
+      evaluations.splice(idx,1);
+      saveEvaluations(evaluations);
+      renderEvaluations();
+      closeModal();
+      toast(`Deleted: ${name}`, 'trash');
+    }
+
+    function addNewEvaluation(){
+      const id = 'eval-' + Math.random().toString(16).slice(2,8);
+      const item = {
+        id,
+        name:'New Evaluation',
+        country:'kenya',
+        countryLabel:'Kenya',
+        status:'Planned',
+        summary:'Describe the evaluation goal…',
+        patients:0,
+        facilities:0,
+        updatedAt:Date.now()
+      };
+      evaluations.unshift(item);
+      saveEvaluations(evaluations);
+      renderEvaluations();
+      showEvaluationDetail(id);
+      toast('New evaluation created', 'plus');
+    }
+
+    /***********************
+     * Map interactions (demo)
+     ***********************/
+    const countryDetails = {
+      kenya:{name:'Kenya', facilities:12, patients:39849, status:'Active'},
+      nigeria:{name:'Nigeria', facilities:15, patients:24500, status:'Active'},
+      rwanda:{name:'Rwanda', facilities:8, patients:15600, status:'Active'},
+      sa:{name:'South Africa', facilities:12, patients:48501, status:'Active'},
+      ethiopia:{name:'Ethiopia', facilities:6, patients:0, status:'Pilot'},
+      ghana:{name:'Ghana', facilities:4, patients:0, status:'Planned'}
+    };
+
+    function selectCountry(id){
+      document.querySelectorAll('.country-path').forEach(p=>p.classList.remove('active'));
+      const el = document.getElementById(id);
+      if(el) el.classList.add('active');
+
+      const d = countryDetails[id];
+      if(d){
+        toast(`${d.name}: ${d.status} • Facilities ${d.facilities} • Patients ${formatNumber(d.patients)}`, 'map-location-dot', 3500);
+      }
+    }
+
+    function setMapFilter(filter){
+      // purely visual demo
+      const btns = document.querySelectorAll('.map-filter');
+      btns.forEach(b=>{
+        const on = b.getAttribute('data-filter') === filter;
+        b.className = 'map-filter px-3 py-1 text-xs rounded-full ' + (on ? 'bg-teal-600 text-white' : 'bg-slate-200 text-slate-600 hover:bg-slate-300');
+      });
+
+      // highlight based on class (active/pilot/planned)
+      document.querySelectorAll('.country-path').forEach(p=>{
+        p.style.opacity = '1';
+        if(filter === 'active'){
+          p.style.opacity = p.classList.contains('pilot') || p.classList.contains('planned') ? '0.25' : '1';
+        } else if(filter === 'pilot'){
+          p.style.opacity = p.classList.contains('pilot') ? '1' : '0.25';
+        } else if(filter === 'planned'){
+          p.style.opacity = p.classList.contains('planned') ? '1' : '0.25';
+        }
+      });
+
+      toast(`Map filter: ${filter}`, 'filter', 1800);
+    }
+
+    /***********************
+     * Offline demo toggle (not real caching)
+     ***********************/
+    let offlineDemo = false;
+    function updateNetUI(){
+      const bar = document.getElementById('demoBar');
+      bar.classList.remove('hidden');
+
+      const dot = document.getElementById('netDot');
+      const text = document.getElementById('netText');
+
+      const online = offlineDemo ? false : navigator.onLine;
+      dot.className = 'w-3 h-3 rounded-full ' + (online ? 'bg-green-500' : 'bg-red-500');
+      text.textContent = online ? 'Online (normal browser mode)' : 'Offline (demo mode — features still work locally)';
+    }
+
+    /***********************
+     * FHIR MOCK (local)
+     ***********************/
+    const FHIR_STORAGE = 'afyaai-fhir-samples-demo-v1';
+    let fhirSamples = [];
+    let fhirSelected = null;
+
+    function seedFHIR(){
+      return [
+        {
+          resourceType:"Patient",
+          id:"P-1001",
+          identifier:[{system:"https://afyaai.example/id", value:"P-1001"}],
+          name:[{given:["Amina"], family:"Mwangi"}],
+          gender:"female",
+          birthDate:"1991-04-12"
+        },
+        {
+          resourceType:"Patient",
+          id:"P-1002",
+          identifier:[{system:"https://afyaai.example/id", value:"P-1002"}],
+          name:[{given:["Chinedu"], family:"Okafor"}],
+          gender:"male",
+          birthDate:"1984-09-03"
+        },
+        {
+          resourceType:"Observation",
+          id:"O-2001",
+          status:"final",
+          code:{text:"Blood pressure"},
+          subject:{reference:"Patient/P-1001"},
+          valueString:"138/92"
+        },
+        {
+          resourceType:"Observation",
+          id:"O-2002",
+          status:"final",
+          code:{text:"Temperature"},
+          subject:{reference:"Patient/P-1002"},
+          valueQuantity:{value:38.1, unit:"C"}
+        }
+      ];
+    }
+    function loadFHIR(){
+      try{
+        const raw = localStorage.getItem(FHIR_STORAGE);
+        if(!raw) return seedFHIR();
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : seedFHIR();
+      }catch{
+        return seedFHIR();
+      }
+    }
+    function saveFHIR(list){ localStorage.setItem(FHIR_STORAGE, JSON.stringify(list)); }
+
+    function renderFHIRResults(results){
+      const box = document.getElementById('fhirResults');
+      if(!results.length){
+        box.innerHTML = `<div class="text-slate-500 text-sm">No matches.</div>`;
+        return;
+      }
+      box.innerHTML = results.map(r=>{
+        const label = r.resourceType==='Patient'
+          ? `${(r.name?.[0]?.given?.[0]||'')} ${(r.name?.[0]?.family||'')} (${r.id})`
+          : `${r.resourceType} ${r.id} — ${r.code?.text || r.valueString || ''}`;
+        return `
+          <button type="button" class="w-full text-left px-3 py-2 rounded-xl border border-slate-200 hover:border-teal-500 hover:bg-teal-50 transition"
+                  data-fhir-id="${escapeHtml(r.id)}" data-fhir-type="${escapeHtml(r.resourceType)}">
+            <div class="text-sm font-semibold text-slate-900">${escapeHtml(label)}</div>
+            <div class="text-xs text-slate-500">${escapeHtml(r.resourceType)}</div>
+          </button>
+        `;
+      }).join('');
+
+      box.querySelectorAll('button[data-fhir-id]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = btn.getAttribute('data-fhir-id');
+          const type = btn.getAttribute('data-fhir-type');
+          fhirSelected = fhirSamples.find(x=>x.id===id && x.resourceType===type) || null;
+          document.getElementById('fhirResourceView').textContent = fhirSelected ? JSON.stringify(fhirSelected,null,2) : 'Select a resource…';
+          toast(`Selected ${type}/${id}`, 'circle-check');
+        });
+      });
+    }
+
+    function fhirSearch(){
+      const q = (document.getElementById('fhirSearch').value || '').toLowerCase().trim();
+      if(!q){ renderFHIRResults([]); return; }
+
+      const results = fhirSamples.filter(r=>{
+        if(r.resourceType==='Patient'){
+          const name = `${r.name?.[0]?.given?.[0]||''} ${r.name?.[0]?.family||''}`.toLowerCase();
+          const id = (r.id||'').toLowerCase();
+          const ident = (r.identifier?.[0]?.value||'').toLowerCase();
+          return name.includes(q) || id.includes(q) || ident.includes(q);
+        }
+        const id = (r.id||'').toLowerCase();
+        const text = (r.code?.text||'').toLowerCase();
+        return id.includes(q) || text.includes(q);
+      });
+
+      renderFHIRResults(results);
+    }
+
+    function buildCDSRequestMock(){
+      const preview = document.getElementById('cdsPreview');
+      if(!fhirSelected){
+        preview.textContent = 'Select a resource first.';
+        toast('Select a patient/resource first', 'triangle-exclamation', 2500);
+        return;
+      }
+
+      const patientId = fhirSelected.resourceType==='Patient'
+        ? fhirSelected.id
+        : (fhirSelected.subject?.reference?.split('/')[1] || null);
+
+      const payload = {
+        hook:"patient-view",
+        hookInstance:"demo-" + Math.random().toString(16).slice(2),
+        fhirServer:"https://mock.fhir.afyaai.local",
+        context:{
+          userId:"Practitioner/clinician-001",
+          patientId,
+          encounterId:"Encounter/enc-123"
+        },
+        prefetch:{
+          patient: fhirSamples.find(r=>r.resourceType==='Patient' && r.id===patientId) || null,
+          recentObservations: fhirSamples.filter(r=>r.resourceType==='Observation' && (r.subject?.reference||'').includes(patientId))
+        }
+      };
+
+      preview.textContent = JSON.stringify(payload,null,2);
+      toast('Generated CDS request preview', 'wand-magic-sparkles');
+    }
+
+    function copyCDS(){
+      const text = document.getElementById('cdsPreview').textContent || '';
+      if(!navigator.clipboard){
+        toast('Clipboard not available in this browser', 'triangle-exclamation', 3000);
+        return;
+      }
+      navigator.clipboard.writeText(text).then(
+        ()=>toast('Copied to clipboard','copy'),
+        ()=>toast('Copy failed (permission)','triangle-exclamation',3000)
+      );
+    }
+
+    /***********************
+     * Compliance Module (local)
+     ***********************/
+    const COMPLIANCE_KEY = 'afyaai-compliance-demo-v1';
+    const AUDIT_KEY = 'afyaai-audit-demo-v1';
+    const EVIDENCE_KEY = 'afyaai-evidence-demo-v1';
+
+    const complianceTemplates = {
+      who_gdp: [
+        { id:"who-1", label:"Clinical safety evaluation plan documented" },
+        { id:"who-2", label:"Data governance + consent approach defined" },
+        { id:"who-3", label:"Monitoring & post-deployment surveillance plan" },
+        { id:"who-4", label:"Equity / bias assessment performed" }
+      ],
+      iso_13485: [
+        { id:"iso-1", label:"QMS scope defined for this evaluation" },
+        { id:"iso-2", label:"Risk management file created (ISO 14971 aligned)" },
+        { id:"iso-3", label:"Design controls + change control records" },
+        { id:"iso-4", label:"CAPA process documented & tested" }
+      ],
+      gdpr: [
+        { id:"gdpr-1", label:"Lawful basis identified (consent/contract/etc.)" },
+        { id:"gdpr-2", label:"DPIA performed where applicable" },
+        { id:"gdpr-3", label:"Data minimization + retention schedule defined" },
+        { id:"gdpr-4", label:"Data subject rights handling process documented" }
+      ],
+      hipaa: [
+        { id:"hipaa-1", label:"Privacy rule mapping completed" },
+        { id:"hipaa-2", label:"Security risk analysis completed" },
+        { id:"hipaa-3", label:"BAA requirements reviewed (if applicable)" },
+        { id:"hipaa-4", label:"Access controls + audit logging verified" }
+      ]
+    };
+
+    function loadJson(key, fallback){
+      try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return fallback;
+        return JSON.parse(raw);
+      }catch{ return fallback; }
+    }
+    function saveJson(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+    function audit(msg){
+      const log = loadJson(AUDIT_KEY, []);
+      log.unshift({ at: Date.now(), msg });
+      saveJson(AUDIT_KEY, log.slice(0, 200));
+      renderAudit();
+    }
+
+    function renderAudit(){
+      const box = document.getElementById('auditLog');
+      const log = loadJson(AUDIT_KEY, []);
+      if(!log.length){
+        box.innerHTML = `<div class="text-slate-500">No audit events.</div>`;
+        return;
+      }
+      box.innerHTML = log.map(e=>`
+        <div class="border border-slate-200 rounded-lg p-2 bg-slate-50">
+          <div class="text-slate-900">${escapeHtml(e.msg)}</div>
+          <div class="text-slate-500">${new Date(e.at).toLocaleString()}</div>
+        </div>
+      `).join('');
+    }
+
+    function populateComplianceEvalSelect(){
+      const sel = document.getElementById('complianceEvalSelect');
+      if(!sel) return;
+      const current = sel.value;
+      sel.innerHTML = evaluations.map(e=>`<option value="${escapeHtml(e.id)}">${escapeHtml(e.name)}</option>`).join('');
+      if(current && evaluations.some(e=>e.id===current)) sel.value = current;
+    }
+
+    function getComplianceState(){ return loadJson(COMPLIANCE_KEY, {}); }
+    function setComplianceState(next){ saveJson(COMPLIANCE_KEY, next); }
+
+    function renderChecklist(){
+      const framework = document.getElementById('complianceFramework').value || 'who_gdp';
+      const evalId = document.getElementById('complianceEvalSelect').value || evaluations[0]?.id;
+
+      const tpl = complianceTemplates[framework] || [];
+      const box = document.getElementById('complianceChecklist');
+
+      const state = getComplianceState();
+      const evalState = state[evalId] || {};
+      const fwState = evalState[framework] || {};
+
+      box.innerHTML = tpl.map(item=>{
+        const checked = !!fwState[item.id];
+        return `
+          <label class="flex items-start gap-3 p-3 rounded-xl border border-slate-200 hover:border-teal-500 transition bg-white">
+            <input type="checkbox" class="mt-1" data-item="${escapeHtml(item.id)}" ${checked ? 'checked' : ''} />
+            <div>
+              <div class="text-sm font-semibold text-slate-900">${escapeHtml(item.label)}</div>
+              <div class="text-xs text-slate-500">Item ID: ${escapeHtml(item.id)}</div>
+            </div>
+          </label>
+        `;
+      }).join('');
+
+      box.querySelectorAll('input[type="checkbox"][data-item]').forEach(cb=>{
+        cb.addEventListener('change', ()=>{
+          const itemId = cb.getAttribute('data-item');
+          const next = getComplianceState();
+          next[evalId] = next[evalId] || {};
+          next[evalId][framework] = next[evalId][framework] || {};
+          next[evalId][framework][itemId] = cb.checked;
+          setComplianceState(next);
+          audit(`Compliance: ${evalId} / ${framework} / ${itemId} = ${cb.checked}`);
+        });
+      });
+
+      renderEvidence();
+    }
+
+    function fileToBase64(file){
+      return new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload = ()=>resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function attachEvidence(){
+      const evalId = document.getElementById('complianceEvalSelect').value;
+      const framework = document.getElementById('complianceFramework').value;
+      const input = document.getElementById('evidenceFile');
+      const file = input.files?.[0];
+
+      if(!evalId || !framework || !file){
+        toast('Pick evaluation/framework and choose a file', 'triangle-exclamation', 3000);
+        return;
+      }
+
+      const content = await fileToBase64(file);
+      const store = loadJson(EVIDENCE_KEY, {});
+      store[evalId] = store[evalId] || {};
+      store[evalId][framework] = store[evalId][framework] || [];
+      store[evalId][framework].unshift({
+        name:file.name, type:file.type||'application/octet-stream', size:file.size, at:Date.now(), content
+      });
+      saveJson(EVIDENCE_KEY, store);
+      input.value = '';
+      audit(`Evidence attached: ${evalId} / ${framework} / ${file.name}`);
+      renderEvidence();
+      toast('Evidence attached (local)', 'paperclip');
+    }
+
+    function renderEvidence(){
+      const evalId = document.getElementById('complianceEvalSelect').value;
+      const framework = document.getElementById('complianceFramework').value;
+      const box = document.getElementById('evidenceList');
+
+      const store = loadJson(EVIDENCE_KEY, {});
+      const list = (store?.[evalId]?.[framework]) || [];
+
+      if(!list.length){
+        box.innerHTML = `<div class="text-slate-500 text-sm">No evidence attached.</div>`;
+        return;
+      }
+
+      box.innerHTML = list.map((e,idx)=>`
+        <div class="flex items-center justify-between gap-2 p-2 rounded-xl border border-slate-200 bg-slate-50">
+          <div class="min-w-0">
+            <div class="text-sm font-semibold text-slate-900 truncate">${escapeHtml(e.name)}</div>
+            <div class="text-xs text-slate-500">${new Date(e.at).toLocaleString()} • ${(e.size/1024).toFixed(1)} KB</div>
+          </div>
+          <div class="flex gap-2">
+            <button class="px-2 py-1 text-xs rounded-lg bg-white hover:bg-slate-100 border border-slate-200" data-dl="${idx}">
+              <i class="fas fa-download mr-1"></i>Download
+            </button>
+            <button class="px-2 py-1 text-xs rounded-lg bg-white hover:bg-slate-100 border border-slate-200" data-del="${idx}">
+              <i class="fas fa-trash mr-1"></i>Remove
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      box.querySelectorAll('button[data-dl]').forEach(btn=>{
+        btn.addEventListener('click', ()=>downloadEvidence(Number(btn.getAttribute('data-dl'))));
+      });
+      box.querySelectorAll('button[data-del]').forEach(btn=>{
+        btn.addEventListener('click', ()=>removeEvidence(Number(btn.getAttribute('data-del'))));
+      });
+    }
+
+    function downloadEvidence(index){
+      const evalId = document.getElementById('complianceEvalSelect').value;
+      const framework = document.getElementById('complianceFramework').value;
+      const store = loadJson(EVIDENCE_KEY, {});
+      const list = (store?.[evalId]?.[framework]) || [];
+      const e = list[index];
+      if(!e) return;
+
+      const a = document.createElement('a');
+      a.href = e.content;
+      a.download = e.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      toast('Downloaded evidence','download');
+    }
+
+    function removeEvidence(index){
+      const evalId = document.getElementById('complianceEvalSelect').value;
+      const framework = document.getElementById('complianceFramework').value;
+      const store = loadJson(EVIDENCE_KEY, {});
+      const list = (store?.[evalId]?.[framework]) || [];
+      const removed = list.splice(index,1)[0];
+      if(store?.[evalId]?.[framework]) store[evalId][framework] = list;
+      saveJson(EVIDENCE_KEY, store);
+      audit(`Evidence removed: ${evalId} / ${framework} / ${(removed?.name)||'file'}`);
+      renderEvidence();
+    }
+
+    function summarizeEvidenceForExport(){
+      const store = loadJson(EVIDENCE_KEY, {});
+      const summary = {};
+      for(const evalId of Object.keys(store)){
+        summary[evalId] = {};
+        for(const fw of Object.keys(store[evalId])){
+          summary[evalId][fw] = store[evalId][fw].map(e=>({ name:e.name, type:e.type, size:e.size, at:e.at }));
+        }
+      }
+      return summary;
+    }
+
+    function exportCompliance(){
+      const payload = {
+        compliance: loadJson(COMPLIANCE_KEY, {}),
+        evidenceIndex: summarizeEvidenceForExport(),
+        audit: loadJson(AUDIT_KEY, [])
+      };
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'afyaai-compliance-export.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast('Exported compliance JSON', 'file-export');
+    }
+
+    function clearAudit(){
+      localStorage.removeItem(AUDIT_KEY);
+      renderAudit();
+      toast('Audit cleared', 'broom');
+    }
+
+    /***********************
+     * Reset
+     ***********************/
+    function resetDemoData(){
+      if(!confirm('Reset all demo data stored in this browser?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(FHIR_STORAGE);
+      localStorage.removeItem(COMPLIANCE_KEY);
+      localStorage.removeItem(EVIDENCE_KEY);
+      localStorage.removeItem(AUDIT_KEY);
+
+      evaluations = structuredClone(seedEvaluations);
+      saveEvaluations(evaluations);
+
+      fhirSamples = seedFHIR();
+      saveFHIR(fhirSamples);
+
+      renderEvaluations();
+      renderAudit();
+      renderChecklist();
+      toast('Demo data reset', 'rotate-left');
+    }
+
+    /***********************
+     * Wire up events
+     ***********************/
+    function initUi(){
+      // language
+      document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>setLanguage(btn.getAttribute('data-lang')));
+      });
+
+      // offline demo
+      document.getElementById('demoBar').classList.remove('hidden');
+      document.getElementById('btnOfflineToggle').addEventListener('click', ()=>{
+        offlineDemo = !offlineDemo;
+        updateNetUI();
+        toast(offlineDemo ? 'Offline demo ON' : 'Offline demo OFF', offlineDemo ? 'plug-circle-xmark' : 'wifi');
+      });
+      window.addEventListener('online', updateNetUI);
+      window.addEventListener('offline', updateNetUI);
+
+      document.getElementById('btnResetLocal').addEventListener('click', resetDemoData);
+
+      // evaluations
+      document.getElementById('evalSearch').addEventListener('input', renderEvaluations);
+      document.querySelectorAll('.eval-filter').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          evalStatusFilter = btn.getAttribute('data-status') || 'all';
+          document.querySelectorAll('.eval-filter').forEach(b=>{
+            const on = (b.getAttribute('data-status')||'all') === evalStatusFilter;
+            b.className = 'eval-filter px-3 py-1 text-xs rounded-full ' + (on ? 'bg-teal-600 text-white' : 'bg-slate-200 text-slate-600 hover:bg-slate-300');
+          });
+          renderEvaluations();
+        });
+      });
+      document.getElementById('btnNewEval').addEventListener('click', addNewEvaluation);
+
+      // modal
+      document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+      document.getElementById('evaluationModal').addEventListener('click', function(e){
+        if(e.target === this) closeModal();
+      });
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+      document.getElementById('btnSaveEval').addEventListener('click', saveActiveEvalEdits);
+      document.getElementById('btnDeleteEval').addEventListener('click', deleteActiveEval);
+      document.getElementById('btnPrintEval').addEventListener('click', ()=>window.print());
+
+      // map
+      ['kenya','nigeria','rwanda','sa','ethiopia','ghana'].forEach(id=>{
+        document.getElementById(id).addEventListener('click', ()=>selectCountry(id));
+      });
+      document.querySelectorAll('.map-filter').forEach(btn=>{
+        btn.addEventListener('click', ()=>setMapFilter(btn.getAttribute('data-filter')));
+      });
+
+      // heatmap refresh
+      document.getElementById('btnRefreshHeatmap').addEventListener('click', ()=>generateHeatmap());
+
+      // FHIR
+      document.getElementById('btnLoadFHIRSamples').addEventListener('click', ()=>{
+        fhirSamples = seedFHIR();
+        saveFHIR(fhirSamples);
+        document.getElementById('fhirResults').innerHTML = `<div class="text-slate-500 text-sm">Samples loaded. Search now.</div>`;
+        toast('FHIR samples loaded', 'database');
+      });
+      document.getElementById('btnFHIRSearch').addEventListener('click', fhirSearch);
+      document.getElementById('fhirSearch').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); fhirSearch(); }});
+      document.getElementById('btnFHIRSendCDS').addEventListener('click', buildCDSRequestMock);
+      document.getElementById('btnCopyCDS').addEventListener('click', copyCDS);
+
+      // Compliance
+      document.getElementById('complianceFramework').addEventListener('change', ()=>{
+        renderChecklist();
+        audit(`Framework selected: ${document.getElementById('complianceFramework').value}`);
+      });
+      document.getElementById('complianceEvalSelect').addEventListener('change', ()=>{
+        renderChecklist();
+        audit(`Compliance evaluation selected: ${document.getElementById('complianceEvalSelect').value}`);
+      });
+      document.getElementById('btnAttachEvidence').addEventListener('click', attachEvidence);
+      document.getElementById('btnExportCompliance').addEventListener('click', exportCompliance);
+      document.getElementById('btnClearAudit').addEventListener('click', clearAudit);
+    }
+
+    /***********************
+     * Initialize
+     ***********************/
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // charts + heatmap
+      initCharts();
+      generateHeatmap();
+
+      // load language pref
+      const savedLang = localStorage.getItem('afyaai-lang');
+      if(savedLang) setLanguage(savedLang);
+
+      // load evaluations + render
+      renderEvaluations();
+
+      // fhir load
+      fhirSamples = loadFHIR();
+
+      // compliance init
+      populateComplianceEvalSelect();
+      renderChecklist();
+      renderAudit();
+
+      // net UI
+      updateNetUI();
+
+      // wire
+      initUi();
+
+      toast('AfyaAI single-file demo loaded', 'sparkles', 3000);
+    });
+  </script>
+</body>
+</html>

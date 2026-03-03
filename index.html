@@ -3,103 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>AfyaAI — Telehealth + Clinical AI Evaluation & Safety Platform (Demo)</title>
+  <title>AfyaAI — WHO/WB Dashboard (Single-File Demo)</title>
 
   <!-- Tailwind + FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet" />
 
+  <!-- PDF Export (Single-file friendly via CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     :root{
-      --primary:#0f766e;
-      --primary-light:#14b8a6;
-      --accent:#f59e0b;
-      --danger:#ef4444;
-      --success:#10b981;
-      --slate:#0f172a;
+      --primary:#0b5fa5;
+      --primary-dark:#094c84;
+      --accent:#0e7490;
+      --success:#0f766e;
+      --danger:#b91c1c;
+      --warning:#c2410c;
+
+      --text:#0f172a;
+      --muted:#64748b;
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --border:#d9e2ef;
+      --shadow:0 6px 18px rgba(2,6,23,.06);
     }
+
     *{margin:0;padding:0;box-sizing:border-box;}
+
     body{
       font-family:'Inter','Noto Sans',sans-serif;
-      background:linear-gradient(135deg,#f0fdfa 0%,#ecfdf5 100%);
+      background:var(--bg);
+      color:var(--text);
       min-height:100vh;
     }
+
     .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;direction:ltr;}
-    .glass{
-      background:rgba(255,255,255,.85);
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      border:1px solid rgba(255,255,255,.3);
+
+    /* Institutional cards */
+    .glass, .glass-dark{
+      background:var(--card);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      backdrop-filter:none!important;
+      -webkit-backdrop-filter:none!important;
     }
-    .glass-dark{
-      background:rgba(15,23,42,.9);
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      border:1px solid rgba(148,163,184,.15);
+
+    /* Nav */
+    nav{
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      box-shadow:0 2px 6px rgba(0,0,0,.03);
     }
-    @keyframes slideIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-    @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-    .animate-slide-in{animation:slideIn .6s ease-out forwards;}
-    .animate-float{animation:float 3s ease-in-out infinite;}
-    ::-webkit-scrollbar{width:8px;}
-    ::-webkit-scrollbar-track{background:#f1f5f9;}
-    ::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:4px;}
-    ::-webkit-scrollbar-thumb:hover{background:#64748b;}
+
+    /* Buttons */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+      padding:.6rem .9rem;border-radius:.6rem;font-weight:600;font-size:14px;
+      transition:all .2s ease;
+      border:1px solid transparent;
+    }
+    .btn-primary{background:var(--primary);color:#fff;}
+    .btn-primary:hover{background:var(--primary-dark);}
+    .btn-soft{background:#eef4fb;border:1px solid var(--border);color:var(--text);}
+    .btn-soft:hover{background:#e6effa;}
+    .btn-slate{background:#0f172a;color:white;}
+    .btn-slate:hover{background:#0b1220;}
+    .btn-danger{background:var(--danger);color:white;}
+    .btn-danger:hover{background:#991b1b;}
+
+    /* Inputs */
+    .input{
+      width:100%;padding:.6rem .75rem;border:1px solid var(--border);
+      border-radius:.6rem;outline:none;transition:box-shadow .2s,border-color .2s;background:white;
+    }
+    .input:focus{border-color:rgba(11,95,165,.55);box-shadow:0 0 0 4px rgba(11,95,165,.12);}
+
+    /* Badges */
+    .pill{font-size:12px;padding:.25rem .5rem;border-radius:999px;font-weight:600;}
+    .role-badge{font-size:12px;padding:.25rem .5rem;border-radius:999px;background:#eef4fb;border:1px solid var(--border);color:#0f172a;font-weight:700;}
+
+    /* Status dots */
+    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+    .status-live{background:var(--success);box-shadow:0 0 8px rgba(15,118,110,.35);}
+    .status-pending{background:var(--warning);}
+    .status-offline{background:var(--danger);}
+
+    /* KPI cards */
+    .kpi-card{
+      background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .kpi-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+    .kpi-label{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.2px;}
+    .kpi-value{font-size:28px;font-weight:800;margin-top:6px;color:#0f172a;}
+    .kpi-note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.35;}
+
+    /* Table */
+    .table-clean{width:100%;border-collapse:collapse;}
+    .table-clean th,.table-clean td{padding:10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top;}
+    .table-clean th{color:var(--muted);font-weight:700;text-align:left;}
+    .table-clean tr:hover td{background:#f8fbff;}
+
+    /* Institutional heat grid */
+    .heat-grid{display:grid;grid-template-columns:120px repeat(7, 1fr);gap:6px;}
+    .heat-head{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+    .heat-week{font-size:11px;color:var(--muted);padding-top:6px;}
+    .heat-cell{
+      height:22px;border-radius:6px;border:1px solid var(--border);
+      background:#f1f5fb;cursor:pointer;position:relative;
+      transition:transform .05s ease, box-shadow .15s ease;
+    }
+    .heat-cell:hover{box-shadow:0 8px 16px rgba(2,6,23,.08);transform:translateY(-1px);}
+    .heat-legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+    .legend-swatch{width:18px;height:12px;border-radius:4px;border:1px solid var(--border);}
 
     /* Map */
     .country-path{
-      fill:#e2e8f0;stroke:#94a3b8;stroke-width:1;transition:all .3s ease;cursor:pointer;
+      fill:#e8eff9;stroke:#98b4d6;stroke-width:1;transition:all .2s ease;cursor:pointer;
     }
-    .country-path:hover{fill:var(--primary-light);transform:scale(1.02);}
-    .country-path.active{fill:var(--primary);}
+    .country-path:hover{fill:#cfe3fb;}
+    .country-path.active{fill:rgba(11,95,165,.85);stroke:#0b5fa5;}
 
-    /* status dots */
-    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
-    .status-live{background:var(--success);box-shadow:0 0 8px var(--success);}
-    .status-pending{background:var(--accent);}
-    .status-offline{background:var(--danger);}
-
-    .hover-lift{transition:transform .3s ease, box-shadow .3s ease;}
-    .hover-lift:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.1);}
-
-    .lang-btn{transition:all .3s ease;border:2px solid transparent;}
-    .lang-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
-
-    .heatmap-cell{
-      aspect-ratio:1;border-radius:4px;transition:all .2s ease;cursor:pointer;position:relative;
-    }
-    .heatmap-cell:hover{transform:scale(1.07);z-index:10;box-shadow:0 6px 16px rgba(0,0,0,.2);}
-
-    .pill{font-size:12px;padding:.25rem .5rem;border-radius:999px;font-weight:600;}
-    .role-badge{font-size:12px;padding:.25rem .5rem;border-radius:999px;background:#e2e8f0;color:#334155;font-weight:600;}
-
-    .input{
-      width:100%;padding:.6rem .75rem;border:1px solid #cbd5e1;border-radius:.75rem;
-      outline:none;transition:box-shadow .2s,border-color .2s;
-      background:white;
-    }
-    .input:focus{border-color:rgba(13,148,136,.8);box-shadow:0 0 0 4px rgba(20,184,166,.2);}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-      padding:.6rem .9rem;border-radius:.75rem;font-weight:600;transition:all .2s ease;
-    }
-    .btn-primary{background:var(--primary);color:white;}
-    .btn-primary:hover{background:#115e59;}
-    .btn-slate{background:#0f172a;color:white;}
-    .btn-slate:hover{background:#111827;}
-    .btn-soft{background:#e2e8f0;color:#0f172a;}
-    .btn-soft:hover{background:#cbd5e1;}
-    .btn-danger{background:#ef4444;color:white;}
-    .btn-danger:hover{background:#dc2626;}
-
-    .modal-card{max-width:920px;width:100%;max-height:90vh;overflow:auto;border-radius:1.25rem;}
+    /* Modals */
+    .modal-card{max-width:980px;width:100%;max-height:90vh;overflow:auto;border-radius:1rem;}
     .hidden{display:none !important;}
 
-    .banner{
-      border:1px solid rgba(148,163,184,.35);
-      background:rgba(255,255,255,.9);
-      border-radius:1rem;
+    /* Print/PDF export helper */
+    @media print{
+      nav, .no-print{display:none!important;}
+      body{background:#fff;}
+      .glass, .kpi-card{box-shadow:none!important;}
+      main{padding-top:0!important;}
     }
   </style>
 
@@ -109,301 +146,281 @@
 <body class="text-slate-800">
 
   <!-- NAV -->
-  <nav class="glass fixed w-full z-50 border-b border-slate-200">
+  <nav class="fixed w-full z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gradient-to-br from-teal-600 to-teal-800 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-xl"
+               style="background:var(--primary);">
             <i class="fas fa-heartbeat"></i>
           </div>
           <div>
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight">AfyaAI</h1>
-            <p class="text-xs text-slate-500 font-medium">Telehealth + Evaluation Consortium</p>
+            <h1 class="text-lg font-bold text-slate-900 tracking-tight">AfyaAI</h1>
+            <p class="text-xs text-slate-500 font-medium">WHO/WB-Style Monitoring Dashboard (Demo)</p>
           </div>
         </div>
 
         <div class="hidden md:flex items-center space-x-8">
-          <a href="#dashboard" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_dashboard">Dashboard</a>
-          <a href="#telehealth" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_deployments">Telehealth</a>
-          <a href="#partners" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_partners">Partners</a>
+          <a href="#dashboard" class="nav-link text-slate-700 hover:text-slate-900 font-medium transition-colors">Dashboard</a>
+          <a href="#telehealth" class="nav-link text-slate-700 hover:text-slate-900 font-medium transition-colors">Telehealth</a>
+          <a href="#partners" class="nav-link text-slate-700 hover:text-slate-900 font-medium transition-colors">Partners</a>
         </div>
 
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3">
           <!-- connectivity -->
-          <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100">
+          <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
             <span id="netDot" class="status-dot status-live"></span>
             <span id="netText" class="text-sm font-medium text-slate-700">Online</span>
           </div>
 
-          <!-- Language -->
-          <div class="relative group">
-            <button class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors">
-              <i class="fas fa-globe-africa text-teal-600"></i>
-              <span id="current-lang" class="text-sm font-medium">English</span>
-              <i class="fas fa-chevron-down text-xs"></i>
-            </button>
-            <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right z-50">
-              <div class="p-2 space-y-1">
-                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2 active" onclick="changeLanguage('en', event)">
-                  <span>🇬🇧</span><span>English</span>
-                </button>
-                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" onclick="changeLanguage('sw', event)">
-                  <span>🇰🇪</span><span>Kiswahili</span>
-                </button>
-                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" onclick="changeLanguage('ha', event)">
-                  <span>🇳🇬</span><span>Hausa</span>
-                </button>
-                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" onclick="changeLanguage('yo', event)">
-                  <span>🇳🇬</span><span>Yorùbá</span>
-                </button>
-                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" onclick="changeLanguage('am', event)">
-                  <span>🇪🇹</span><span>አማርኛ</span>
-                </button>
-                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" onclick="changeLanguage('zu', event)">
-                  <span>🇿🇦</span><span>isiZulu</span>
-                </button>
-                <button class="lang-btn w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 flex items-center space-x-2" onclick="changeLanguage('fr', event)">
-                  <span>🇫🇷</span><span>Français</span>
-                </button>
-              </div>
-            </div>
+          <!-- Country filter -->
+          <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
+            <i class="fa-solid fa-globe text-slate-500"></i>
+            <select id="countryFilter" class="bg-transparent text-sm font-semibold text-slate-800 outline-none" onchange="setCountryFilter(this.value)">
+              <option value="all">All Countries</option>
+              <option value="Kenya">Kenya</option>
+              <option value="Nigeria">Nigeria</option>
+              <option value="Rwanda">Rwanda</option>
+              <option value="South Africa">South Africa</option>
+              <option value="Ethiopia">Ethiopia</option>
+              <option value="Ghana">Ghana</option>
+            </select>
           </div>
 
+          <!-- Export -->
+          <button class="btn btn-soft no-print" onclick="exportPDF()"><i class="fa-solid fa-file-pdf"></i>Export PDF</button>
+
+          <!-- Audit -->
+          <button class="btn btn-soft no-print" onclick="openAuditPanel()"><i class="fa-solid fa-clipboard-list"></i>Audit Logs</button>
+
           <!-- Login / User -->
-          <button id="loginBtn" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-teal-600/30" onclick="openLogin()">
-            <i class="fas fa-user-shield mr-2"></i><span>Login</span>
+          <button id="loginBtn" class="btn btn-primary no-print" onclick="openLogin()">
+            <i class="fas fa-user-shield"></i><span>Login</span>
           </button>
-          <div id="userChip" class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100">
+
+          <div id="userChip" class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
             <span class="role-badge" id="roleBadge">Clinician</span>
             <span class="text-sm font-semibold text-slate-800" id="userNameChip">Demo User</span>
             <button class="text-slate-500 hover:text-slate-700" onclick="logout()" title="Logout">
               <i class="fas fa-right-from-bracket"></i>
             </button>
           </div>
-
         </div>
       </div>
     </div>
   </nav>
 
   <!-- MAIN -->
-  <main class="pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  <main id="exportArea" class="pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
 
-    <!-- Offline/PWA note -->
-    <div class="banner p-4 mb-6 animate-slide-in">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div class="flex items-start gap-3">
-          <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-700">
-            <i class="fas fa-signal"></i>
-          </div>
+    <!-- Dashboard header -->
+    <section id="dashboard" class="mb-6">
+      <div class="glass rounded-2xl p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <div class="font-bold text-slate-900">Demo is designed for GitHub Pages (single file).</div>
-            <div class="text-sm text-slate-600">
-              Data persists in your browser (localStorage). True installable PWA offline caching normally needs a separate service worker file.
-            </div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">AfyaAI Monitoring Dashboard</h2>
+            <p class="text-sm text-slate-600 mt-1">
+              Telehealth Operations • AI Evaluation • Clinical Safety Monitoring
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2 no-print">
+            <button class="btn btn-soft" onclick="seedTelehealthDemoActivity()"><i class="fas fa-bolt"></i>Seed Demo Data</button>
+            <button class="btn btn-soft" onclick="resetAllDemo()"><i class="fas fa-rotate"></i>Reset</button>
           </div>
         </div>
-        <div class="flex gap-2">
-          <button class="btn btn-slate" onclick="seedTelehealthDemoActivity()"><i class="fas fa-bolt"></i>Seed Demo Data</button>
-          <button class="btn btn-soft" onclick="resetAllDemo()"><i class="fas fa-rotate"></i>Reset</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- HERO -->
-    <section id="dashboard" class="mb-8 animate-slide-in">
-      <div class="glass rounded-2xl p-8 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-400/20 to-blue-500/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
-        <div class="relative z-10">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h2 class="text-3xl font-bold text-slate-900 mb-2" data-key="hero_title">Real-World Evaluation Infrastructure for African Health AI</h2>
-              <p class="text-slate-600 max-w-2xl" data-key="hero_subtitle">
-                Bridging the gap between AI potential and patient impact through rigorous clinical decision support evaluation — now integrated with telehealth for rural access.
-              </p>
-              <div class="mt-4 flex flex-wrap gap-2">
-                <span class="pill bg-teal-100 text-teal-800"><i class="fa-solid fa-video mr-1"></i> Telehealth</span>
-                <span class="pill bg-amber-100 text-amber-800"><i class="fa-solid fa-shield-halved mr-1"></i> Safety Monitoring</span>
-                <span class="pill bg-slate-100 text-slate-800"><i class="fa-solid fa-file-medical mr-1"></i> FHIR Mock</span>
-                <span class="pill bg-blue-100 text-blue-800"><i class="fa-solid fa-scale-balanced mr-1"></i> Compliance</span>
-              </div>
-            </div>
-            <div class="hidden lg:block animate-float">
-              <div class="w-32 h-32 bg-gradient-to-br from-teal-500 to-teal-700 rounded-2xl flex items-center justify-center text-white shadow-2xl">
-                <i class="fas fa-stethoscope text-5xl"></i>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-wrap gap-4 mt-6">
-            <div class="flex items-center space-x-2 text-sm text-slate-600">
-              <span class="status-dot status-live"></span>
-              <span id="activeEvalCount" data-key="status_live">12 Active Evaluations</span>
-            </div>
-            <div class="flex items-center space-x-2 text-sm text-slate-600">
-              <i class="fas fa-hospital text-teal-600"></i>
-              <span data-key="status_facilities">47 Partner Facilities</span>
-            </div>
-            <div class="flex items-center space-x-2 text-sm text-slate-600">
-              <i class="fas fa-users text-teal-600"></i>
-              <span id="patientsEnrolled" data-key="status_patients">128,450 Patients Enrolled</span>
-            </div>
-            <div class="flex items-center space-x-2 text-sm text-slate-600">
-              <i class="fas fa-video text-teal-600"></i>
-              <span id="teleSessions">0 Telehealth Sessions (demo)</span>
-            </div>
-          </div>
+        <div class="mt-4 text-xs text-slate-500">
+          <strong>Data source:</strong> Demo dataset (localStorage). Replace with consortium reporting feeds + facility submissions for production.
         </div>
       </div>
     </section>
 
-    <!-- METRICS -->
-    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay:.1s">
-        <div class="flex justify-between items-start mb-4">
-          <div class="p-3 bg-teal-100 rounded-lg"><i class="fas fa-chart-line text-teal-600 text-xl"></i></div>
-          <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">+16%</span>
+    <!-- National Summary Scorecard -->
+    <section class="glass rounded-2xl p-6 mb-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">National Summary Scorecard</h3>
+          <div class="text-xs text-slate-500">Aggregated indicators for selected country (or All).</div>
         </div>
-        <h3 class="text-2xl font-bold text-slate-900">94.2%</h3>
-        <p class="text-sm text-slate-600 mt-1" data-key="metric_accuracy">Diagnostic Accuracy Improvement</p>
+        <div class="text-xs text-slate-500">
+          <span class="font-semibold text-slate-700" id="scorecardScope">Scope: All Countries</span>
+        </div>
       </div>
 
-      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay:.2s">
-        <div class="flex justify-between items-start mb-4">
-          <div class="p-3 bg-amber-100 rounded-lg"><i class="fas fa-clock text-amber-600 text-xl"></i></div>
-          <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">-23%</span>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-label">Active Evaluations</div>
+              <div class="kpi-value" id="kpiActiveEvals">12</div>
+            </div>
+            <i class="fa-solid fa-flask text-slate-400"></i>
+          </div>
+          <div class="kpi-note">
+            <strong>Definition:</strong> Evaluations tagged Live/Pilot/Setup within scope.<br>
+            <strong>Source:</strong> Demo evaluation registry.
+          </div>
         </div>
-        <h3 class="text-2xl font-bold text-slate-900">12.4min</h3>
-        <p class="text-sm text-slate-600 mt-1" data-key="metric_time">Avg. Consultation Time</p>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-label">Patients Enrolled</div>
+              <div class="kpi-value" id="kpiPatients">128,450</div>
+            </div>
+            <i class="fa-solid fa-users text-slate-400"></i>
+          </div>
+          <div class="kpi-note">
+            <strong>Definition:</strong> Total enrolled patients in evaluation sites (demo).<br>
+            <strong>Source:</strong> Demo enrollment totals.
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-label">Telehealth Sessions</div>
+              <div class="kpi-value" id="kpiTeleSessions">0</div>
+            </div>
+            <i class="fa-solid fa-video text-slate-400"></i>
+          </div>
+          <div class="kpi-note">
+            <strong>Definition:</strong> Count of session_start events (demo).<br>
+            <strong>Source:</strong> Telehealth activity log (localStorage).
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <div>
+              <div class="kpi-label">Override Rate</div>
+              <div class="kpi-value" id="kpiOverrideRate">12.4%</div>
+            </div>
+            <i class="fa-solid fa-triangle-exclamation text-slate-400"></i>
+          </div>
+          <div class="kpi-note">
+            <strong>Definition:</strong> overrides / AI recommendations (demo).<br>
+            <strong>Source:</strong> Telehealth activity log (localStorage).
+          </div>
+        </div>
       </div>
 
-      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay:.3s">
-        <div class="flex justify-between items-start mb-4">
-          <div class="p-3 bg-blue-100 rounded-lg"><i class="fas fa-user-md text-blue-600 text-xl"></i></div>
-          <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">+89%</span>
+      <div class="mt-5 bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <div class="text-sm font-semibold text-slate-900 mb-2">Indicator Definitions</div>
+        <table class="table-clean">
+          <thead>
+            <tr>
+              <th style="width:28%">Indicator</th>
+              <th style="width:52%">Definition</th>
+              <th style="width:20%">Target (example)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Override Rate</strong></td>
+              <td>Percent of AI recommendations overridden by clinician with documented reason.</td>
+              <td>&lt; 15%</td>
+            </tr>
+            <tr>
+              <td><strong>Telehealth Sessions</strong></td>
+              <td>Count of clinician-started video sessions (session_start).</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><strong>Active Evaluations</strong></td>
+              <td>Evaluations in Live/Pilot/Setup (excludes Planned).</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-xs text-slate-500 mt-2">
+          <strong>Data source:</strong> Demo values. For production: link to MoH reporting feeds + evaluation registry approvals.
         </div>
-        <h3 class="text-2xl font-bold text-slate-900">342</h3>
-        <p class="text-sm text-slate-600 mt-1" data-key="metric_clinicians">Clinicians Trained</p>
-      </div>
-
-      <div class="glass rounded-xl p-6 hover-lift animate-slide-in" style="animation-delay:.4s">
-        <div class="flex justify-between items-start mb-4">
-          <div class="p-3 bg-purple-100 rounded-lg"><i class="fas fa-shield-alt text-purple-600 text-xl"></i></div>
-          <span id="seriousEvents" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-full">0</span>
-        </div>
-        <h3 class="text-2xl font-bold text-slate-900">Zero</h3>
-        <p class="text-sm text-slate-600 mt-1" data-key="metric_safety">Serious Safety Events</p>
       </div>
     </section>
 
     <!-- DASH GRID (MAP + EVALS) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
       <!-- Map -->
-      <div class="lg:col-span-2 glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.5s">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-lg font-bold text-slate-900" data-key="map_title">Deployment Coverage</h3>
-          <div class="flex space-x-2">
-            <button onclick="filterMap('all')" class="px-3 py-1 text-xs rounded-full bg-teal-600 text-white">All</button>
-            <button onclick="filterMap('active')" class="px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300">Active</button>
-            <button onclick="filterMap('pilot')" class="px-3 py-1 text-xs rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300">Pilot</button>
+      <div class="lg:col-span-2 glass rounded-2xl p-6">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Deployment Coverage</h3>
+            <div class="text-xs text-slate-500">Click a country to view summary. Filter dropdown applies across dashboard.</div>
+          </div>
+          <div class="flex space-x-2 no-print">
+            <button onclick="filterMap('all')" class="btn btn-soft text-xs">All</button>
+            <button onclick="filterMap('active')" class="btn btn-soft text-xs">Active</button>
+            <button onclick="filterMap('pilot')" class="btn btn-soft text-xs">Pilot</button>
           </div>
         </div>
-        <div class="relative h-96 bg-slate-50 rounded-xl overflow-hidden">
+        <div class="relative h-96 bg-slate-50 rounded-xl overflow-hidden border border-slate-200">
           <svg viewBox="0 0 800 600" class="w-full h-full">
-            <path id="kenya" class="country-path active" d="M 420 280 L 450 270 L 480 280 L 490 320 L 470 350 L 430 340 L 410 310 Z" onclick="selectCountry('kenya')" />
-            <path id="nigeria" class="country-path active" d="M 280 260 L 320 250 L 340 280 L 330 320 L 290 330 L 270 300 Z" onclick="selectCountry('nigeria')" />
-            <path id="rwanda" class="country-path" d="M 380 320 L 400 315 L 405 330 L 395 340 L 385 335 Z" onclick="selectCountry('rwanda')" />
-            <path id="sa" class="country-path active" d="M 350 450 L 400 440 L 420 480 L 400 520 L 360 510 L 340 480 Z" onclick="selectCountry('sa')" />
-            <path id="ethiopia" class="country-path" d="M 440 220 L 480 210 L 500 250 L 480 270 L 450 260 L 435 240 Z" onclick="selectCountry('ethiopia')" />
-            <path id="ghana" class="country-path" d="M 250 290 L 270 285 L 275 305 L 260 315 L 245 305 Z" onclick="selectCountry('ghana')" />
+            <path id="kenya" class="country-path" d="M 420 280 L 450 270 L 480 280 L 490 320 L 470 350 L 430 340 L 410 310 Z" onclick="selectCountry('Kenya')" />
+            <path id="nigeria" class="country-path" d="M 280 260 L 320 250 L 340 280 L 330 320 L 290 330 L 270 300 Z" onclick="selectCountry('Nigeria')" />
+            <path id="rwanda" class="country-path" d="M 380 320 L 400 315 L 405 330 L 395 340 L 385 335 Z" onclick="selectCountry('Rwanda')" />
+            <path id="sa" class="country-path" d="M 350 450 L 400 440 L 420 480 L 400 520 L 360 510 L 340 480 Z" onclick="selectCountry('South Africa')" />
+            <path id="ethiopia" class="country-path" d="M 440 220 L 480 210 L 500 250 L 480 270 L 450 260 L 435 240 Z" onclick="selectCountry('Ethiopia')" />
+            <path id="ghana" class="country-path" d="M 250 290 L 270 285 L 275 305 L 260 315 L 245 305 Z" onclick="selectCountry('Ghana')" />
           </svg>
 
-          <div class="absolute bottom-4 left-4 bg-white/90 p-3 rounded-lg shadow-lg">
-            <div class="flex items-center space-x-4 text-xs">
-              <div class="flex items-center"><span class="w-3 h-3 bg-teal-600 rounded-full mr-1"></span> Active</div>
-              <div class="flex items-center"><span class="w-3 h-3 bg-amber-500 rounded-full mr-1"></span> Pilot</div>
-              <div class="flex items-center"><span class="w-3 h-3 bg-slate-300 rounded-full mr-1"></span> Planned</div>
+          <div class="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-sm border border-slate-200">
+            <div class="flex items-center space-x-4 text-xs text-slate-700">
+              <div class="flex items-center"><span class="w-3 h-3 rounded-full mr-1" style="background:rgba(11,95,165,.85)"></span> In scope</div>
+              <div class="flex items-center"><span class="w-3 h-3 bg-slate-200 rounded-full mr-1"></span> Out of scope</div>
             </div>
           </div>
+        </div>
+        <div class="text-xs text-slate-500 mt-3">
+          <strong>Data source:</strong> Demo deployment map. Production: link to facility registry and approvals.
         </div>
       </div>
 
-      <!-- Active Evaluations -->
-      <div class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.6s">
+      <!-- Active Evaluations (table-based) -->
+      <div class="glass rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold text-slate-900" data-key="evaluations_title">Active Evaluations</h3>
-          <button class="btn btn-soft text-xs" onclick="openNewEval()"><i class="fas fa-plus"></i>New</button>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Evaluation Registry</h3>
+            <div class="text-xs text-slate-500">Indicator table view (WHO/WB style).</div>
+          </div>
+          <button class="btn btn-soft text-xs no-print" onclick="openNewEval()"><i class="fas fa-plus"></i>New</button>
         </div>
 
-        <div class="space-y-4 max-h-96 overflow-y-auto">
-          <div class="evaluation-card p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer" onclick="showEvaluationDetail('penda')">
-            <div class="flex justify-between items-start mb-2">
-              <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">Live</span>
-              <span class="text-xs text-slate-400">Kenya</span>
-            </div>
-            <h4 class="font-semibold text-slate-900 mb-1">Penda Health CDSS</h4>
-            <p class="text-xs text-slate-600 mb-2">Primary care diagnostic support</p>
-            <div class="flex items-center text-xs text-slate-500">
-              <i class="fas fa-users mr-1"></i> 39,849 patients
-              <span class="mx-2">•</span>
-              <i class="fas fa-hospital mr-1"></i> 12 clinics
-            </div>
-          </div>
+        <div class="overflow-auto border border-slate-200 rounded-xl bg-white">
+          <table class="table-clean" id="evalTable">
+            <thead>
+              <tr>
+                <th>Program</th>
+                <th>Country</th>
+                <th>Status</th>
+                <th>Patients</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
 
-          <div class="evaluation-card p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer" onclick="showEvaluationDetail('ubenwa')">
-            <div class="flex justify-between items-start mb-2">
-              <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">Pilot</span>
-              <span class="text-xs text-slate-400">Nigeria</span>
-            </div>
-            <h4 class="font-semibold text-slate-900 mb-1">Ubenwa Birth Asphyxia</h4>
-            <p class="text-xs text-slate-600 mb-2">Neonatal cry analysis</p>
-            <div class="flex items-center text-xs text-slate-500">
-              <i class="fas fa-users mr-1"></i> 2,400 newborns
-              <span class="mx-2">•</span>
-              <i class="fas fa-hospital mr-1"></i> 8 hospitals
-            </div>
-          </div>
-
-          <div class="evaluation-card p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer" onclick="showEvaluationDetail('babylon')">
-            <div class="flex justify-between items-start mb-2">
-              <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">Live</span>
-              <span class="text-xs text-slate-400">Rwanda</span>
-            </div>
-            <h4 class="font-semibold text-slate-900 mb-1">Babylon Triage</h4>
-            <p class="text-xs text-slate-600 mb-2">AI symptom checker</p>
-            <div class="flex items-center text-xs text-slate-500">
-              <i class="fas fa-users mr-1"></i> 15,600 patients
-              <span class="mx-2">•</span>
-              <i class="fas fa-hospital mr-1"></i> 5 facilities
-            </div>
-          </div>
-
-          <div class="evaluation-card p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer" onclick="showEvaluationDetail('qure')">
-            <div class="flex justify-between items-start mb-2">
-              <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Setup</span>
-              <span class="text-xs text-slate-400">South Africa</span>
-            </div>
-            <h4 class="font-semibold text-slate-900 mb-1">Qure.ai CXR</h4>
-            <p class="text-xs text-slate-600 mb-2">Tuberculosis screening</p>
-            <div class="flex items-center text-xs text-slate-500">
-              <i class="fas fa-users mr-1"></i> 8,200 patients
-              <span class="mx-2">•</span>
-              <i class="fas fa-hospital mr-1"></i> 3 hospitals
-            </div>
-          </div>
+        <div class="mt-3 text-xs text-slate-500">
+          <strong>Definitions:</strong> Status reflects phase (Live/Pilot/Setup/Planned). Patients = demo totals per program.
+        </div>
+        <div class="text-xs text-slate-500 mt-1">
+          <strong>Data source:</strong> Demo registry + local “New Evaluation” entries (localStorage).
         </div>
       </div>
     </section>
 
-    <!-- TELEHEALTH MODULE -->
-    <section id="telehealth" class="glass rounded-2xl p-6 mb-8 animate-slide-in" style="animation-delay:.65s">
+    <!-- TELEHEALTH MODULE (kept intact) -->
+    <section id="telehealth" class="glass rounded-2xl p-6 mb-8">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
         <div>
           <h3 class="text-lg font-bold text-slate-900">Telehealth Command Center (Demo)</h3>
           <p class="text-sm text-slate-600">
             Patient intake → video room → AI support → referral + eRx → FHIR export + compliance log.
           </p>
+          <div class="text-xs text-slate-500 mt-2">
+            <strong>Data source:</strong> Telehealth events stored locally (localStorage).
+          </div>
         </div>
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2 no-print">
           <button class="btn btn-primary" onclick="openTeleRoomCreate()"><i class="fas fa-video"></i>Create Video Room</button>
           <button class="btn btn-soft" onclick="openPatientPortal()"><i class="fas fa-id-card"></i>Patient Portal</button>
           <button class="btn btn-soft" onclick="openCompliance()"><i class="fas fa-scale-balanced"></i>Compliance</button>
@@ -422,9 +439,13 @@
 
           <div class="space-y-3 max-h-72 overflow-auto" id="queueList"></div>
 
-          <div class="mt-3 flex gap-2">
+          <div class="mt-3 flex gap-2 no-print">
             <button class="btn btn-soft w-full" onclick="seedQueue()"><i class="fas fa-user-plus"></i>Add Demo Patients</button>
             <button class="btn btn-danger w-full" onclick="clearQueue()"><i class="fas fa-trash"></i>Clear</button>
+          </div>
+
+          <div class="text-xs text-slate-500 mt-3">
+            <strong>Definition:</strong> Queue is local demo state. Production: facility triage / scheduling integration.
           </div>
         </div>
 
@@ -435,8 +456,8 @@
               <div class="font-bold text-slate-900">Encounter Workspace</div>
               <div class="text-xs text-slate-500">Select a patient from the queue to start.</div>
             </div>
-            <div class="flex flex-wrap gap-2">
-              <button class="btn btn-slate" onclick="startSession()" id="startSessionBtn" disabled><i class="fas fa-play"></i>Start Session</button>
+            <div class="flex flex-wrap gap-2 no-print">
+              <button class="btn btn-slate" onclick="startSession()" id="startSessionBtn" disabled><i class="fas fa-play"></i>Start</button>
               <button class="btn btn-soft" onclick="runAI()" id="aiBtn" disabled><i class="fas fa-wand-magic-sparkles"></i>Run AI</button>
               <button class="btn btn-soft" onclick="openReferral()" id="refBtn" disabled><i class="fas fa-share"></i>Refer</button>
               <button class="btn btn-soft" onclick="openRx()" id="rxBtn" disabled><i class="fas fa-prescription-bottle-medical"></i>eRx</button>
@@ -452,6 +473,9 @@
               </div>
               <div id="intakeView" class="text-sm text-slate-600">
                 <div class="text-slate-400">No intake loaded.</div>
+              </div>
+              <div class="text-[11px] text-slate-500 mt-2">
+                <strong>Data source:</strong> Patient intake entries (localStorage).
               </div>
             </div>
 
@@ -469,12 +493,16 @@
                   <div class="font-semibold text-slate-900 text-sm">Clinician Action</div>
                   <span class="text-xs text-slate-500" id="overrideRateChip">Override Rate: 12.4%</span>
                 </div>
-                <div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2 no-print">
                   <button class="btn btn-primary" onclick="acceptAI()" id="acceptBtn" disabled><i class="fas fa-check"></i>Accept</button>
                   <button class="btn btn-soft" onclick="modifyAI()" id="modifyBtn" disabled><i class="fas fa-pen"></i>Modify</button>
                   <button class="btn btn-danger" onclick="overrideAI()" id="overrideBtn" disabled><i class="fas fa-ban"></i>Override</button>
                 </div>
                 <div id="actionLog" class="mt-3 text-xs text-slate-500"></div>
+
+                <div class="text-[11px] text-slate-500 mt-2">
+                  <strong>Indicator definition:</strong> Override requires documented reason (audit).
+                </div>
               </div>
             </div>
           </div>
@@ -488,8 +516,8 @@
               </div>
               <div class="flex items-center gap-2">
                 <span class="text-xs text-slate-500">Room:</span>
-                <span class="pill bg-slate-100 text-slate-800" id="roomCodeChip">—</span>
-                <button class="btn btn-soft text-xs" onclick="copyRoomCode()"><i class="fas fa-copy"></i>Copy</button>
+                <span class="pill bg-slate-50 border border-slate-200 text-slate-800" id="roomCodeChip">—</span>
+                <button class="btn btn-soft text-xs no-print" onclick="copyRoomCode()"><i class="fas fa-copy"></i>Copy</button>
               </div>
             </div>
 
@@ -510,7 +538,7 @@
               </div>
             </div>
 
-            <div class="mt-3 flex flex-wrap gap-2">
+            <div class="mt-3 flex flex-wrap gap-2 no-print">
               <button class="btn btn-soft" onclick="toggleMute()"><i class="fas fa-microphone-slash"></i>Mute</button>
               <button class="btn btn-soft" onclick="toggleCam()"><i class="fas fa-video-slash"></i>Camera</button>
               <button class="btn btn-danger" onclick="endRoom()"><i class="fas fa-phone-slash"></i>End Room</button>
@@ -521,112 +549,133 @@
       </div>
     </section>
 
-    <!-- SAFETY + HEATMAP -->
-    <section class="glass rounded-2xl p-6 mb-8 animate-slide-in" style="animation-delay:.9s">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
-        <h3 class="text-lg font-bold text-slate-900" data-key="safety_title">Real-Time Safety Monitoring</h3>
+    <!-- SAFETY + HEATMAP (institutional grid style) -->
+    <section class="glass rounded-2xl p-6 mb-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Safety & Utilization Monitoring</h3>
+          <div class="text-xs text-slate-500">
+            Institutional grid view (last 12 weeks). Click a cell to view daily counts.
+          </div>
+        </div>
         <div class="flex items-center space-x-2">
-          <span class="relative flex h-3 w-3">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-          </span>
+          <span class="status-dot status-live"></span>
           <span class="text-sm text-slate-600">System Operational</span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white rounded-xl p-4 border border-slate-200">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-medium text-slate-600">Alert Override Rate</span>
-            <i class="fas fa-exclamation-triangle text-amber-500"></i>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-slate-700">Override Rate</span>
+            <i class="fas fa-triangle-exclamation text-slate-400"></i>
           </div>
           <div class="text-2xl font-bold text-slate-900" id="overrideRateBig">12.4%</div>
           <div class="text-xs text-slate-500 mt-1">Target: &lt;15%</div>
-          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div class="h-full bg-amber-500 rounded-full" id="overrideBar" style="width:82%"></div>
+          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div class="h-full rounded-full" id="overrideBar" style="width:82%; background:var(--warning)"></div>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-2">
+            <strong>Definition:</strong> Overrides / AI recommendations (within scope).
           </div>
         </div>
 
         <div class="bg-white rounded-xl p-4 border border-slate-200">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-medium text-slate-600">Response Time</span>
-            <i class="fas fa-clock text-teal-600"></i>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-slate-700">AI Response Time</span>
+            <i class="fas fa-clock text-slate-400"></i>
           </div>
           <div class="text-2xl font-bold text-slate-900" id="aiRespTime">2.3s</div>
-          <div class="text-xs text-slate-500 mt-1">Avg. AI recommendation display</div>
-          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div class="h-full bg-teal-600 rounded-full" id="respBar" style="width:95%"></div>
+          <div class="text-xs text-slate-500 mt-1">Avg. recommendation display (demo)</div>
+          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div class="h-full rounded-full" id="respBar" style="width:95%; background:var(--accent)"></div>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-2">
+            <strong>Source:</strong> Demo latency sampling.
           </div>
         </div>
 
         <div class="bg-white rounded-xl p-4 border border-slate-200">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-medium text-slate-600">Data Quality Score</span>
-            <i class="fas fa-check-circle text-green-500"></i>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-slate-700">Data Quality Score</span>
+            <i class="fas fa-check-circle text-slate-400"></i>
           </div>
           <div class="text-2xl font-bold text-slate-900" id="dqs">94.7%</div>
-          <div class="text-xs text-slate-500 mt-1">Completeness & validity</div>
-          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div class="h-full bg-green-500 rounded-full" id="dqsBar" style="width:94.7%"></div>
+          <div class="text-xs text-slate-500 mt-1">Completeness & validity (demo)</div>
+          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div class="h-full rounded-full" id="dqsBar" style="width:94.7%; background:var(--success)"></div>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-2">
+            <strong>Source:</strong> Demo KPI.
           </div>
         </div>
       </div>
 
-      <!-- Heatmap -->
       <div class="mt-6">
-        <h4 class="text-sm font-medium text-slate-600 mb-2">System Utilization &amp; Safety Monitoring Overview</h4>
-        <p class="text-xs text-slate-500 mb-3">
-          Intensity reflects telehealth sessions, patient intakes, AI usage, overrides, referrals, and e-prescriptions over the last 12 weeks. Amber dot = overrides.
-        </p>
-        <div class="grid grid-cols-7 gap-1" id="heatmap"></div>
-        <div class="flex justify-between text-xs text-slate-400 mt-2">
-          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        <div class="flex items-center justify-between">
+          <h4 class="text-sm font-bold text-slate-900">12-Week Institutional Activity Grid</h4>
+          <div class="heat-legend">
+            <span>Low</span>
+            <span class="legend-swatch" style="background:#f1f5fb"></span>
+            <span class="legend-swatch" style="background:#dbeafe"></span>
+            <span class="legend-swatch" style="background:#93c5fd"></span>
+            <span class="legend-swatch" style="background:#3b82f6"></span>
+            <span>High</span>
+            <span class="ml-2 text-xs">• Amber dot = override(s)</span>
+          </div>
+        </div>
+        <div class="mt-3" id="heatmapInstitutional"></div>
+        <div class="text-xs text-slate-500 mt-2">
+          <strong>Data source:</strong> Activity events (localStorage). Production: event streaming + audit store.
         </div>
       </div>
     </section>
 
     <!-- PARTNERS -->
-    <section id="partners" class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay:1s">
-      <h3 class="text-lg font-bold text-slate-900 mb-6" data-key="partners_title">Consortium Partners</h3>
+    <section id="partners" class="glass rounded-2xl p-6">
+      <h3 class="text-lg font-bold text-slate-900 mb-4">Consortium Partners</h3>
+      <div class="text-xs text-slate-500 mb-5">
+        <strong>Data source:</strong> Demo partner list.
+      </div>
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
-          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
-            <i class="fas fa-hospital text-2xl text-slate-400 group-hover:text-teal-600"></i>
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
+          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
+            <i class="fas fa-hospital text-2xl text-slate-400"></i>
           </div>
           <span class="text-xs font-medium text-slate-700 text-center">Penda Health</span>
           <span class="text-xs text-slate-400">Kenya</span>
         </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
-          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
-            <i class="fas fa-baby text-2xl text-slate-400 group-hover:text-teal-600"></i>
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
+          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
+            <i class="fas fa-baby text-2xl text-slate-400"></i>
           </div>
           <span class="text-xs font-medium text-slate-700 text-center">Ubenwa</span>
           <span class="text-xs text-slate-400">Nigeria</span>
         </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
-          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
-            <i class="fas fa-heartbeat text-2xl text-slate-400 group-hover:text-teal-600"></i>
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
+          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
+            <i class="fas fa-heartbeat text-2xl text-slate-400"></i>
           </div>
           <span class="text-xs font-medium text-slate-700 text-center">Babylon</span>
           <span class="text-xs text-slate-400">Rwanda</span>
         </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
-          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
-            <i class="fas fa-x-ray text-2xl text-slate-400 group-hover:text-teal-600"></i>
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
+          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
+            <i class="fas fa-x-ray text-2xl text-slate-400"></i>
           </div>
           <span class="text-xs font-medium text-slate-700 text-center">Qure.ai</span>
           <span class="text-xs text-slate-400">South Africa</span>
         </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
-          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
-            <i class="fas fa-university text-2xl text-slate-400 group-hover:text-teal-600"></i>
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
+          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
+            <i class="fas fa-university text-2xl text-slate-400"></i>
           </div>
           <span class="text-xs font-medium text-slate-700 text-center">Univ. of Cape Town</span>
           <span class="text-xs text-slate-400">Research</span>
         </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-500 transition-all cursor-pointer group">
-          <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-teal-50 transition-colors">
-            <i class="fas fa-landmark text-2xl text-slate-400 group-hover:text-teal-600"></i>
+        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
+          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
+            <i class="fas fa-landmark text-2xl text-slate-400"></i>
           </div>
           <span class="text-xs font-medium text-slate-700 text-center">Min. of Health</span>
           <span class="text-xs text-slate-400">Kenya</span>
@@ -637,8 +686,65 @@
   </main>
 
   <!-- MODALS -->
-  <!-- Evaluation modal -->
-  <div id="evaluationModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+
+  <!-- Audit Panel Modal -->
+  <div id="auditModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white modal-card shadow-2xl">
+      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+        <h3 class="text-xl font-bold text-slate-900">Regulatory Audit Logs (Demo)</h3>
+        <button onclick="closeModal('auditModal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="flex flex-col md:flex-row gap-2 no-print">
+          <input class="input" id="auditSearch" placeholder="Search (type, user, patientId, country)..." oninput="renderAudit()" />
+          <select class="input md:max-w-xs" id="auditTypeFilter" onchange="renderAudit()">
+            <option value="all">All event types</option>
+            <option value="login">login</option>
+            <option value="logout">logout</option>
+            <option value="intake_submit">intake_submit</option>
+            <option value="session_start">session_start</option>
+            <option value="ai_recommendation">ai_recommendation</option>
+            <option value="override">override</option>
+            <option value="referral">referral</option>
+            <option value="eprescription">eprescription</option>
+            <option value="compliance_save">compliance_save</option>
+            <option value="export_pdf">export_pdf</option>
+            <option value="new_evaluation">new_evaluation</option>
+          </select>
+          <button class="btn btn-soft" onclick="copyAuditJson()"><i class="fa-solid fa-copy"></i>Copy JSON</button>
+          <button class="btn btn-danger" onclick="clearAudit()"><i class="fa-solid fa-trash"></i>Clear</button>
+        </div>
+
+        <div class="text-xs text-slate-500">
+          <strong>Purpose:</strong> Demonstrates required audit trail fields (timestamp, actor, action, metadata). Production: write-once log store + access controls.
+        </div>
+
+        <div class="overflow-auto border border-slate-200 rounded-xl">
+          <table class="table-clean" id="auditTable">
+            <thead>
+              <tr>
+                <th style="width:18%">Time</th>
+                <th style="width:14%">Type</th>
+                <th style="width:14%">Actor</th>
+                <th style="width:14%">Role</th>
+                <th style="width:40%">Details</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="text-xs text-slate-500">
+          <strong>Data source:</strong> Demo audit store (localStorage). Export and compliance actions are logged.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluation modal (Indicator table format) -->
+  <div id="evaluationModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 id="modalTitle" class="text-xl font-bold text-slate-900">Evaluation Details</h3>
@@ -651,7 +757,7 @@
   </div>
 
   <!-- Login modal -->
-  <div id="loginModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="loginModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 class="text-xl font-bold text-slate-900">Login (Demo)</h3>
@@ -689,7 +795,7 @@
   </div>
 
   <!-- Patient Portal modal -->
-  <div id="patientPortalModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="patientPortalModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 class="text-xl font-bold text-slate-900">Patient Portal (Intake + Join Video Room)</h3>
@@ -747,11 +853,15 @@
                 <textarea class="input mt-1" id="ptNotes" rows="3" placeholder="e.g., Penicillin allergy"></textarea>
               </div>
 
-              <div class="mt-3 flex gap-2">
+              <div class="mt-3 flex gap-2 no-print">
                 <button class="btn btn-primary w-full" onclick="submitIntake()"><i class="fas fa-paper-plane"></i>Submit Intake</button>
                 <button class="btn btn-soft w-full" onclick="fillSampleIntake()">Auto-fill</button>
               </div>
               <div class="text-xs text-slate-500 mt-2" id="intakeStatus">—</div>
+
+              <div class="text-[11px] text-slate-500 mt-2">
+                <strong>Data source:</strong> localStorage. Production: patient identity + consent + secure intake.
+              </div>
             </div>
           </div>
 
@@ -760,7 +870,7 @@
               <div class="text-sm font-semibold text-slate-900 mb-2">Join Video Room (Demo)</div>
               <label class="text-xs font-medium text-slate-700">Room Code</label>
               <input class="input mt-1" id="joinRoomCode" placeholder="e.g., K3F9Q" />
-              <div class="mt-3 flex gap-2">
+              <div class="mt-3 flex gap-2 no-print">
                 <button class="btn btn-slate w-full" onclick="patientJoinRoom()"><i class="fas fa-video"></i>Join</button>
                 <button class="btn btn-soft w-full" onclick="closeModal('patientPortalModal')">Close</button>
               </div>
@@ -770,7 +880,7 @@
             <div class="bg-white border border-slate-200 rounded-xl p-4">
               <div class="text-sm font-semibold text-slate-900 mb-2">My Care Actions (Demo)</div>
               <div class="text-xs text-slate-600">See if prescriptions or referrals were created for your Patient ID.</div>
-              <div class="mt-3 flex gap-2">
+              <div class="mt-3 flex gap-2 no-print">
                 <button class="btn btn-soft w-full" onclick="viewPatientRecord()"><i class="fas fa-folder-open"></i>View My Record</button>
                 <button class="btn btn-soft w-full" onclick="copyFHIRForPatient()"><i class="fas fa-copy"></i>Copy FHIR</button>
               </div>
@@ -784,7 +894,7 @@
   </div>
 
   <!-- Referral modal -->
-  <div id="referralModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="referralModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 class="text-xl font-bold text-slate-900">Facility Referral (Telehealth → Facility)</h3>
@@ -816,7 +926,7 @@
           <textarea class="input mt-1" id="refReason" rows="4" placeholder="Clinical reasoning, tests requested, warning signs..."></textarea>
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 no-print">
           <button class="btn btn-primary w-full" onclick="createReferral()"><i class="fas fa-share"></i>Create Referral</button>
           <button class="btn btn-soft w-full" onclick="closeModal('referralModal')">Cancel</button>
         </div>
@@ -827,7 +937,7 @@
   </div>
 
   <!-- Rx modal -->
-  <div id="rxModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="rxModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 class="text-xl font-bold text-slate-900">Pharmacy e-Prescription (Mock)</h3>
@@ -856,7 +966,7 @@
           <label class="text-sm font-medium text-slate-700">Pharmacy Notes</label>
           <textarea class="input mt-1" id="rxNotes" rows="3" placeholder="Substitution guidance, allergy notes, counseling points..."></textarea>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 no-print">
           <button class="btn btn-primary w-full" onclick="createRx()"><i class="fas fa-prescription-bottle-medical"></i>Create eRx</button>
           <button class="btn btn-soft w-full" onclick="closeModal('rxModal')">Cancel</button>
         </div>
@@ -866,7 +976,7 @@
   </div>
 
   <!-- FHIR modal -->
-  <div id="fhirModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="fhirModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 class="text-xl font-bold text-slate-900">FHIR Integration Preview (Mock)</h3>
@@ -877,16 +987,19 @@
           This preview simulates a FHIR Bundle payload you can send to an EHR/HIE gateway. (Demo only)
         </div>
         <textarea class="input font-mono text-xs" id="fhirPayload" rows="16"></textarea>
-        <div class="flex gap-2">
+        <div class="flex gap-2 no-print">
           <button class="btn btn-slate w-full" onclick="copyFHIR()"><i class="fas fa-copy"></i>Copy</button>
           <button class="btn btn-soft w-full" onclick="closeModal('fhirModal')">Close</button>
+        </div>
+        <div class="text-xs text-slate-500">
+          <strong>Data source:</strong> Built from local demo encounter records.
         </div>
       </div>
     </div>
   </div>
 
   <!-- Compliance modal -->
-  <div id="complianceModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="complianceModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 class="text-xl font-bold text-slate-900">Regulatory Compliance Tracker (Demo)</h3>
@@ -913,18 +1026,22 @@
           </div>
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 no-print">
           <button class="btn btn-slate w-full" onclick="exportCompliance()"><i class="fas fa-file-export"></i>Export Compliance Report</button>
           <button class="btn btn-danger w-full" onclick="resetCompliance()"><i class="fas fa-rotate"></i>Reset</button>
         </div>
 
         <div class="text-xs text-slate-500" id="complianceStatus">—</div>
+
+        <div class="text-xs text-slate-500">
+          <strong>Indicator definitions:</strong> Checklist items map to baseline compliance requirements. Production: attach evidence IDs + approval references.
+        </div>
       </div>
     </div>
   </div>
 
   <!-- New eval modal -->
-  <div id="newEvalModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="newEvalModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white modal-card shadow-2xl">
       <div class="p-6 border-b border-slate-200 flex justify-between items-center">
         <h3 class="text-xl font-bold text-slate-900">New Evaluation (Demo)</h3>
@@ -947,183 +1064,29 @@
           <label class="text-sm font-medium text-slate-700">Description</label>
           <textarea class="input mt-1" id="evalDesc" rows="4" placeholder="Short evaluation purpose, endpoints, and safety monitoring..."></textarea>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 no-print">
           <button class="btn btn-primary w-full" onclick="createEvaluation()"><i class="fas fa-plus"></i>Create</button>
           <button class="btn btn-soft w-full" onclick="closeModal('newEvalModal')">Cancel</button>
         </div>
         <div class="text-xs text-slate-500" id="evalStatus">—</div>
+        <div class="text-xs text-slate-500">
+          <strong>Data source:</strong> Stored locally in browser (demo). Production: registry approval workflow.
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     /********************
-     * TRANSLATIONS
-     ********************/
-    const translations = {
-      en: {
-        nav_dashboard:"Dashboard",
-        nav_deployments:"Telehealth",
-        nav_partners:"Partners",
-        hero_title:"Real-World Evaluation Infrastructure for African Health AI",
-        hero_subtitle:"Bridging the gap between AI potential and patient impact through rigorous clinical decision support evaluation — now integrated with telehealth for rural access.",
-        status_live:"12 Active Evaluations",
-        status_facilities:"47 Partner Facilities",
-        status_patients:"128,450 Patients Enrolled",
-        metric_accuracy:"Diagnostic Accuracy Improvement",
-        metric_time:"Avg. Consultation Time",
-        metric_clinicians:"Clinicians Trained",
-        metric_safety:"Serious Safety Events",
-        map_title:"Deployment Coverage",
-        evaluations_title:"Active Evaluations",
-        safety_title:"Real-Time Safety Monitoring",
-        partners_title:"Consortium Partners"
-      },
-      sw: {
-        nav_dashboard:"Dashibodi",
-        nav_deployments:"Telehealth",
-        nav_partners:"Washirika",
-        hero_title:"Miundombinu ya Tathmini ya AI ya Afya Afrika",
-        hero_subtitle:"Kuziba pengo kati ya uwezo wa AI na athari kwa wagonjwa — sasa ikiwa na telehealth kwa maeneo ya vijijini.",
-        status_live:"Tathmini 12 Zinazoendelea",
-        status_facilities:"Vituo 47 vya Washirika",
-        status_patients:"Wagonjwa 128,450 Wamesajiliwa",
-        metric_accuracy:"Uboreshaji wa Usahihi wa Utambuzi",
-        metric_time:"Wakati wastani wa Ushauri",
-        metric_clinicians:"Waganga Waliopatiwa Mafunzo",
-        metric_safety:"Matukio Makubwa ya Usalama",
-        map_title:"Maeneo ya Utekelezaji",
-        evaluations_title:"Tathmini Zinazoendelea",
-        safety_title:"Ufuatiliaji wa Usalama wa Wakati Halisi",
-        partners_title:"Washirika wa Muungano"
-      },
-      ha: {
-        nav_dashboard:"Dashboard",
-        nav_deployments:"Telehealth",
-        nav_partners:"Abokan hulda",
-        hero_title:"Kayan Aikin Kimar AI na Lafiya a Afrika",
-        hero_subtitle:"Rufe bakan tsakanin yadda AI zai iya taimakawa da amfanin da ya ke da shi ga marasa lafiya — tare da telehealth ga karkara.",
-        status_live:"Maimaitawa 12 Masu Aiki",
-        status_facilities:"47 Tsare-tsare na Abokan Hulda",
-        status_patients:"Marasa Lafiya 128,450 Sun Yi Rajista",
-        metric_accuracy:"Ingantaccen Gano",
-        metric_time:"Lokaci na Shawara",
-        metric_clinicians:"Likitoci da aka horar",
-        metric_safety:"Mummunan Lamurran Tsaro",
-        map_title:"Rufe Saka",
-        evaluations_title:"Ayyukan Maimaitawa",
-        safety_title:"Kallon Tsaro na Lokaci-Lokaci",
-        partners_title:"Abokan Huldar Kungiyar"
-      },
-      yo: {
-        nav_dashboard:"Dasibodu",
-        nav_deployments:"Telehealth",
-        nav_partners:"Alabaṣiṣẹpọ",
-        hero_title:"Ilana Atunyẹwo AI Ilera fun Afrika",
-        hero_subtitle:"Dínà ààrin agbára AI àti ipa ààbò fún àwọn aláìsàn — pẹ̀lú telehealth fún agbègbè ìlú-ọba.",
-        status_live:"Atunyẹwo 12 Ti ńṣiṣẹ́",
-        status_facilities:"Ilé-iwòsàn 47 Alabaṣiṣẹpọ",
-        status_patients:"Àwọn Aláìsàn 128,450",
-        metric_accuracy:"Ìlọsiwaju Iṣòro",
-        metric_time:"Àkókò Ìmòràn",
-        metric_clinicians:"Oníṣẹ́ ìlera tí a kọ́",
-        metric_safety:"Ìṣẹ̀lẹ̀ Ààbò Pataki",
-        map_title:"Ikojọpọ Igbesẹ",
-        evaluations_title:"Atunyẹwo Ti ńṣiṣẹ́",
-        safety_title:"Ààbò Ní Àkókò Gbogbo",
-        partners_title:"Àwọn Alabaṣiṣẹpọ"
-      },
-      am: {
-        nav_dashboard:"ዳሽቦርድ",
-        nav_deployments:"ቴሌሄልዝ",
-        nav_partners:"አጋሮች",
-        hero_title:"የአፍሪካ ጤና AI እውነተኛ ዓለም ግምገማ መሰረተ ልማት",
-        hero_subtitle:"የAI አቅምን እና የታካሚ ተፅዕኖን በጥንቃቄ ግምገማ ማገናኘት — አሁን ከቴሌሄልዝ ጋር።",
-        status_live:"12 ንቁ ግምገማዎች",
-        status_facilities:"47 የአጋር ተቋማት",
-        status_patients:"128,450 ታካሚዎች ተመዝግበዋል",
-        metric_accuracy:"የምርመራ ልዩነት",
-        metric_time:"አማካይ ምክር ጊዜ",
-        metric_clinicians:"የተሰለጠኑ ክሊኒሺያን",
-        metric_safety:"ከባድ የደህንነት ክስተቶች",
-        map_title:"የተግባራዊነት ሽፋን",
-        evaluations_title:"ንቁ ግምገማዎች",
-        safety_title:"በጊዜ ደህንነት ክትትል",
-        partners_title:"የኮንሶርሲየም አጋሮች"
-      },
-      zu: {
-        nav_dashboard:"Ideshibhodi",
-        nav_deployments:"Telehealth",
-        nav_partners:"Abalingiswa",
-        hero_title:"Isakhiwo Sokuhlola AI Yezokwelapha Yase-Afrika",
-        hero_subtitle:"Ukuvala isikhala phakathi kwamandla e-AI nomthelela wesiguli — manje ne-telehealth ezindaweni zasemakhaya.",
-        status_live:"Ukuhlola 12 Osebenzayo",
-        status_facilities:"Izakhiwo 47 Zabalingiswa",
-        status_patients:"Amalungu 128,450 Abhalisiwe",
-        metric_accuracy:"Ukuthuthukiswa Kokunemba",
-        metric_time:"Isikhathi Sokweluleka",
-        metric_clinicians:"Abelaphi Abaqeqeshiwe",
-        metric_safety:"Izingozi Ezinkulu",
-        map_title:"Ukusakaza Ukuhambisa",
-        evaluations_title:"Ukuhlola Osebenzayo",
-        safety_title:"Ukuqapha Ukuphepha",
-        partners_title:"Abalingiswa Be-Consortium"
-      },
-      fr: {
-        nav_dashboard:"Tableau de Bord",
-        nav_deployments:"Télé-santé",
-        nav_partners:"Partenaires",
-        hero_title:"Infrastructure d'Évaluation Réelle pour l'IA Santé Africaine",
-        hero_subtitle:"Combler le fossé entre le potentiel de l'IA et l'impact patient — désormais intégrée à la télésanté.",
-        status_live:"12 Évaluations Actives",
-        status_facilities:"47 Établissements Partenaires",
-        status_patients:"128 450 Patients Inscrits",
-        metric_accuracy:"Amélioration du Diagnostic",
-        metric_time:"Temps de Consultation Moyen",
-        metric_clinicians:"Cliniciens Formés",
-        metric_safety:"Événements Indésirables Graves",
-        map_title:"Couverture de Déploiement",
-        evaluations_title:"Évaluations Actives",
-        safety_title:"Surveillance de Sécurité",
-        partners_title:"Partenaires du Consortium"
-      }
-    };
-
-    let currentLang = "en";
-
-    function changeLanguage(lang, ev){
-      currentLang = lang;
-      const t = translations[lang] || translations.en;
-
-      document.querySelectorAll("[data-key]").forEach(el=>{
-        const key = el.getAttribute("data-key");
-        if(t[key]){
-          if(lang==="am") el.classList.add("amharic-text");
-          else el.classList.remove("amharic-text");
-          el.textContent = t[key];
-        }
-      });
-
-      const langName = (l)=>({
-        en:"English", sw:"Kiswahili", ha:"Hausa", yo:"Yorùbá", am:"አማርኛ", zu:"isiZulu", fr:"Français"
-      }[l] || "English");
-      document.getElementById("current-lang").textContent = langName(lang);
-
-      document.querySelectorAll(".lang-btn").forEach(btn=>btn.classList.remove("active"));
-      if(ev && ev.target) ev.target.closest(".lang-btn")?.classList.add("active");
-
-      localStorage.setItem("afyaai-lang", lang);
-    }
-
-    /********************
      * STORAGE KEYS
      ********************/
     const AFYA_ACTIVITY_KEY = "afyaai-activity-events-v1";
     const AFYA_QUEUE_KEY = "afyaai-telequeue-v1";
     const AFYA_RECORDS_KEY = "afyaai-patient-records-v1";
-    const AFYA_SESSION_KEY = "afyaai-session-v1";
     const AFYA_COMPLIANCE_KEY = "afyaai-compliance-v1";
     const AFYA_EVALS_KEY = "afyaai-new-evals-v1";
+    const AFYA_AUDIT_KEY = "afyaai-audit-logs-v1";
+    const AFYA_COUNTRY_FILTER_KEY = "afyaai-country-filter-v1";
 
     /********************
      * HELPERS
@@ -1138,7 +1101,64 @@
     function getActivityEvents(){ return safeJsonParse(localStorage.getItem(AFYA_ACTIVITY_KEY) || "[]", []); }
     function saveActivityEvents(e){ localStorage.setItem(AFYA_ACTIVITY_KEY, JSON.stringify(e)); }
 
+    function getAudit(){ return safeJsonParse(localStorage.getItem(AFYA_AUDIT_KEY) || "[]", []); }
+    function saveAudit(a){ localStorage.setItem(AFYA_AUDIT_KEY, JSON.stringify(a)); }
+
     function toast(msg){ alert(msg); }
+
+    function nowIso(){ return new Date().toISOString(); }
+
+    /********************
+     * COUNTRY FILTER (GLOBAL)
+     ********************/
+    let selectedCountryFilter = "all";
+
+    function setCountryFilter(country){
+      selectedCountryFilter = country;
+      localStorage.setItem(AFYA_COUNTRY_FILTER_KEY, country);
+      document.getElementById("scorecardScope").textContent = `Scope: ${country==="all" ? "All Countries" : country}`;
+      applyCountryFilterUI();
+      renderEvalTable();
+      refreshScorecard();
+      renderInstitutionalHeatmap();
+      auditLog("filter_change", { country });
+    }
+
+    function applyCountryFilterUI(){
+      // Highlight map countries in scope
+      const mapIds = { "Kenya":"kenya", "Nigeria":"nigeria", "Rwanda":"rwanda", "South Africa":"sa", "Ethiopia":"ethiopia", "Ghana":"ghana" };
+      document.querySelectorAll(".country-path").forEach(p => p.classList.remove("active"));
+
+      if(selectedCountryFilter==="all"){
+        Object.values(mapIds).forEach(id => document.getElementById(id)?.classList.add("active"));
+      } else {
+        const id = mapIds[selectedCountryFilter];
+        if(id) document.getElementById(id)?.classList.add("active");
+      }
+    }
+
+    function selectCountry(country){
+      // Clicking map sets global filter
+      const dd = document.getElementById("countryFilter");
+      if(dd){ dd.value = country; }
+      setCountryFilter(country);
+      const details = getCountrySummary(country);
+      alert(`${details.name}\nFacilities: ${details.facilities}\nPatients: ${details.patients.toLocaleString()}\nStatus: ${details.status}\n\nSource: Demo coverage registry`);
+    }
+
+    function filterMap(type){ console.log("Filtering map:", type, "(demo placeholder)"); }
+
+    function getCountrySummary(country){
+      const details = {
+        "Kenya":{ name:"Kenya", facilities:12, patients:39849, status:"Active"},
+        "Nigeria":{ name:"Nigeria", facilities:15, patients:24500, status:"Active"},
+        "Rwanda":{ name:"Rwanda", facilities:8, patients:15600, status:"Active"},
+        "South Africa":{ name:"South Africa", facilities:12, patients:48501, status:"Active"},
+        "Ethiopia":{ name:"Ethiopia", facilities:6, patients:0, status:"Pilot"},
+        "Ghana":{ name:"Ghana", facilities:4, patients:0, status:"Planned"}
+      };
+      return details[country] || { name:country, facilities:0, patients:0, status:"—" };
+    }
 
     /********************
      * CONNECTIVITY UI
@@ -1159,10 +1179,74 @@
     window.addEventListener("offline", updateOnlineStatus);
 
     /********************
-     * LOGIN
+     * AUDIT LOGGING (Regulatory panel)
      ********************/
     let currentUser = { role:null, name:null, patientId:null };
 
+    function auditLog(type, meta={}){
+      const a = getAudit();
+      a.push({
+        ts: Date.now(),
+        iso: nowIso(),
+        type,
+        actor: currentUser?.name || "Anonymous",
+        role: currentUser?.role || "—",
+        scopeCountry: selectedCountryFilter,
+        meta
+      });
+      saveAudit(a);
+    }
+
+    function openAuditPanel(){
+      openModal("auditModal");
+      renderAudit();
+    }
+
+    function renderAudit(){
+      const tbody = document.querySelector("#auditTable tbody");
+      if(!tbody) return;
+      const q = (document.getElementById("auditSearch")?.value || "").toLowerCase().trim();
+      const typeFilter = document.getElementById("auditTypeFilter")?.value || "all";
+      const rows = getAudit().slice().reverse();
+
+      const filtered = rows.filter(r=>{
+        if(typeFilter !== "all" && r.type !== typeFilter) return false;
+        const hay = `${r.iso} ${r.type} ${r.actor} ${r.role} ${JSON.stringify(r.meta||{})} ${r.scopeCountry}`.toLowerCase();
+        return !q || hay.includes(q);
+      });
+
+      tbody.innerHTML = "";
+      for(const r of filtered.slice(0, 400)){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(new Date(r.ts).toLocaleString())}</td>
+          <td><span class="pill bg-slate-50 border border-slate-200 text-slate-800">${escapeHtml(r.type)}</span></td>
+          <td>${escapeHtml(r.actor||"—")}</td>
+          <td>${escapeHtml(r.role||"—")}</td>
+          <td class="text-xs text-slate-600">${escapeHtml(JSON.stringify({ scope:r.scopeCountry, ...r.meta }))}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function copyAuditJson(){
+      const data = getAudit();
+      navigator.clipboard?.writeText(JSON.stringify(data, null, 2));
+      toast("Audit logs copied (JSON).");
+      auditLog("audit_export_copy", { count:data.length });
+    }
+
+    function clearAudit(){
+      if(!confirm("Clear audit logs (demo)?")) return;
+      localStorage.removeItem(AFYA_AUDIT_KEY);
+      renderAudit();
+      toast("Audit logs cleared.");
+      // Don't log to cleared store.
+    }
+
+    /********************
+     * LOGIN
+     ********************/
     function openLogin(){
       openModal("loginModal");
       document.getElementById("patientLoginExtra").classList.add("hidden");
@@ -1194,6 +1278,8 @@
 
       closeModal("loginModal");
 
+      auditLog("login", { role, patientId: currentUser.patientId || null });
+
       if(role==="Patient"){
         openPatientPortal();
         document.getElementById("ptId").value = currentUser.patientId;
@@ -1202,6 +1288,7 @@
     }
 
     function logout(){
+      auditLog("logout", {});
       currentUser = { role:null, name:null, patientId:null };
       localStorage.removeItem("afyaai-user");
       document.getElementById("loginBtn").classList.remove("hidden");
@@ -1210,7 +1297,194 @@
     }
 
     /********************
-     * TELEHEALTH: QUEUE + ENCOUNTER
+     * EVALUATION REGISTRY (Indicator tables)
+     ********************/
+    const BASE_EVALS = [
+      { key:"penda", program:"Penda Health CDSS", country:"Kenya", status:"Live", patients:39849, clinics:12, type:"CDSS",
+        indicators:{
+          "Diagnostic errors (Δ%)":{ current:"-16%", target:"≤ -10%", trend:"Improving" },
+          "Treatment errors (Δ%)":{ current:"-13%", target:"≤ -8%", trend:"Improving" },
+          "Clinician satisfaction":{ current:"94%", target:"≥ 85%", trend:"Stable" }
+        },
+        notes:"Stepped-wedge cluster randomized design (demo)."
+      },
+      { key:"ubenwa", program:"Ubenwa Birth Asphyxia", country:"Nigeria", status:"Pilot", patients:2400, clinics:8, type:"Neonatal AI",
+        indicators:{
+          "Sensitivity":{ current:"—", target:"≥ 90%", trend:"—" },
+          "Safety events":{ current:"0", target:"0", trend:"Stable" },
+          "Adoption (active users)":{ current:"—", target:"≥ 70%", trend:"—" }
+        },
+        notes:"Pilot phase with safety monitoring (demo)."
+      },
+      { key:"babylon", program:"Babylon Triage", country:"Rwanda", status:"Live", patients:15600, clinics:5, type:"Triage",
+        indicators:{
+          "Appropriate referral rate":{ current:"—", target:"↑", trend:"—" },
+          "Time-to-triage":{ current:"—", target:"↓", trend:"—" },
+          "User satisfaction":{ current:"—", target:"≥ 80%", trend:"—" }
+        },
+        notes:"National rollout context (demo)."
+      },
+      { key:"qure", program:"Qure.ai CXR TB Screening", country:"South Africa", status:"Setup", patients:8200, clinics:3, type:"Imaging AI",
+        indicators:{
+          "Turnaround time":{ current:"—", target:"↓", trend:"—" },
+          "Radiologist concordance":{ current:"—", target:"≥ 90%", trend:"—" },
+          "Data quality":{ current:"—", target:"≥ 95%", trend:"—" }
+        },
+        notes:"Setup/integration activities (demo)."
+      }
+    ];
+
+    function getNewEvals(){
+      return safeJsonParse(localStorage.getItem(AFYA_EVALS_KEY) || "[]", []);
+    }
+
+    function getAllEvals(){
+      const added = getNewEvals().map((e, idx)=>({
+        key:`new_${idx}_${e.ts}`,
+        program:e.name,
+        country:e.country,
+        status:"Setup",
+        patients:0,
+        clinics:0,
+        type:"New",
+        indicators:{
+          "Primary endpoint":{ current:"—", target:"—", trend:"—" },
+          "Safety monitoring":{ current:"Active", target:"Active", trend:"Stable" }
+        },
+        notes:e.desc || "—"
+      }));
+      return [...BASE_EVALS, ...added];
+    }
+
+    function evalInScope(ev){
+      return selectedCountryFilter==="all" || ev.country===selectedCountryFilter;
+    }
+
+    function renderEvalTable(){
+      const tbody = document.querySelector("#evalTable tbody");
+      if(!tbody) return;
+      const evals = getAllEvals().filter(evalInScope);
+
+      tbody.innerHTML = "";
+      for(const ev of evals){
+        const tr = document.createElement("tr");
+        const statusPill = ev.status==="Live"
+          ? `bg-teal-50 border border-teal-200 text-teal-800`
+          : ev.status==="Pilot"
+            ? `bg-amber-50 border border-amber-200 text-amber-900`
+            : ev.status==="Setup"
+              ? `bg-blue-50 border border-blue-200 text-blue-900`
+              : `bg-slate-50 border border-slate-200 text-slate-800`;
+
+        tr.innerHTML = `
+          <td class="font-semibold text-slate-900">
+            <button class="text-left hover:underline" onclick="showEvaluationDetail('${escapeHtml(ev.key)}')">${escapeHtml(ev.program)}</button>
+            <div class="text-[11px] text-slate-500">Type: ${escapeHtml(ev.type || "—")}</div>
+          </td>
+          <td>${escapeHtml(ev.country)}</td>
+          <td><span class="pill ${statusPill}">${escapeHtml(ev.status)}</span></td>
+          <td>${Number(ev.patients||0).toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function showEvaluationDetail(key){
+      const modal = document.getElementById("evaluationModal");
+      const content = document.getElementById("modalContent");
+      const title = document.getElementById("modalTitle");
+      const ev = getAllEvals().find(x=>x.key===key);
+      if(!ev) return;
+
+      title.textContent = `${ev.program} — Indicator Table`;
+      const indicRows = Object.entries(ev.indicators || {}).map(([name, v])=>`
+        <tr>
+          <td><strong>${escapeHtml(name)}</strong></td>
+          <td>${escapeHtml(v.current || "—")}</td>
+          <td>${escapeHtml(v.target || "—")}</td>
+          <td>${escapeHtml(v.trend || "—")}</td>
+        </tr>
+      `).join("");
+
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-2">
+            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Country: ${escapeHtml(ev.country)}</span>
+            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Status: ${escapeHtml(ev.status)}</span>
+            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Patients: ${Number(ev.patients||0).toLocaleString()}</span>
+            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Sites: ${Number(ev.clinics||0).toLocaleString()}</span>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl overflow-auto">
+            <table class="table-clean">
+              <thead>
+                <tr>
+                  <th>Indicator</th>
+                  <th>Current</th>
+                  <th>Target</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${indicRows || `<tr><td colspan="4" class="text-slate-500">No indicators</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div class="text-sm font-semibold text-slate-900 mb-1">Indicator Definitions</div>
+            <ul class="text-sm text-slate-700 list-disc list-inside">
+              <li><strong>Δ%</strong> indicates change vs baseline period (demo).</li>
+              <li><strong>Trend</strong> is qualitative and for demonstration only.</li>
+              <li><strong>Targets</strong> are example thresholds for presentation.</li>
+            </ul>
+          </div>
+
+          <div class="text-xs text-slate-500">
+            <strong>Notes:</strong> ${escapeHtml(ev.notes || "—")}
+          </div>
+          <div class="text-xs text-slate-500">
+            <strong>Data source:</strong> Demo evaluation registry + local additions (localStorage). Production: protocol registry + ethics approvals + monitoring reports.
+          </div>
+        </div>
+      `;
+
+      openModal("evaluationModal");
+      auditLog("eval_view", { key:ev.key, program:ev.program, country:ev.country });
+    }
+
+    /********************
+     * SCORECARD (national)
+     ********************/
+    function refreshScorecard(){
+      const evals = getAllEvals().filter(evalInScope);
+      document.getElementById("kpiActiveEvals").textContent = String(evals.length);
+
+      // Patients (demo aggregate from evals + base national rollup)
+      const patients = evals.reduce((sum,e)=>sum + (Number(e.patients)||0), 0);
+      document.getElementById("kpiPatients").textContent = patients ? patients.toLocaleString() : "0";
+
+      // Telehealth sessions within scope: for demo, scope means meta.country if present; otherwise count all
+      const events = getActivityEvents();
+      const starts = events.filter(e=>e.type==="session_start" && inScopeEvent(e)).length;
+      document.getElementById("kpiTeleSessions").textContent = String(starts);
+
+      // Override rate
+      const overrides = events.filter(e=>e.type==="override" && inScopeEvent(e)).length;
+      const aiRuns = events.filter(e=>e.type==="ai_recommendation" && inScopeEvent(e)).length;
+      const rate = aiRuns ? Math.round((overrides/aiRuns)*1000)/10 : 12.4;
+      document.getElementById("kpiOverrideRate").textContent = rate.toFixed(1)+"%";
+    }
+
+    function inScopeEvent(e){
+      if(selectedCountryFilter==="all") return true;
+      const c = e?.meta?.country || e?.meta?.scopeCountry || null;
+      // If event has no country metadata, keep it in scope (demo). In production, enforce strict scoping.
+      return !c || c === selectedCountryFilter;
+    }
+
+    /********************
+     * TELEHEALTH: QUEUE + ENCOUNTER (unchanged logic, + audit tags)
      ********************/
     let selectedPatient = null;
     let currentRoomCode = null;
@@ -1228,6 +1502,7 @@
       saveQueue(merged);
       renderQueue();
       toast("Demo patients added to telehealth queue.");
+      auditLog("seed_queue", { count:demo.length });
     }
 
     function clearQueue(){
@@ -1236,6 +1511,7 @@
       renderQueue();
       clearEncounter();
       toast("Queue cleared.");
+      auditLog("queue_clear", {});
     }
 
     function renderQueue(){
@@ -1253,15 +1529,15 @@
 
       filtered.forEach(p=>{
         const card = document.createElement("div");
-        card.className = "p-3 rounded-xl border border-slate-200 hover:border-teal-500 cursor-pointer transition-all";
+        card.className = "p-3 rounded-xl border border-slate-200 hover:border-slate-300 cursor-pointer transition-all bg-white";
         card.innerHTML = `
           <div class="flex items-start justify-between">
             <div>
-              <div class="font-semibold text-slate-900">${p.name} <span class="text-xs text-slate-500">(${p.id})</span></div>
-              <div class="text-xs text-slate-600">${p.complaint}</div>
-              <div class="text-xs text-slate-400 mt-1">Age ${p.age} • ${p.sex}</div>
+              <div class="font-semibold text-slate-900">${escapeHtml(p.name)} <span class="text-xs text-slate-500">(${escapeHtml(p.id)})</span></div>
+              <div class="text-xs text-slate-600">${escapeHtml(p.complaint)}</div>
+              <div class="text-xs text-slate-400 mt-1">Age ${escapeHtml(p.age)} • ${escapeHtml(p.sex)}</div>
             </div>
-            <span class="pill ${p.status==="Waiting" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-700"}">${p.status}</span>
+            <span class="pill ${p.status==="Waiting" ? "bg-amber-50 border border-amber-200 text-amber-900" : "bg-slate-50 border border-slate-200 text-slate-700"}">${escapeHtml(p.status)}</span>
           </div>
         `;
         card.onclick = ()=>selectPatient(p.id);
@@ -1291,20 +1567,21 @@
 
       document.getElementById("intakeView").innerHTML = intakeHtml(intake);
       refreshFHIRPayload();
+      auditLog("patient_select", { patientId:p.id });
     }
 
     function intakeHtml(intake){
       return `
         <div class="space-y-2">
-          <div class="text-sm font-semibold text-slate-900">${intake.name} <span class="text-xs text-slate-500">(${intake.id})</span></div>
-          <div class="text-xs text-slate-600"><span class="font-semibold">Complaint:</span> ${escapeHtml(intake.complaint || "—")}</div>
-          <div class="grid grid-cols-2 gap-2 text-xs text-slate-600">
+          <div class="text-sm font-semibold text-slate-900">${escapeHtml(intake.name)} <span class="text-xs text-slate-500">(${escapeHtml(intake.id)})</span></div>
+          <div class="text-xs text-slate-700"><span class="font-semibold">Complaint:</span> ${escapeHtml(intake.complaint || "—")}</div>
+          <div class="grid grid-cols-2 gap-2 text-xs text-slate-700">
             <div><span class="font-semibold">Temp:</span> ${escapeHtml(intake.vitals?.temp || "—")}°C</div>
             <div><span class="font-semibold">HR:</span> ${escapeHtml(intake.vitals?.hr || "—")}</div>
             <div><span class="font-semibold">SpO₂:</span> ${escapeHtml(intake.vitals?.spo2 || "—")}%</div>
             <div><span class="font-semibold">BP:</span> ${escapeHtml(intake.vitals?.bp || "—")}</div>
           </div>
-          <div class="text-xs text-slate-600"><span class="font-semibold">Notes:</span> ${escapeHtml(intake.notes || "—")}</div>
+          <div class="text-xs text-slate-700"><span class="font-semibold">Notes:</span> ${escapeHtml(intake.notes || "—")}</div>
         </div>
       `;
     }
@@ -1336,9 +1613,7 @@
       saveQueue(q);
       renderQueue();
 
-      logActivity("session_start", { patientId:selectedPatient.id, room:currentRoomCode });
-      bumpTeleSessionCount();
-
+      logActivity("session_start", { patientId:selectedPatient.id, room:currentRoomCode, country:selectedCountryFilter });
       toast(`Session started for ${selectedPatient.name}. Room: ${currentRoomCode}`);
     }
 
@@ -1355,7 +1630,7 @@
 
         ["acceptBtn","modifyBtn","overrideBtn"].forEach(id=>document.getElementById(id).disabled=false);
 
-        logActivity("ai_recommendation", { patientId:selectedPatient.id, latency:latencyS, risk:rec.risk });
+        logActivity("ai_recommendation", { patientId:selectedPatient.id, latency:latencyS, risk:rec.risk, country:selectedCountryFilter });
         updateSafetyKPIs();
         refreshFHIRPayload();
       }, 450);
@@ -1406,7 +1681,7 @@
       return `
         <div class="space-y-3">
           <div class="p-3 rounded-xl border ${riskColor}">
-            <div class="text-xs font-semibold">Risk: <span class="font-bold">${rec.risk}</span></div>
+            <div class="text-xs font-semibold">Risk: <span class="font-bold">${escapeHtml(rec.risk)}</span></div>
             <div class="text-xs mt-1"><span class="font-semibold">Triage:</span> ${escapeHtml(rec.triage)}</div>
           </div>
           <div class="text-xs text-slate-700">
@@ -1452,10 +1727,10 @@
       aiAction = { type:"Override", reason, ts:Date.now() };
       document.getElementById("actionLog").innerHTML = actionHtml(aiAction);
       toast("AI recommendation overridden (logged).");
-      logActivity("override", { patientId:selectedPatient?.id, reason });
+      logActivity("override", { patientId:selectedPatient?.id, reason, country:selectedCountryFilter });
       updateSafetyKPIs();
       refreshFHIRPayload();
-      renderTelehealthHeatmap();
+      renderInstitutionalHeatmap();
     }
 
     function actionHtml(a){
@@ -1465,16 +1740,16 @@
       const dt = new Date(a.ts).toLocaleString();
       return `
         <div class="p-3 rounded-xl border ${c}">
-          <div class="font-semibold text-xs">${a.type}</div>
+          <div class="font-semibold text-xs">${escapeHtml(a.type)}</div>
           <div class="text-xs mt-1">${escapeHtml(a.reason)}</div>
-          <div class="text-[11px] opacity-70 mt-1">${dt}</div>
+          <div class="text-[11px] opacity-70 mt-1">${escapeHtml(dt)}</div>
         </div>
       `;
     }
 
     function logActionEvent(kind){
-      logActivity("ai_recommendation", { action:kind, patientId:selectedPatient?.id });
-      renderTelehealthHeatmap();
+      logActivity("ai_recommendation", { action:kind, patientId:selectedPatient?.id, country:selectedCountryFilter });
+      renderInstitutionalHeatmap();
       updateSafetyKPIs();
     }
 
@@ -1491,8 +1766,8 @@
       recs[selectedPatient.id] = rec;
       saveRecords(recs);
 
-      logActivity("session_complete", { patientId:selectedPatient.id });
-      renderTelehealthHeatmap();
+      logActivity("session_complete", { patientId:selectedPatient.id, country:selectedCountryFilter });
+      renderInstitutionalHeatmap();
       refreshFHIRPayload();
 
       toast("Session completed (demo).");
@@ -1503,6 +1778,7 @@
       document.getElementById("roomCodeChip").textContent = currentRoomCode;
       document.getElementById("patientJoinStatus").textContent = "Waiting for patient…";
       toast(`Video room created. Code: ${currentRoomCode}`);
+      auditLog("room_create", { room:currentRoomCode });
     }
 
     function makeRoomCode(){
@@ -1517,6 +1793,7 @@
       if(!code || code==="—"){ toast("Create a room first."); return; }
       navigator.clipboard?.writeText(code);
       toast("Room code copied.");
+      auditLog("room_copy", { room:code });
     }
 
     function patientJoinRoom(){
@@ -1528,14 +1805,15 @@
       }
       document.getElementById("joinStatus").textContent = "Joined room (simulated).";
       document.getElementById("patientJoinStatus").textContent = "Patient joined (simulated).";
-      logActivity("session_join", { room:code, patientId: document.getElementById("ptId").value || "PT-UNKNOWN" });
-      renderTelehealthHeatmap();
+      logActivity("session_join", { room:code, patientId: document.getElementById("ptId").value || "PT-UNKNOWN", country:selectedCountryFilter });
+      renderInstitutionalHeatmap();
       bumpTeleSessionCount();
     }
 
     function toggleMute(){ toast("Mute toggled (simulated)."); }
     function toggleCam(){ toast("Camera toggled (simulated)."); }
     function endRoom(){
+      auditLog("room_end", { room:currentRoomCode || null });
       currentRoomCode = null;
       document.getElementById("roomCodeChip").textContent = "—";
       document.getElementById("patientJoinStatus").textContent = "Waiting for patient…";
@@ -1549,6 +1827,7 @@
         document.getElementById("ptId").value = u.patientId || "PT-DEMO";
         document.getElementById("ptName").value = u.name || "Patient";
       }
+      auditLog("patient_portal_open", {});
     }
 
     function fillSampleIntake(){
@@ -1611,8 +1890,8 @@
 
       renderQueue();
       document.getElementById("intakeStatus").textContent = "Intake submitted. You are now in the telehealth queue.";
-      logActivity("intake_submit", { patientId:id });
-      renderTelehealthHeatmap();
+      logActivity("intake_submit", { patientId:id, country:selectedCountryFilter });
+      renderInstitutionalHeatmap();
       refreshFHIRPayload();
     }
 
@@ -1630,12 +1909,14 @@
       const last = rec.lastEncounter ? new Date(rec.lastEncounter.ts).toLocaleString() : "—";
       toast(`Patient: ${id}\nLast Encounter: ${last}\nReferrals: ${refs.length}\nPrescriptions: ${rx.length}`);
       document.getElementById("recordStatus").textContent = `Found record. Referrals: ${refs.length}, eRx: ${rx.length}`;
+      auditLog("patient_record_view", { patientId:id, referrals:refs.length, rx:rx.length });
     }
 
     function bumpTeleSessionCount(){
       const events = getActivityEvents();
-      const sessions = events.filter(e=>e.type==="session_start").length;
-      document.getElementById("teleSessions").textContent = `${sessions} Telehealth Sessions (demo)`;
+      const sessions = events.filter(e=>e.type==="session_start" && inScopeEvent(e)).length;
+      // scorecard
+      document.getElementById("kpiTeleSessions").textContent = String(sessions);
     }
 
     /********************
@@ -1648,6 +1929,7 @@
         ? "High risk flagged (hypoxia). Recommend urgent in-person evaluation."
         : "Telehealth triage for follow-up evaluation.";
       document.getElementById("refStatus").textContent = "—";
+      auditLog("referral_open", { patientId:selectedPatient.id });
     }
 
     function createReferral(){
@@ -1664,8 +1946,8 @@
       saveRecords(records);
 
       document.getElementById("refStatus").textContent = "Referral created and saved.";
-      logActivity("referral", { patientId:selectedPatient.id, facility, urgency });
-      renderTelehealthHeatmap();
+      logActivity("referral", { patientId:selectedPatient.id, facility, urgency, country:selectedCountryFilter });
+      renderInstitutionalHeatmap();
       refreshFHIRPayload();
       toast("Referral created (demo).");
     }
@@ -1679,6 +1961,7 @@
       document.getElementById("rxDur").value = "3–5 days";
       document.getElementById("rxNotes").value = "Demo eRx. Verify allergies and local formulary.";
       document.getElementById("rxStatus").textContent = "—";
+      auditLog("rx_open", { patientId:selectedPatient.id });
     }
 
     function createRx(){
@@ -1697,8 +1980,8 @@
       saveRecords(records);
 
       document.getElementById("rxStatus").textContent = "eRx created and saved.";
-      logActivity("eprescription", { patientId:selectedPatient.id, med });
-      renderTelehealthHeatmap();
+      logActivity("eprescription", { patientId:selectedPatient.id, med, country:selectedCountryFilter });
+      renderInstitutionalHeatmap();
       refreshFHIRPayload();
       toast("e-Prescription created (demo).");
     }
@@ -1709,6 +1992,7 @@
     function openFHIR(){
       refreshFHIRPayload();
       openModal("fhirModal");
+      auditLog("fhir_open", {});
     }
 
     function refreshFHIRPayload(){
@@ -1789,6 +2073,7 @@
       const ta = document.getElementById("fhirPayload");
       navigator.clipboard?.writeText(ta.value);
       toast("FHIR payload copied.");
+      auditLog("fhir_copy", {});
     }
 
     function copyFHIRForPatient(){
@@ -1796,6 +2081,7 @@
       const ta = document.getElementById("fhirPayload");
       navigator.clipboard?.writeText(ta.value);
       document.getElementById("recordStatus").textContent = "Copied FHIR payload to clipboard (demo).";
+      auditLog("fhir_copy_patient", { patientId:(document.getElementById("ptId").value||"").trim() });
     }
 
     /********************
@@ -1804,6 +2090,7 @@
     function openCompliance(){
       openModal("complianceModal");
       loadCompliance();
+      auditLog("compliance_open", {});
     }
 
     function loadCompliance(){
@@ -1823,6 +2110,7 @@
       obj.updated = Date.now();
       localStorage.setItem(AFYA_COMPLIANCE_KEY, JSON.stringify(obj));
       document.getElementById("complianceStatus").textContent = "Saved.";
+      auditLog("compliance_save", { checklist:obj, notesLen:(obj.notes||"").length });
     }
 
     function exportCompliance(){
@@ -1830,6 +2118,7 @@
       const report = {
         platform:"AfyaAI Demo",
         exportedAt:new Date().toISOString(),
+        scopeCountry:selectedCountryFilter,
         checklist: {
           consent:!!obj.c1,
           minimization:!!obj.c2,
@@ -1843,21 +2132,24 @@
       navigator.clipboard?.writeText(JSON.stringify(report, null, 2));
       document.getElementById("complianceStatus").textContent = "Compliance report copied to clipboard.";
       toast("Compliance report copied (JSON).");
+      auditLog("compliance_export_copy", { reportSummary:report.checklist });
     }
 
     function resetCompliance(){
       localStorage.removeItem(AFYA_COMPLIANCE_KEY);
       loadCompliance();
       document.getElementById("complianceStatus").textContent = "Reset.";
+      auditLog("compliance_reset", {});
     }
 
     /********************
      * SAFETY KPIs (simple demo)
      ********************/
     function updateSafetyKPIs(){
-      const events = getActivityEvents();
+      const events = getActivityEvents().filter(inScopeEvent);
       const overrides = events.filter(e=>e.type==="override").length;
       const aiRuns = events.filter(e=>e.type==="ai_recommendation").length;
+
       const rate = aiRuns ? Math.min(99, Math.round((overrides/aiRuns)*1000)/10) : 12.4;
       document.getElementById("overrideRateBig").textContent = rate.toFixed(1)+"%";
       document.getElementById("overrideRateChip").textContent = "Override Rate: "+rate.toFixed(1)+"%";
@@ -1867,10 +2159,11 @@
       document.getElementById("aiRespTime").textContent = resp;
 
       bumpTeleSessionCount();
+      refreshScorecard();
     }
 
     /********************
-     * HEATMAP (Telehealth-based)
+     * HEATMAP (Institutional grid style)
      ********************/
     const HEAT_WEIGHTS = {
       session_start: 3,
@@ -1887,9 +2180,10 @@
       const events = getActivityEvents();
       events.push({ ts: Date.now(), type, meta });
       saveActivityEvents(events);
-      renderTelehealthHeatmap();
+      renderInstitutionalHeatmap();
       updateSafetyKPIs();
       refreshFHIRPayload();
+      auditLog(type, meta); // regulatory audit
     }
 
     function dayKeyFromTs(ts){
@@ -1910,8 +2204,9 @@
       }
       return days;
     }
+
     function computeDailyScores(daysBack=84){
-      const events = getActivityEvents();
+      const events = getActivityEvents().filter(inScopeEvent);
       const cutoff = Date.now() - daysBack*24*60*60*1000;
       const scores = {};
       for(const e of events){
@@ -1924,67 +2219,126 @@
       }
       return scores;
     }
-    function colorForScore(score){
-      if(score<=0) return "#e2e8f0";
-      if(score<=3) return "#ccfbf1";
-      if(score<=7) return "#5eead4";
-      if(score<=12) return "#14b8a6";
-      return "#0f766e";
-    }
-    function safetyMarkerHtml(counts){
-      const o = counts?.override || 0;
-      if(o<=0) return "";
-      return `<span class="absolute top-1 right-1 w-2 h-2 rounded-full" style="background:#f59e0b" title="Safety signal: ${o} override(s)"></span>`;
-    }
-    function renderTelehealthHeatmap(){
-      const container = document.getElementById("heatmap");
-      if(!container) return;
 
-      container.innerHTML = "";
-      const days = lastNDays(84);
-      const daily = computeDailyScores(84);
+    function cellColor(score){
+      // Institutional blues
+      if(score<=0) return "#f1f5fb";
+      if(score<=3) return "#dbeafe";
+      if(score<=7) return "#93c5fd";
+      return "#3b82f6";
+    }
 
+    function renderInstitutionalHeatmap(){
+      const host = document.getElementById("heatmapInstitutional");
+      if(!host) return;
+
+      host.innerHTML = "";
+
+      const daysBack = 84; // 12 weeks
+      const days = lastNDays(daysBack);
+      const daily = computeDailyScores(daysBack);
+
+      // Build weeks (rows), aligned Monday
+      const weeks = [];
+      let week = [];
       const first = days[0];
-      const firstDay = first.getDay(); // Sun=0
-      const pad = (firstDay - 1 + 7) % 7; // align Monday
-      for(let i=0;i<pad;i++){
-        const blank = document.createElement("div");
-        blank.className="heatmap-cell";
-        blank.style.backgroundColor="transparent";
-        blank.style.border="1px solid rgba(148,163,184,0.25)";
-        blank.style.opacity="0.6";
-        container.appendChild(blank);
-      }
+      const firstDow = (first.getDay()+6)%7; // Mon=0
+      for(let i=0;i<firstDow;i++) week.push(null);
 
       for(const d of days){
-        const key = dayKeyFromTs(d.getTime());
-        const dayData = daily[key] || { score:0, counts:{} };
-
-        const cell = document.createElement("div");
-        cell.className = "heatmap-cell";
-        cell.style.backgroundColor = colorForScore(dayData.score);
-        cell.innerHTML = safetyMarkerHtml(dayData.counts);
-
-        const formatted = d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
-        const c = dayData.counts || {};
-        const lines = [
-          `${formatted}`,
-          `Score: ${dayData.score}`,
-          `Sessions: ${c.session_start||0}`,
-          `Joins: ${c.session_join||0}`,
-          `Intakes: ${c.intake_submit||0}`,
-          `AI used: ${c.ai_recommendation||0}`,
-          `Overrides: ${c.override||0}`,
-          `Referrals: ${c.referral||0}`,
-          `eRx: ${c.eprescription||0}`,
-          `Completed: ${c.session_complete||0}`
-        ];
-        cell.title = lines.join("\n");
-        cell.addEventListener("click", ()=>alert(lines.join("\n")));
-        container.appendChild(cell);
+        week.push(d);
+        if(week.length===7){
+          weeks.push(week);
+          week = [];
+        }
       }
+      if(week.length){
+        while(week.length<7) week.push(null);
+        weeks.push(week);
+      }
+
+      const grid = document.createElement("div");
+      grid.className = "heat-grid";
+
+      // Header row
+      const headBlank = document.createElement("div");
+      headBlank.className="heat-head";
+      headBlank.textContent="Week";
+      grid.appendChild(headBlank);
+
+      ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d=>{
+        const h = document.createElement("div");
+        h.className="heat-head";
+        h.textContent=d;
+        grid.appendChild(h);
+      });
+
+      // Rows
+      weeks.forEach((w, idx)=>{
+        const label = document.createElement("div");
+        label.className="heat-week";
+        const anyDay = w.find(x=>x);
+        label.textContent = anyDay ? `Wk of ${anyDay.toLocaleDateString(undefined,{month:"short",day:"numeric"})}` : `Week ${idx+1}`;
+        grid.appendChild(label);
+
+        w.forEach(d=>{
+          const cell = document.createElement("div");
+          cell.className="heat-cell";
+
+          if(!d){
+            cell.style.background="#fff";
+            cell.style.borderColor="transparent";
+            cell.style.cursor="default";
+            grid.appendChild(cell);
+            return;
+          }
+
+          const key = dayKeyFromTs(d.getTime());
+          const dayData = daily[key] || { score:0, counts:{} };
+          cell.style.background = cellColor(dayData.score);
+
+          // override marker
+          const o = dayData.counts?.override || 0;
+          if(o>0){
+            const dot = document.createElement("span");
+            dot.style.position="absolute";
+            dot.style.right="6px";
+            dot.style.top="6px";
+            dot.style.width="8px";
+            dot.style.height="8px";
+            dot.style.borderRadius="999px";
+            dot.style.background="var(--warning)";
+            dot.style.border="1px solid rgba(0,0,0,.12)";
+            cell.appendChild(dot);
+          }
+
+          const formatted = d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
+          const c = dayData.counts || {};
+          const lines = [
+            `${formatted}`,
+            `Score: ${dayData.score}`,
+            `Sessions: ${c.session_start||0}`,
+            `Joins: ${c.session_join||0}`,
+            `Intakes: ${c.intake_submit||0}`,
+            `AI used: ${c.ai_recommendation||0}`,
+            `Overrides: ${c.override||0}`,
+            `Referrals: ${c.referral||0}`,
+            `eRx: ${c.eprescription||0}`,
+            `Completed: ${c.session_complete||0}`,
+            `Scope: ${selectedCountryFilter==="all" ? "All Countries" : selectedCountryFilter}`
+          ];
+          cell.title = lines.join("\n");
+          cell.addEventListener("click", ()=>alert(lines.join("\n")));
+          grid.appendChild(cell);
+        });
+      });
+
+      host.appendChild(grid);
     }
 
+    /********************
+     * DEMO SEED
+     ********************/
     function seedTelehealthDemoActivity(){
       const now = Date.now();
       const events = [];
@@ -2000,136 +2354,19 @@
         else if(roll < 0.9) t = "eprescription";
         else t = "override";
 
-        events.push({ ts, type:t, meta:{ seeded:true } });
+        events.push({ ts, type:t, meta:{ seeded:true, country:selectedCountryFilter } });
       }
 
       const merged = [...getActivityEvents(), ...events];
       saveActivityEvents(merged);
+
       seedQueue();
-
-      renderTelehealthHeatmap();
+      renderInstitutionalHeatmap();
       updateSafetyKPIs();
-      bumpTeleSessionCount();
+      refreshScorecard();
       toast("Seeded demo utilization + safety activity.");
+      auditLog("seed_activity", { added:events.length });
     }
-
-    /********************
-     * EVALUATION DETAILS (original)
-     ********************/
-    function showEvaluationDetail(type){
-      const modal = document.getElementById("evaluationModal");
-      const content = document.getElementById("modalContent");
-      const title = document.getElementById("modalTitle");
-
-      const details = {
-        penda: {
-          title: "Penda Health CDSS Evaluation",
-          content: `
-            <div class="space-y-4">
-              <div class="grid grid-cols-3 gap-4">
-                <div class="bg-teal-50 p-3 rounded-lg text-center">
-                  <div class="text-2xl font-bold text-teal-700">16%</div>
-                  <div class="text-xs text-teal-600">Fewer Diagnostic Errors</div>
-                </div>
-                <div class="bg-teal-50 p-3 rounded-lg text-center">
-                  <div class="text-2xl font-bold text-teal-700">13%</div>
-                  <div class="text-xs text-teal-600">Fewer Treatment Errors</div>
-                </div>
-                <div class="bg-teal-50 p-3 rounded-lg text-center">
-                  <div class="text-2xl font-bold text-teal-700">94%</div>
-                  <div class="text-xs text-teal-600">Clinician Satisfaction</div>
-                </div>
-              </div>
-              <p class="text-sm text-slate-600">
-                Comprehensive evaluation of AI-assisted clinical decision support across 12 primary care clinics in Nairobi.
-                Study design: Stepped-wedge cluster randomized trial.
-              </p>
-              <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <div class="font-semibold text-slate-900 mb-1">Telehealth integration (new)</div>
-                <div class="text-sm text-slate-600">Patients can submit intake remotely, join a code-based video room, and receive referral + eRx workflows.</div>
-              </div>
-            </div>
-          `
-        },
-        ubenwa: {
-          title: "Ubenwa Birth Asphyxia Detection",
-          content: `
-            <div class="space-y-4">
-              <p class="text-sm text-slate-600">
-                AI-powered analysis of infant cries to detect birth asphyxia in resource-limited settings. Currently in pilot phase across 8 tertiary hospitals.
-              </p>
-              <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg">
-                <i class="fas fa-info-circle text-amber-600 mr-2"></i>
-                <span class="text-sm text-amber-800">Pilot phase: Safety monitoring active, efficacy data collection ongoing</span>
-              </div>
-              <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <div class="font-semibold text-slate-900 mb-1">Telehealth workflow (new)</div>
-                <div class="text-sm text-slate-600">Neonatal triage consults can be simulated via remote consult queue + referral pathways.</div>
-              </div>
-            </div>
-          `
-        },
-        babylon: {
-          title: "Babylon Rwanda Triage System",
-          content: `
-            <div class="space-y-4">
-              <p class="text-sm text-slate-600">
-                AI symptom checker integrated with national health insurance scheme. Evaluating impact on primary care utilization and appropriate referrals.
-              </p>
-              <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <div class="font-semibold text-slate-900 mb-1">Telehealth overlay (new)</div>
-                <div class="text-sm text-slate-600">A triage consult can be initiated remotely with an intake form + video-room code.</div>
-              </div>
-            </div>
-          `
-        },
-        qure: {
-          title: "Qure.ai Chest X-Ray Screening",
-          content: `
-            <div class="space-y-4">
-              <p class="text-sm text-slate-600">Automated TB screening using computer vision. Deployment in 3 district hospitals in Western Cape Province.</p>
-              <div class="bg-blue-50 p-3 rounded-lg">
-                <div class="text-sm font-medium text-blue-900 mb-1">Setup Phase Activities</div>
-                <ul class="text-sm text-blue-800 list-disc list-inside">
-                  <li>Integration with existing PACS systems</li>
-                  <li>Radiologist validation protocol</li>
-                  <li>Data privacy compliance audit</li>
-                </ul>
-              </div>
-              <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <div class="font-semibold text-slate-900 mb-1">Tele-radiology pathway (new)</div>
-                <div class="text-sm text-slate-600">Telehealth consult can generate a referral + imaging request (FHIR ServiceRequest mock).</div>
-              </div>
-            </div>
-          `
-        }
-      };
-
-      const d = details[type];
-      title.textContent = d.title;
-      content.innerHTML = d.content;
-      modal.classList.remove("hidden");
-    }
-
-    /********************
-     * MAP
-     ********************/
-    function selectCountry(country){
-      document.querySelectorAll(".country-path").forEach(p => p.classList.remove("active"));
-      document.getElementById(country).classList.add("active");
-
-      const details = {
-        kenya:{ name:"Kenya", facilities:12, patients:39849, status:"Active"},
-        nigeria:{ name:"Nigeria", facilities:15, patients:24500, status:"Active"},
-        rwanda:{ name:"Rwanda", facilities:8, patients:15600, status:"Active"},
-        sa:{ name:"South Africa", facilities:12, patients:48501, status:"Active"},
-        ethiopia:{ name:"Ethiopia", facilities:6, patients:0, status:"Pilot"},
-        ghana:{ name:"Ghana", facilities:4, patients:0, status:"Planned"}
-      };
-      const d = details[country];
-      alert(`${d.name}\nFacilities: ${d.facilities}\nPatients: ${d.patients.toLocaleString()}\nStatus: ${d.status}`);
-    }
-    function filterMap(type){ console.log("Filtering map:", type); }
 
     /********************
      * NEW EVALUATION (demo)
@@ -2146,29 +2383,79 @@
       localStorage.setItem(AFYA_EVALS_KEY, JSON.stringify(evs));
       document.getElementById("evalStatus").textContent="Created (stored locally).";
       toast("New evaluation created (demo).");
+      auditLog("new_evaluation", { name, country });
+      renderEvalTable();
+      refreshScorecard();
+    }
+
+    /********************
+     * PDF EXPORT (single-file, GitHub Pages friendly)
+     ********************/
+    async function exportPDF(){
+      try{
+        auditLog("export_pdf", { scope:selectedCountryFilter });
+        // Use html2canvas -> jsPDF (client side)
+        const el = document.getElementById("exportArea");
+        const canvas = await html2canvas(el, { scale: 2, useCORS:true, backgroundColor:"#ffffff" });
+        const imgData = canvas.toDataURL("image/png");
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        // Fit width, paginate vertically
+        const imgProps = pdf.getImageProperties(imgData);
+        const imgWidth = pageWidth;
+        const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+        let y = 0;
+        let remaining = imgHeight;
+
+        pdf.addImage(imgData, "PNG", 0, y, imgWidth, imgHeight);
+
+        while(remaining > pageHeight){
+          remaining -= pageHeight;
+          pdf.addPage();
+          y = -((imgHeight - remaining));
+          pdf.addImage(imgData, "PNG", 0, y, imgWidth, imgHeight);
+        }
+
+        const name = `AfyaAI_Dashboard_${selectedCountryFilter==="all"?"All":selectedCountryFilter}_${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(name);
+      }catch(e){
+        console.error(e);
+        toast("PDF export failed (browser limits). You can still use Print → Save as PDF.");
+      }
     }
 
     /********************
      * RESET
      ********************/
     function resetAllDemo(){
-      if(!confirm("Reset all demo data (queue, records, activity, compliance, user)?")) return;
+      if(!confirm("Reset all demo data (queue, records, activity, compliance, user, evals, audit)?")) return;
       localStorage.removeItem(AFYA_QUEUE_KEY);
       localStorage.removeItem(AFYA_RECORDS_KEY);
       localStorage.removeItem(AFYA_ACTIVITY_KEY);
       localStorage.removeItem(AFYA_COMPLIANCE_KEY);
+      localStorage.removeItem(AFYA_EVALS_KEY);
+      localStorage.removeItem(AFYA_AUDIT_KEY);
       localStorage.removeItem("afyaai-user");
+
       currentRoomCode = null;
       document.getElementById("roomCodeChip").textContent="—";
       document.getElementById("patientJoinStatus").textContent="Waiting for patient…";
       clearEncounter();
       renderQueue();
-      renderTelehealthHeatmap();
+      renderInstitutionalHeatmap();
       updateSafetyKPIs();
-      bumpTeleSessionCount();
+      refreshScorecard();
+      renderEvalTable();
+
       toast("Reset complete.");
       document.getElementById("loginBtn").classList.remove("hidden");
       document.getElementById("userChip").classList.add("hidden");
+      currentUser = { role:null, name:null, patientId:null };
     }
 
     /********************
@@ -2186,7 +2473,7 @@
     /********************
      * CLOSE MODALS OUTSIDE CLICK
      ********************/
-    ["evaluationModal","loginModal","patientPortalModal","referralModal","rxModal","fhirModal","complianceModal","newEvalModal"].forEach(id=>{
+    ["evaluationModal","loginModal","patientPortalModal","referralModal","rxModal","fhirModal","complianceModal","newEvalModal","auditModal"].forEach(id=>{
       const el = document.getElementById(id);
       if(el){
         el.addEventListener("click", function(e){
@@ -2201,9 +2488,14 @@
     document.addEventListener("DOMContentLoaded", ()=>{
       updateOnlineStatus();
 
-      const savedLang = localStorage.getItem("afyaai-lang");
-      if(savedLang && savedLang!=="en") changeLanguage(savedLang);
+      // restore filter
+      const savedFilter = localStorage.getItem(AFYA_COUNTRY_FILTER_KEY) || "all";
+      selectedCountryFilter = savedFilter;
+      const dd = document.getElementById("countryFilter");
+      if(dd) dd.value = savedFilter;
+      document.getElementById("scorecardScope").textContent = `Scope: ${savedFilter==="all" ? "All Countries" : savedFilter}`;
 
+      // restore user
       const u = safeJsonParse(localStorage.getItem("afyaai-user") || "null", null);
       if(u){
         currentUser = u;
@@ -2213,10 +2505,12 @@
         document.getElementById("userNameChip").textContent = u.name;
       }
 
+      applyCountryFilterUI();
       renderQueue();
-      renderTelehealthHeatmap();
+      renderEvalTable();
+      renderInstitutionalHeatmap();
       updateSafetyKPIs();
-      bumpTeleSessionCount();
+      refreshScorecard();
       refreshFHIRPayload();
     });
   </script>

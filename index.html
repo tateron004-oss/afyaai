@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>AfyaAI — Telehealth + Clinical AI Evaluation & Safety Platform (Demo)</title>
 
-  <!-- Tailwind + Chart.js + FontAwesome -->
+  <!-- Tailwind + FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet" />
 
@@ -72,15 +71,9 @@
     }
     .heatmap-cell:hover{transform:scale(1.07);z-index:10;box-shadow:0 6px 16px rgba(0,0,0,.2);}
 
-    /* Simple tabs */
-    .tab-btn{border-bottom:2px solid transparent;}
-    .tab-btn.active{border-bottom-color:var(--primary);color:var(--primary);}
     .pill{font-size:12px;padding:.25rem .5rem;border-radius:999px;font-weight:600;}
-
-    /* role badge */
     .role-badge{font-size:12px;padding:.25rem .5rem;border-radius:999px;background:#e2e8f0;color:#334155;font-weight:600;}
 
-    /* input */
     .input{
       width:100%;padding:.6rem .75rem;border:1px solid #cbd5e1;border-radius:.75rem;
       outline:none;transition:box-shadow .2s,border-color .2s;
@@ -100,18 +93,16 @@
     .btn-danger{background:#ef4444;color:white;}
     .btn-danger:hover{background:#dc2626;}
 
-    /* modal */
     .modal-card{max-width:920px;width:100%;max-height:90vh;overflow:auto;border-radius:1.25rem;}
     .hidden{display:none !important;}
 
-    /* offline banner */
     .banner{
       border:1px solid rgba(148,163,184,.35);
       background:rgba(255,255,255,.9);
       border-radius:1rem;
     }
-
   </style>
+
   <base target="_blank">
 </head>
 
@@ -134,7 +125,6 @@
         <div class="hidden md:flex items-center space-x-8">
           <a href="#dashboard" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_dashboard">Dashboard</a>
           <a href="#telehealth" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_deployments">Telehealth</a>
-          <a href="#analytics" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_analytics">Analytics</a>
           <a href="#partners" class="nav-link text-slate-600 hover:text-teal-700 font-medium transition-colors" data-key="nav_partners">Partners</a>
         </div>
 
@@ -198,6 +188,7 @@
 
   <!-- MAIN -->
   <main class="pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
     <!-- Offline/PWA note -->
     <div class="banner p-4 mb-6 animate-slide-in">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -527,19 +518,6 @@
           </div>
 
         </div>
-      </div>
-    </section>
-
-    <!-- ANALYTICS -->
-    <section id="analytics" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-      <div class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.7s">
-        <h3 class="text-lg font-bold text-slate-900 mb-4" data-key="chart_outcomes">Clinical Outcomes Comparison</h3>
-        <canvas id="outcomesChart" height="250"></canvas>
-      </div>
-
-      <div class="glass rounded-2xl p-6 animate-slide-in" style="animation-delay:.8s">
-        <h3 class="text-lg font-bold text-slate-900 mb-4" data-key="chart_adoption">Clinician Adoption Rates</h3>
-        <canvas id="adoptionChart" height="250"></canvas>
       </div>
     </section>
 
@@ -986,7 +964,6 @@
       en: {
         nav_dashboard:"Dashboard",
         nav_deployments:"Telehealth",
-        nav_analytics:"Analytics",
         nav_partners:"Partners",
         hero_title:"Real-World Evaluation Infrastructure for African Health AI",
         hero_subtitle:"Bridging the gap between AI potential and patient impact through rigorous clinical decision support evaluation — now integrated with telehealth for rural access.",
@@ -999,15 +976,12 @@
         metric_safety:"Serious Safety Events",
         map_title:"Deployment Coverage",
         evaluations_title:"Active Evaluations",
-        chart_outcomes:"Clinical Outcomes Comparison",
-        chart_adoption:"Clinician Adoption Rates",
         safety_title:"Real-Time Safety Monitoring",
         partners_title:"Consortium Partners"
       },
       sw: {
         nav_dashboard:"Dashibodi",
         nav_deployments:"Telehealth",
-        nav_analytics:"Takwimu",
         nav_partners:"Washirika",
         hero_title:"Miundombinu ya Tathmini ya AI ya Afya Afrika",
         hero_subtitle:"Kuziba pengo kati ya uwezo wa AI na athari kwa wagonjwa — sasa ikiwa na telehealth kwa maeneo ya vijijini.",
@@ -1020,15 +994,12 @@
         metric_safety:"Matukio Makubwa ya Usalama",
         map_title:"Maeneo ya Utekelezaji",
         evaluations_title:"Tathmini Zinazoendelea",
-        chart_outcomes:"Ulinganisho wa Matokeo ya Kliniki",
-        chart_adoption:"Kiwango cha Kukubaliwa na Waganga",
         safety_title:"Ufuatiliaji wa Usalama wa Wakati Halisi",
         partners_title:"Washirika wa Muungano"
       },
       ha: {
         nav_dashboard:"Dashboard",
         nav_deployments:"Telehealth",
-        nav_analytics:"Bincike",
         nav_partners:"Abokan hulda",
         hero_title:"Kayan Aikin Kimar AI na Lafiya a Afrika",
         hero_subtitle:"Rufe bakan tsakanin yadda AI zai iya taimakawa da amfanin da ya ke da shi ga marasa lafiya — tare da telehealth ga karkara.",
@@ -1041,15 +1012,12 @@
         metric_safety:"Mummunan Lamurran Tsaro",
         map_title:"Rufe Saka",
         evaluations_title:"Ayyukan Maimaitawa",
-        chart_outcomes:"Sakamakon Kliniki",
-        chart_adoption:"Yadda Likitoci ke Karbarwa",
         safety_title:"Kallon Tsaro na Lokaci-Lokaci",
         partners_title:"Abokan Huldar Kungiyar"
       },
       yo: {
         nav_dashboard:"Dasibodu",
         nav_deployments:"Telehealth",
-        nav_analytics:"Oniye",
         nav_partners:"Alabaṣiṣẹpọ",
         hero_title:"Ilana Atunyẹwo AI Ilera fun Afrika",
         hero_subtitle:"Dínà ààrin agbára AI àti ipa ààbò fún àwọn aláìsàn — pẹ̀lú telehealth fún agbègbè ìlú-ọba.",
@@ -1062,15 +1030,12 @@
         metric_safety:"Ìṣẹ̀lẹ̀ Ààbò Pataki",
         map_title:"Ikojọpọ Igbesẹ",
         evaluations_title:"Atunyẹwo Ti ńṣiṣẹ́",
-        chart_outcomes:"Àfiwéra Ìsì Kliniki",
-        chart_adoption:"Ìgbàgbọ́ Oníṣẹ́ ìlera",
         safety_title:"Ààbò Ní Àkókò Gbogbo",
         partners_title:"Àwọn Alabaṣiṣẹpọ"
       },
       am: {
         nav_dashboard:"ዳሽቦርድ",
         nav_deployments:"ቴሌሄልዝ",
-        nav_analytics:"ትንተና",
         nav_partners:"አጋሮች",
         hero_title:"የአፍሪካ ጤና AI እውነተኛ ዓለም ግምገማ መሰረተ ልማት",
         hero_subtitle:"የAI አቅምን እና የታካሚ ተፅዕኖን በጥንቃቄ ግምገማ ማገናኘት — አሁን ከቴሌሄልዝ ጋር።",
@@ -1083,15 +1048,12 @@
         metric_safety:"ከባድ የደህንነት ክስተቶች",
         map_title:"የተግባራዊነት ሽፋን",
         evaluations_title:"ንቁ ግምገማዎች",
-        chart_outcomes:"የክሊኒካል ውጤቶች ንፅፅር",
-        chart_adoption:"የመቀበል መጠን",
         safety_title:"በጊዜ ደህንነት ክትትል",
         partners_title:"የኮንሶርሲየም አጋሮች"
       },
       zu: {
         nav_dashboard:"Ideshibhodi",
         nav_deployments:"Telehealth",
-        nav_analytics:"Uhlaziyelo",
         nav_partners:"Abalingiswa",
         hero_title:"Isakhiwo Sokuhlola AI Yezokwelapha Yase-Afrika",
         hero_subtitle:"Ukuvala isikhala phakathi kwamandla e-AI nomthelela wesiguli — manje ne-telehealth ezindaweni zasemakhaya.",
@@ -1104,15 +1066,12 @@
         metric_safety:"Izingozi Ezinkulu",
         map_title:"Ukusakaza Ukuhambisa",
         evaluations_title:"Ukuhlola Osebenzayo",
-        chart_outcomes:"Ukuqhathaniswa Kweziphumo",
-        chart_adoption:"Amazinga Okutholwa",
         safety_title:"Ukuqapha Ukuphepha",
         partners_title:"Abalingiswa Be-Consortium"
       },
       fr: {
         nav_dashboard:"Tableau de Bord",
         nav_deployments:"Télé-santé",
-        nav_analytics:"Analytiques",
         nav_partners:"Partenaires",
         hero_title:"Infrastructure d'Évaluation Réelle pour l'IA Santé Africaine",
         hero_subtitle:"Combler le fossé entre le potentiel de l'IA et l'impact patient — désormais intégrée à la télésanté.",
@@ -1125,8 +1084,6 @@
         metric_safety:"Événements Indésirables Graves",
         map_title:"Couverture de Déploiement",
         evaluations_title:"Évaluations Actives",
-        chart_outcomes:"Comparaison des Résultats",
-        chart_adoption:"Taux d'Adoption",
         safety_title:"Surveillance de Sécurité",
         partners_title:"Partenaires du Consortium"
       }
@@ -1173,22 +1130,15 @@
      ********************/
     function openModal(id){ document.getElementById(id).classList.remove("hidden"); }
     function closeModal(id){ document.getElementById(id).classList.add("hidden"); }
-    function safeJsonParse(str, fallback){
-      try { return JSON.parse(str); } catch { return fallback; }
-    }
+    function safeJsonParse(str, fallback){ try { return JSON.parse(str); } catch { return fallback; } }
     function getQueue(){ return safeJsonParse(localStorage.getItem(AFYA_QUEUE_KEY) || "[]", []); }
     function saveQueue(q){ localStorage.setItem(AFYA_QUEUE_KEY, JSON.stringify(q)); }
     function getRecords(){ return safeJsonParse(localStorage.getItem(AFYA_RECORDS_KEY) || "{}", {}); }
     function saveRecords(r){ localStorage.setItem(AFYA_RECORDS_KEY, JSON.stringify(r)); }
     function getActivityEvents(){ return safeJsonParse(localStorage.getItem(AFYA_ACTIVITY_KEY) || "[]", []); }
     function saveActivityEvents(e){ localStorage.setItem(AFYA_ACTIVITY_KEY, JSON.stringify(e)); }
-    function getSession(){ return safeJsonParse(localStorage.getItem(AFYA_SESSION_KEY) || "{}", {}); }
-    function saveSession(s){ localStorage.setItem(AFYA_SESSION_KEY, JSON.stringify(s)); }
 
-    function toast(msg){
-      // simple alert-style toast
-      alert(msg);
-    }
+    function toast(msg){ alert(msg); }
 
     /********************
      * CONNECTIVITY UI
@@ -1215,7 +1165,6 @@
 
     function openLogin(){
       openModal("loginModal");
-      // reset view
       document.getElementById("patientLoginExtra").classList.add("hidden");
       document.getElementById("loginRole").value = "Clinician";
       document.getElementById("loginName").value = "";
@@ -1245,7 +1194,6 @@
 
       closeModal("loginModal");
 
-      // If patient, open portal to show value immediately
       if(role==="Patient"){
         openPatientPortal();
         document.getElementById("ptId").value = currentUser.patientId;
@@ -1334,7 +1282,6 @@
       document.getElementById("rxBtn").disabled = false;
       document.getElementById("completeBtn").disabled = false;
 
-      // load intake if exists
       const records = getRecords();
       const rec = records[p.id] || {};
       const intake = rec.intake || {
@@ -1380,14 +1327,10 @@
 
     function startSession(){
       if(!selectedPatient){ toast("Select a patient first."); return; }
-
-      // Create room if none
       if(!currentRoomCode){
         currentRoomCode = makeRoomCode();
         document.getElementById("roomCodeChip").textContent = currentRoomCode;
       }
-
-      // Mark patient in queue as "In Session"
       const q = getQueue();
       q.forEach(p=>{ if(p.id===selectedPatient.id) p.status="In Session"; });
       saveQueue(q);
@@ -1401,9 +1344,6 @@
 
     function runAI(){
       if(!selectedPatient){ toast("Select a patient first."); return; }
-
-      const start = performance.now();
-      // simulate latency
       setTimeout(()=>{
         const latencyMs = Math.round(500 + Math.random()*1200);
         const latencyS = (latencyMs/1000).toFixed(1)+"s";
@@ -1425,7 +1365,6 @@
       const records = getRecords();
       const intake = records[pid]?.intake;
 
-      // simple rule-based mock:
       const temp = parseFloat(intake?.vitals?.temp || "0") || 0;
       const spo2 = parseFloat(intake?.vitals?.spo2 || "99") || 99;
       const hr = parseFloat(intake?.vitals?.hr || "80") || 80;
@@ -1534,7 +1473,6 @@
     }
 
     function logActionEvent(kind){
-      // for demo, accepted/modified could still be tracked
       logActivity("ai_recommendation", { action:kind, patientId:selectedPatient?.id });
       renderTelehealthHeatmap();
       updateSafetyKPIs();
@@ -1542,28 +1480,17 @@
 
     function completeSession(){
       if(!selectedPatient){ toast("Select a patient first."); return; }
-
-      // mark queue done
       const q = getQueue();
-      q.forEach(p=>{
-        if(p.id===selectedPatient.id) p.status = "Completed";
-      });
+      q.forEach(p=>{ if(p.id===selectedPatient.id) p.status = "Completed"; });
       saveQueue(q);
       renderQueue();
 
-      // record encounter summary
       const recs = getRecords();
       const rec = recs[selectedPatient.id] || {};
-      rec.lastEncounter = {
-        ts: Date.now(),
-        room: currentRoomCode || null,
-        aiRisk: aiResult?.risk || null,
-        aiAction: aiAction?.type || null
-      };
+      rec.lastEncounter = { ts: Date.now(), room: currentRoomCode || null, aiRisk: aiResult?.risk || null, aiAction: aiAction?.type || null };
       recs[selectedPatient.id] = rec;
       saveRecords(recs);
 
-      // log utilization
       logActivity("session_complete", { patientId:selectedPatient.id });
       renderTelehealthHeatmap();
       refreshFHIRPayload();
@@ -1617,7 +1544,6 @@
 
     function openPatientPortal(){
       openModal("patientPortalModal");
-      // prefill if logged patient
       const u = currentUser;
       if(u?.role==="Patient"){
         document.getElementById("ptId").value = u.patientId || "PT-DEMO";
@@ -1661,20 +1587,17 @@
         notes: document.getElementById("ptNotes").value || ""
       };
 
-      // store in records
       const records = getRecords();
       const rec = records[id] || {};
       rec.intake = intake;
       records[id] = rec;
       saveRecords(records);
 
-      // add to queue if not present
       const q = getQueue();
       if(!q.some(p=>p.id===id)){
         q.unshift({ id, name, age:intake.age||"—", sex:intake.sex||"—", complaint:intake.complaint||"—", status:"Waiting", created:Date.now() });
         saveQueue(q);
       } else {
-        // update queue display fields
         q.forEach(p=>{
           if(p.id===id){
             p.name=name;
@@ -1705,14 +1628,11 @@
       const rx = rec.prescriptions || [];
       const refs = rec.referrals || [];
       const last = rec.lastEncounter ? new Date(rec.lastEncounter.ts).toLocaleString() : "—";
-      toast(
-        `Patient: ${id}\nLast Encounter: ${last}\nReferrals: ${refs.length}\nPrescriptions: ${rx.length}`
-      );
+      toast(`Patient: ${id}\nLast Encounter: ${last}\nReferrals: ${refs.length}\nPrescriptions: ${rx.length}`);
       document.getElementById("recordStatus").textContent = `Found record. Referrals: ${refs.length}, eRx: ${rx.length}`;
     }
 
     function bumpTeleSessionCount(){
-      // show a metric on hero
       const events = getActivityEvents();
       const sessions = events.filter(e=>e.type==="session_start").length;
       document.getElementById("teleSessions").textContent = `${sessions} Telehealth Sessions (demo)`;
@@ -1739,11 +1659,7 @@
       const records = getRecords();
       const rec = records[selectedPatient.id] || {};
       rec.referrals = rec.referrals || [];
-      rec.referrals.push({
-        ts: Date.now(),
-        facility, urgency, reason,
-        room: currentRoomCode || null
-      });
+      rec.referrals.push({ ts: Date.now(), facility, urgency, reason, room: currentRoomCode || null });
       records[selectedPatient.id] = rec;
       saveRecords(records);
 
@@ -1757,7 +1673,6 @@
     function openRx(){
       if(!selectedPatient){ toast("Select a patient first."); return; }
       openModal("rxModal");
-      // simple defaults
       document.getElementById("rxMed").value = aiResult?.risk==="High" ? "Oxygen + facility protocol meds" : "Paracetamol";
       document.getElementById("rxDose").value = aiResult?.risk==="High" ? "Per protocol" : "500mg";
       document.getElementById("rxFreq").value = aiResult?.risk==="High" ? "As directed" : "Every 6–8 hours PRN";
@@ -1821,13 +1736,7 @@
         type:"collection",
         timestamp:new Date().toISOString(),
         entry:[
-          {
-            resource:{
-              resourceType:"Patient",
-              id: pid,
-              name:[{ text:intake.name || "Demo Patient" }]
-            }
-          },
+          { resource:{ resourceType:"Patient", id: pid, name:[{ text:intake.name || "Demo Patient" }] } },
           {
             resource:{
               resourceType:"Encounter",
@@ -1949,12 +1858,11 @@
       const events = getActivityEvents();
       const overrides = events.filter(e=>e.type==="override").length;
       const aiRuns = events.filter(e=>e.type==="ai_recommendation").length;
-      const rate = aiRuns ? Math.min(99, Math.round((overrides/aiRuns)*1000)/10) : 12.4; // %
+      const rate = aiRuns ? Math.min(99, Math.round((overrides/aiRuns)*1000)/10) : 12.4;
       document.getElementById("overrideRateBig").textContent = rate.toFixed(1)+"%";
       document.getElementById("overrideRateChip").textContent = "Override Rate: "+rate.toFixed(1)+"%";
       document.getElementById("overrideBar").style.width = Math.min(100, Math.max(5, rate*6))+"%";
 
-      // fake response time avg:
       const resp = (2.0 + Math.random()*0.8).toFixed(1)+"s";
       document.getElementById("aiRespTime").textContent = resp;
 
@@ -2080,8 +1988,6 @@
     function seedTelehealthDemoActivity(){
       const now = Date.now();
       const events = [];
-      const types = Object.keys(HEAT_WEIGHTS);
-
       for(let i=0;i<140;i++){
         const daysAgo = Math.floor(Math.random()*80);
         const ts = now - daysAgo*24*60*60*1000 - Math.floor(Math.random()*8*60*60*1000);
@@ -2097,11 +2003,8 @@
         events.push({ ts, type:t, meta:{ seeded:true } });
       }
 
-      // merge into existing events (don’t wipe)
       const merged = [...getActivityEvents(), ...events];
       saveActivityEvents(merged);
-
-      // also seed queue/records a bit
       seedQueue();
 
       renderTelehealthHeatmap();
@@ -2173,16 +2076,6 @@
               <p class="text-sm text-slate-600">
                 AI symptom checker integrated with national health insurance scheme. Evaluating impact on primary care utilization and appropriate referrals.
               </p>
-              <div class="grid grid-cols-2 gap-4 mt-4">
-                <div class="border border-slate-200 p-3 rounded-lg">
-                  <div class="text-sm font-medium text-slate-900">Response Time</div>
-                  <div class="text-lg font-bold text-teal-600">&lt;3 seconds</div>
-                </div>
-                <div class="border border-slate-200 p-3 rounded-lg">
-                  <div class="text-sm font-medium text-slate-900">Accuracy</div>
-                  <div class="text-lg font-bold text-teal-600">87.3%</div>
-                </div>
-              </div>
               <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
                 <div class="font-semibold text-slate-900 mb-1">Telehealth overlay (new)</div>
                 <div class="text-sm text-slate-600">A triage consult can be initiated remotely with an intake form + video-room code.</div>
@@ -2222,7 +2115,7 @@
      * MAP
      ********************/
     function selectCountry(country){
-      document.querySelectorAll(".country-path").forEach(p=>p.classList.remove("active"));
+      document.querySelectorAll(".country-path").forEach(p => p.classList.remove("active"));
       document.getElementById(country).classList.add("active");
 
       const details = {
@@ -2237,55 +2130,6 @@
       alert(`${d.name}\nFacilities: ${d.facilities}\nPatients: ${d.patients.toLocaleString()}\nStatus: ${d.status}`);
     }
     function filterMap(type){ console.log("Filtering map:", type); }
-
-    /********************
-     * CHARTS
-     ********************/
-    function initCharts(){
-      const ctx1 = document.getElementById("outcomesChart").getContext("2d");
-      new Chart(ctx1,{
-        type:"bar",
-        data:{
-          labels:["Diagnostic Error","Treatment Error","Adverse Events","Mortality"],
-          datasets:[
-            { label:"Without AI", data:[18.5,14.2,8.3,3.2], backgroundColor:"rgba(148,163,184,0.8)", borderRadius:6 },
-            { label:"With AI Support", data:[15.6,12.4,6.8,2.8], backgroundColor:"rgba(13,148,136,0.8)", borderRadius:6 }
-          ]
-        },
-        options:{
-          responsive:true, maintainAspectRatio:false,
-          plugins:{ legend:{ position:"bottom" }},
-          scales:{
-            y:{ beginAtZero:true, grid:{ color:"rgba(0,0,0,0.05)" }},
-            x:{ grid:{ display:false }}
-          }
-        }
-      });
-
-      const ctx2 = document.getElementById("adoptionChart").getContext("2d");
-      new Chart(ctx2,{
-        type:"line",
-        data:{
-          labels:["Week 1","Week 2","Week 4","Week 6","Week 8","Week 12"],
-          datasets:[{
-            label:"Daily Active Users",
-            data:[45,62,78,85,89,94],
-            borderColor:"rgb(13,148,136)",
-            backgroundColor:"rgba(13,148,136,0.1)",
-            tension:0.4,
-            fill:true
-          }]
-        },
-        options:{
-          responsive:true, maintainAspectRatio:false,
-          plugins:{ legend:{ display:false }},
-          scales:{
-            y:{ beginAtZero:true, max:100 },
-            x:{ grid:{ display:false }}
-          }
-        }
-      });
-    }
 
     /********************
      * NEW EVALUATION (demo)
@@ -2323,7 +2167,6 @@
       updateSafetyKPIs();
       bumpTeleSessionCount();
       toast("Reset complete.");
-      // show login button
       document.getElementById("loginBtn").classList.remove("hidden");
       document.getElementById("userChip").classList.add("hidden");
     }
@@ -2358,11 +2201,9 @@
     document.addEventListener("DOMContentLoaded", ()=>{
       updateOnlineStatus();
 
-      // Load language
       const savedLang = localStorage.getItem("afyaai-lang");
       if(savedLang && savedLang!=="en") changeLanguage(savedLang);
 
-      // Load user
       const u = safeJsonParse(localStorage.getItem("afyaai-user") || "null", null);
       if(u){
         currentUser = u;
@@ -2372,14 +2213,12 @@
         document.getElementById("userNameChip").textContent = u.name;
       }
 
-      initCharts();
       renderQueue();
       renderTelehealthHeatmap();
       updateSafetyKPIs();
       bumpTeleSessionCount();
       refreshFHIRPayload();
     });
-
   </script>
 </body>
 </html>

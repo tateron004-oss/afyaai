@@ -38,7 +38,6 @@
     }
     body[dir="rtl"]{direction:rtl}
     .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
 
     .topbar{
       background:linear-gradient(90deg, var(--wb-blue) 0%, var(--who-blue) 55%, var(--wb-blue-2) 100%);
@@ -61,22 +60,20 @@
       padding:.28rem .55rem;border-radius:999px;
       border:1px solid var(--border);
       background:var(--surface-2);
-      font-size:12px;font-weight:700;color:var(--muted);
+      font-size:12px;font-weight:800;color:var(--muted);
     }
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-      padding:.62rem .95rem;border-radius:12px;font-weight:700;
+      padding:.62rem .95rem;border-radius:12px;font-weight:800;
       border:1px solid transparent; transition:all .15s ease;
       user-select:none;
     }
     .btn-primary{background:var(--who-blue);color:#fff}
     .btn-primary:hover{filter:brightness(.95)}
-    .btn-soft{background:var(--surface-2); border-color:var(--border); color:var(--ink); border:1px solid var(--border)}
+    .btn-soft{background:var(--surface-2); border:1px solid var(--border); color:var(--ink)}
     .btn-soft:hover{background:#eef3fb}
     .btn-slate{background:#0f172a;color:#fff}
     .btn-slate:hover{filter:brightness(.95)}
-    .btn-danger{background:var(--bad);color:#fff}
-    .btn-danger:hover{filter:brightness(.95)}
     .input{
       width:100%; padding:.62rem .78rem;
       border:1px solid var(--border);
@@ -95,19 +92,22 @@
       background-position: -1px -1px;
       border-radius:16px;
     }
+
     .status-dot{width:9px;height:9px;border-radius:999px;display:inline-block}
     .status-live{background:var(--good); box-shadow:0 0 0 4px rgba(17,138,78,.12)}
     .status-offline{background:var(--bad); box-shadow:0 0 0 4px rgba(197,48,48,.12)}
+
     table{border-collapse:separate;border-spacing:0;width:100%}
     th,td{padding:10px 10px; border-bottom:1px solid var(--border); vertical-align:top}
     th{
-      text-align:left;font-size:12px;color:var(--muted);font-weight:800;
+      text-align:left;font-size:12px;color:var(--muted);font-weight:900;
       background:linear-gradient(180deg,#fbfdff 0%, #f5f7fb 100%);
       position:sticky; top:0; z-index:1;
     }
     tr:hover td{background:#fbfdff}
+
     .badge{
-      font-size:12px;font-weight:800;
+      font-size:12px;font-weight:900;
       padding:.2rem .5rem;border-radius:999px;
       border:1px solid var(--border);
       background:var(--surface-2);
@@ -116,11 +116,23 @@
       white-space:nowrap;
     }
     .b-good{border-color:rgba(17,138,78,.25); background:rgba(17,138,78,.08); color:var(--good)}
-    .b-warn{border-color:rgba(183,121,31,.25); background:rgba(183,121,31,.08); color:var(--warn)}
     .b-bad{border-color:rgba(197,48,48,.25); background:rgba(197,48,48,.08); color:var(--bad)}
     .b-info{border-color:rgba(0,114,188,.25); background:rgba(0,114,188,.08); color:var(--who-blue)}
 
-    /* Accessibility helpers */
+    /* ✅ Make the language dropdown legible on the dark topbar */
+    .topbar-select{
+      background:#ffffff;
+      color:var(--ink);
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:12px;
+      padding:.42rem .55rem;
+      font-weight:900;
+      outline:none;
+      min-width: 210px;
+    }
+    .topbar-select option{ color:var(--ink); background:#fff; }
+
+    /* Captions overlay */
     .caption-overlay{
       position:absolute; left:12px; right:12px; bottom:12px;
       padding:.5rem .75rem;
@@ -132,16 +144,28 @@
       border:1px solid rgba(255,255,255,.15);
       backdrop-filter: blur(6px);
     }
-    .caption-overlay .label{ font-size:11px; opacity:.8; font-weight:800; margin-bottom:.25rem; }
-    .caption-overlay .text{ font-weight:700; }
+    .caption-overlay .label{ font-size:11px; opacity:.85; font-weight:900; margin-bottom:.25rem; }
+    .caption-overlay .text{ font-weight:800; }
 
-    /* Modal */
+    /* Modals */
     .modal-backdrop{position:fixed; inset:0; background:rgba(11,18,32,.55); backdrop-filter:blur(6px); z-index:60; display:flex; align-items:center; justify-content:center; padding:18px;}
     .modal{max-width:980px; width:100%; max-height:90vh; overflow:auto; border-radius:18px; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow);}
     .modal-h{padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
     .modal-b{padding:18px;}
     .hidden{display:none!important}
-    .no-print{}
+
+    /* Partner links */
+    .partner-link{
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+      padding:.65rem .75rem; border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .partner-link:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(11,18,32,.08); }
+    .partner-link .name{ font-weight:900; }
+    .partner-link .meta{ font-size:12px; color:var(--muted); font-weight:700; }
+
     @media print{
       .no-print{display:none!important}
       body{background:#fff}
@@ -171,26 +195,9 @@
         </div>
 
         <div class="flex items-center gap-2 no-print">
-          <!-- Language dropdown -->
-          <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
+          <div class="hidden sm:flex items-center gap-2">
             <i class="fa-solid fa-language text-white/90"></i>
-            <select id="langSelect" class="bg-transparent text-white text-sm font-bold outline-none">
-              <!-- injected by JS -->
-            </select>
-          </div>
-
-          <!-- Country filter -->
-          <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
-            <i class="fa-solid fa-flag text-white/90"></i>
-            <select id="countryFilter" class="bg-transparent text-white text-sm font-bold outline-none">
-              <option value="ALL">All countries</option>
-              <option value="Kenya">Kenya</option>
-              <option value="Nigeria">Nigeria</option>
-              <option value="Rwanda">Rwanda</option>
-              <option value="South Africa">South Africa</option>
-              <option value="Ethiopia">Ethiopia</option>
-              <option value="Ghana">Ghana</option>
-            </select>
+            <select id="langSelect" class="topbar-select" aria-label="Language"></select>
           </div>
 
           <button id="pdfBtn" class="btn btn-soft" title="Export dashboard to PDF">
@@ -218,6 +225,7 @@
               <span class="chip"><i class="fa-solid fa-video"></i> <span data-i18n="chip_telehealth">Telehealth</span></span>
               <span class="chip"><i class="fa-solid fa-scale-balanced"></i> <span data-i18n="chip_regulatory">Regulatory Readiness</span></span>
             </div>
+
             <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight" data-i18n="hero_title">
               National AI Health Program Monitoring (Demo)
             </h1>
@@ -227,11 +235,15 @@
 
             <div class="mt-4 flex flex-wrap gap-2 no-print">
               <button class="btn btn-primary" id="openPortalBtn">
-                <i class="fa-solid fa-hospital-user"></i> Patient Portal
+                <i class="fa-solid fa-hospital-user"></i> <span data-i18n="patient_portal">Patient Portal</span>
               </button>
               <button class="btn btn-soft" id="runAiBtn">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Recommendation (Mock)
+                <i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="run_ai">Run AI Recommendation (Mock)</span>
               </button>
+            </div>
+
+            <div class="mt-3 text-xs muted" data-i18n="tip_voice">
+              Tip: For voice features, use Chrome/Edge and allow microphone access. Hosting on HTTPS (e.g., GitHub Pages) is recommended.
             </div>
           </div>
 
@@ -248,7 +260,7 @@
               <div class="card-flat p-3">
                 <div class="tiny muted font-extrabold" data-i18n="composite_score">Composite Score</div>
                 <div class="text-2xl font-extrabold" id="nationalComposite">72</div>
-                <div class="tiny muted" id="nationalCompositeNote">Across all countries</div>
+                <div class="tiny muted" id="nationalCompositeNote" data-i18n="across_all">Across all countries</div>
               </div>
               <div class="card-flat p-3">
                 <div class="tiny muted font-extrabold" data-i18n="safety_signal">Safety Signal Rate</div>
@@ -269,22 +281,22 @@
       <section class="mt-6 card p-6 md:p-7">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <h2 class="text-lg md:text-xl font-extrabold">AI Recommendation (Mock)</h2>
-            <span class="badge b-info"><i class="fa-solid fa-brain"></i> Care Plan</span>
+            <h2 class="text-lg md:text-xl font-extrabold" data-i18n="ai_title">AI Recommendation (Mock)</h2>
+            <span class="badge b-info"><i class="fa-solid fa-brain"></i> <span data-i18n="care_plan">Care Plan</span></span>
           </div>
           <span class="text-xs muted" id="aiLatency">—</span>
         </div>
 
-        <div id="aiView" class="mt-3 text-sm text-slate-700">
-          <div class="text-slate-400">Run AI to generate recommendations.</div>
+        <div id="aiView" class="mt-3 text-sm text-slate-700 whitespace-pre-line">
+          <div class="text-slate-400" data-i18n="ai_hint">Run AI to generate recommendations.</div>
         </div>
 
         <div class="mt-3 flex flex-wrap gap-2 no-print">
           <button class="btn btn-slate" type="button" id="ttsReadPlanBtn">
-            <i class="fa-solid fa-volume-high"></i> Read Plan Aloud (Patient-friendly)
+            <i class="fa-solid fa-volume-high"></i> <span data-i18n="tts_read_plan">Read Plan Aloud (Patient-friendly)</span>
           </button>
           <button class="btn btn-soft" type="button" id="ttsStopBtn">
-            <i class="fa-solid fa-stop"></i> Stop
+            <i class="fa-solid fa-stop"></i> <span data-i18n="stop">Stop</span>
           </button>
         </div>
         <div class="text-xs muted mt-2" id="ttsStatus">—</div>
@@ -301,12 +313,57 @@
         </div>
       </section>
 
+      <!-- Consortium partners -->
+      <section class="mt-6 card p-6 md:p-7">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="partners_title">Consortium Partners (Reference Links)</h2>
+          <span class="badge b-info"><i class="fa-solid fa-link"></i> <span data-i18n="public_links">Public websites</span></span>
+        </div>
+        <p class="mt-2 text-sm muted" data-i18n="partners_note">
+          Reference links to real institutions. Replace or append with your confirmed consortium members for the RFP submission.
+        </p>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <a class="partner-link" href="https://www.who.int" target="_blank" rel="noopener">
+            <div>
+              <div class="name">World Health Organization (WHO)</div>
+              <div class="meta">Norms, standards, digital health strategy</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://www.worldbank.org" target="_blank" rel="noopener">
+            <div>
+              <div class="name">World Bank</div>
+              <div class="meta">Health systems strengthening, financing</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://www.unicef.org/innovation" target="_blank" rel="noopener">
+            <div>
+              <div class="name">UNICEF Office of Innovation</div>
+              <div class="meta">Digital public goods, innovation financing</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://www.dhis2.org" target="_blank" rel="noopener">
+            <div>
+              <div class="name">DHIS2</div>
+              <div class="meta">Health data platform used by many Ministries</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </section>
+
     </section>
   </main>
 
   <!-- Login modal -->
-  <div id="loginModal" class="modal-backdrop hidden no-print">
-    <div class="modal">
+  <div id="loginModal" class="modal-backdrop hidden no-print" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-h">
         <div class="font-extrabold" data-i18n="login_demo">Login (Demo)</div>
         <button id="closeLogin" class="btn btn-soft" style="padding:.45rem .7rem"><i class="fa-solid fa-xmark"></i></button>
@@ -315,7 +372,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="tiny muted font-extrabold" data-i18n="role">Role</label>
-            <select class="input mt-1 font-bold" id="loginRole">
+            <select class="input mt-1 font-extrabold" id="loginRole">
               <option value="Clinician">Clinician</option>
               <option value="Patient">Patient</option>
               <option value="Ministry">Ministry</option>
@@ -324,7 +381,7 @@
           </div>
           <div>
             <label class="tiny muted font-extrabold" data-i18n="name">Name</label>
-            <input class="input mt-1 font-bold" id="loginName" placeholder="e.g., Dr. Amina" />
+            <input class="input mt-1 font-extrabold" id="loginName" placeholder="e.g., Dr. Amina" />
           </div>
         </div>
         <div class="flex gap-2">
@@ -336,11 +393,11 @@
   </div>
 
   <!-- Patient Portal modal -->
-  <div id="patientPortalModal" class="modal-backdrop hidden no-print">
-    <div class="modal">
+  <div id="patientPortalModal" class="modal-backdrop hidden no-print" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-h">
-        <div class="font-extrabold">Patient Portal (Intake + Join Video Room)</div>
-        <button class="btn btn-soft" style="padding:.45rem .7rem" onclick="closeModal('patientPortalModal')">
+        <div class="font-extrabold" data-i18n="portal_title">Patient Portal (Intake + Join Video Room)</div>
+        <button class="btn btn-soft" style="padding:.45rem .7rem" id="closePortalBtn">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -351,41 +408,41 @@
           <!-- Intake -->
           <div class="space-y-3">
             <div class="card-flat p-4">
-              <div class="text-sm font-extrabold mb-2">Patient Intake Form</div>
+              <div class="text-sm font-extrabold mb-2" data-i18n="intake_title">Patient Intake Form</div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label class="tiny muted font-extrabold">Full Name</label>
+                  <label class="tiny muted font-extrabold" data-i18n="full_name">Full Name</label>
                   <input class="input mt-1" id="ptName" placeholder="e.g., Mary N." />
                 </div>
                 <div>
-                  <label class="tiny muted font-extrabold">Age</label>
+                  <label class="tiny muted font-extrabold" data-i18n="age">Age</label>
                   <input class="input mt-1" id="ptAge" placeholder="e.g., 34" />
                 </div>
                 <div>
-                  <label class="tiny muted font-extrabold">Phone</label>
+                  <label class="tiny muted font-extrabold" data-i18n="phone">Phone</label>
                   <input class="input mt-1" id="ptPhone" placeholder="+254..." />
                 </div>
                 <div>
-                  <label class="tiny muted font-extrabold">Chief Complaint</label>
+                  <label class="tiny muted font-extrabold" data-i18n="chief_complaint">Chief Complaint</label>
                   <input class="input mt-1" id="ptComplaint" placeholder="e.g., fever and cough" />
                 </div>
               </div>
 
               <div class="mt-3">
-                <label class="tiny muted font-extrabold">Allergies / Notes</label>
+                <label class="tiny muted font-extrabold" data-i18n="notes">Allergies / Notes</label>
                 <textarea class="input mt-1" id="ptNotes" rows="3" placeholder="e.g., Penicillin allergy"></textarea>
               </div>
 
-              <!-- Accessibility: Voice-to-Text + Translation + Read Aloud -->
+              <!-- STT block -->
               <div class="mt-3 card-flat p-3">
                 <div class="flex items-center justify-between gap-2">
                   <div>
                     <div class="font-extrabold text-sm">
                       <i class="fa-solid fa-microphone-lines"></i>
-                      <span>Voice Symptom Capture</span>
+                      <span data-i18n="voice_capture">Voice Symptom Capture</span>
                     </div>
-                    <div class="tiny muted">
+                    <div class="tiny muted" data-i18n="voice_capture_note">
                       Speak your symptoms. We’ll transcribe and (optionally) translate to the selected UI language.
                     </div>
                   </div>
@@ -396,44 +453,44 @@
 
                 <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                   <button class="btn btn-primary" type="button" id="sttStartBtn">
-                    <i class="fa-solid fa-microphone"></i><span>Start</span>
+                    <i class="fa-solid fa-microphone"></i><span data-i18n="start">Start</span>
                   </button>
                   <button class="btn btn-soft" type="button" id="sttStopBtn" disabled>
-                    <i class="fa-solid fa-stop"></i><span>Stop</span>
+                    <i class="fa-solid fa-stop"></i><span data-i18n="stop">Stop</span>
                   </button>
                   <button class="btn btn-soft" type="button" id="sttClearBtn">
-                    <i class="fa-solid fa-eraser"></i><span>Clear</span>
+                    <i class="fa-solid fa-eraser"></i><span data-i18n="clear">Clear</span>
                   </button>
                 </div>
 
                 <div class="mt-3">
-                  <div class="tiny muted font-extrabold">Live transcript</div>
+                  <div class="tiny muted font-extrabold" data-i18n="live_transcript">Live transcript</div>
                   <div id="sttTranscript"
-                    class="mt-1 p-3 rounded-xl border border-slate-200 bg-white text-sm"
-                    style="min-height:72px"
-                    aria-live="polite">—</div>
+                       class="mt-1 p-3 rounded-xl border border-slate-200 bg-white text-sm"
+                       style="min-height:72px"
+                       aria-live="polite">—</div>
 
                   <div class="mt-3 flex items-center justify-between">
-                    <div class="tiny muted font-extrabold">Translated (UI language)</div>
+                    <div class="tiny muted font-extrabold" data-i18n="translated_ui">Translated (UI language)</div>
                     <label class="flex items-center gap-2 tiny muted">
                       <input type="checkbox" id="sttAutoTranslate" checked />
-                      Auto-translate
+                      <span data-i18n="auto_translate">Auto-translate</span>
                     </label>
                   </div>
                   <div id="sttTranslated"
-                    class="mt-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm"
-                    style="min-height:64px"
-                    aria-live="polite">—</div>
+                       class="mt-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm"
+                       style="min-height:64px"
+                       aria-live="polite">—</div>
 
                   <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                     <button class="btn btn-soft" type="button" id="sttApplyToComplaintBtn">
-                      <i class="fa-solid fa-arrow-turn-down"></i><span>→ Chief Complaint</span>
+                      <i class="fa-solid fa-arrow-turn-down"></i><span data-i18n="to_complaint">→ Chief Complaint</span>
                     </button>
                     <button class="btn btn-soft" type="button" id="sttApplyToNotesBtn">
-                      <i class="fa-solid fa-arrow-turn-down"></i><span>→ Notes</span>
+                      <i class="fa-solid fa-arrow-turn-down"></i><span data-i18n="to_notes">→ Notes</span>
                     </button>
                     <button class="btn btn-slate" type="button" id="sttSpeakTranslatedBtn">
-                      <i class="fa-solid fa-volume-high"></i><span>Read Aloud</span>
+                      <i class="fa-solid fa-volume-high"></i><span data-i18n="read_aloud">Read Aloud</span>
                     </button>
                   </div>
 
@@ -442,8 +499,10 @@
               </div>
 
               <div class="mt-3 flex gap-2 no-print">
-                <button class="btn btn-primary w-full" onclick="submitIntake()"><i class="fa-solid fa-paper-plane"></i> Submit Intake</button>
-                <button class="btn btn-soft w-full" onclick="fillSampleIntake()">Auto-fill</button>
+                <button class="btn btn-primary w-full" type="button" id="submitIntakeBtn">
+                  <i class="fa-solid fa-paper-plane"></i> <span data-i18n="submit_intake">Submit Intake</span>
+                </button>
+                <button class="btn btn-soft w-full" type="button" id="autoFillBtn" data-i18n="autofill">Auto-fill</button>
               </div>
               <div class="text-xs muted mt-2" id="intakeStatus">—</div>
             </div>
@@ -453,52 +512,50 @@
           <div class="space-y-3">
             <div class="card-flat p-4">
               <div class="flex items-center justify-between">
-                <div class="text-sm font-extrabold">Video Room (Simulated)</div>
+                <div class="text-sm font-extrabold" data-i18n="video_room">Video Room (Simulated)</div>
                 <span class="badge b-info" id="ccSupportBadge"><i class="fa-solid fa-universal-access"></i> CC: Checking…</span>
               </div>
-              <div class="tiny muted mt-1">Captions use browser SpeechRecognition (simulated clinician speech).</div>
+              <div class="tiny muted mt-1" data-i18n="cc_note">Captions use browser SpeechRecognition (simulated clinician speech).</div>
 
               <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- Clinician tile with captions overlay -->
-                <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center overflow-hidden">
+                <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[170px] flex items-center justify-center overflow-hidden">
                   <div class="text-center">
                     <i class="fa-solid fa-user-doctor text-2xl mb-2"></i>
-                    <div class="text-sm font-extrabold">Clinician Video Tile</div>
-                    <div class="text-xs text-slate-300">Simulated</div>
+                    <div class="text-sm font-extrabold" data-i18n="clinician_tile">Clinician Video Tile</div>
+                    <div class="text-xs text-slate-300" data-i18n="simulated">Simulated</div>
 
                     <div class="mt-3 flex flex-wrap gap-2 justify-center">
                       <button class="btn btn-soft text-xs" type="button" id="ccStartBtn">
-                        <i class="fa-solid fa-closed-captioning"></i> Start Captions
+                        <i class="fa-solid fa-closed-captioning"></i> <span data-i18n="start_captions">Start Captions</span>
                       </button>
                       <button class="btn btn-soft text-xs" type="button" id="ccStopBtn" disabled>
-                        <i class="fa-solid fa-stop"></i> Stop
+                        <i class="fa-solid fa-stop"></i> <span data-i18n="stop">Stop</span>
                       </button>
                       <button class="btn btn-soft text-xs" type="button" id="ccClearBtn">
-                        <i class="fa-solid fa-eraser"></i> Clear
+                        <i class="fa-solid fa-eraser"></i> <span data-i18n="clear">Clear</span>
                       </button>
                     </div>
                   </div>
 
                   <div class="caption-overlay" id="ccOverlay" style="display:none;">
-                    <div class="label">Closed Captions (Simulated)</div>
+                    <div class="label" data-i18n="cc_label">Closed Captions (Simulated)</div>
                     <div class="text" id="ccText">—</div>
                   </div>
                 </div>
 
-                <!-- Patient tile -->
-                <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center">
+                <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[170px] flex items-center justify-center">
                   <div class="text-center">
                     <i class="fa-solid fa-user text-2xl mb-2"></i>
-                    <div class="text-sm font-extrabold">Patient Video Tile</div>
-                    <div class="text-xs text-slate-300" id="patientJoinStatus">Waiting for patient…</div>
-                    <button class="btn btn-primary text-xs mt-3" type="button" onclick="joinVideoRoom()">
-                      <i class="fa-solid fa-video"></i> Join Room
+                    <div class="text-sm font-extrabold" data-i18n="patient_tile">Patient Video Tile</div>
+                    <div class="text-xs text-slate-300" id="patientJoinStatus" data-i18n="waiting_patient">Waiting for patient…</div>
+                    <button class="btn btn-primary text-xs mt-3" type="button" id="joinRoomBtn">
+                      <i class="fa-solid fa-video"></i> <span data-i18n="join_room">Join Room</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div class="mt-3 text-xs muted">
+              <div class="mt-3 text-xs muted" data-i18n="privacy_note">
                 Privacy note: STT/CC stops when you close this modal.
               </div>
             </div>
@@ -511,30 +568,22 @@
 
   <script>
     /***************************************************************
-     * i18n + Language Dropdown (Single-File)
+     * ✅ i18n “Language model” (UI translation)
+     * FIXED: Your previous build only changed what had data-i18n.
+     * This new HTML adds data-i18n across the UI so language changes
+     * actually change content.
      ***************************************************************/
-    const AFYA_LANG_KEY = "afyaai-lang-v2";
+    const AFYA_LANG_KEY = "afyaai-lang-v3";
 
     const LANGS = [
       { code:"en", label:"English", native:"English", dir:"ltr" },
       { code:"sw", label:"Swahili", native:"Kiswahili", dir:"ltr" },
-      { code:"ha", label:"Hausa", native:"Hausa", dir:"ltr" },
-      { code:"yo", label:"Yoruba", native:"Yorùbá", dir:"ltr" },
-      { code:"ig", label:"Igbo", native:"Igbo", dir:"ltr" },
-      { code:"am", label:"Amharic", native:"አማርኛ", dir:"ltr" },
-      { code:"om", label:"Oromo", native:"Afaan Oromoo", dir:"ltr" },
-      { code:"ti", label:"Tigrinya", native:"ትግርኛ", dir:"ltr" },
-      { code:"so", label:"Somali", native:"Soomaali", dir:"ltr" },
-      { code:"rw", label:"Kinyarwanda", native:"Ikinyarwanda", dir:"ltr" },
-      { code:"rn", label:"Kirundi", native:"Ikirundi", dir:"ltr" },
-      { code:"ln", label:"Lingala", native:"Lingála", dir:"ltr" },
-      { code:"lu", label:"Luganda", native:"Luganda", dir:"ltr" },
-      { code:"sn", label:"Shona", native:"chiShona", dir:"ltr" },
-      { code:"zu", label:"Zulu", native:"isiZulu", dir:"ltr" },
-      { code:"xh", label:"Xhosa", native:"isiXhosa", dir:"ltr" },
       { code:"fr", label:"French", native:"Français", dir:"ltr" },
       { code:"pt", label:"Portuguese", native:"Português", dir:"ltr" },
-      { code:"ar", label:"Arabic", native:"العربية", dir:"rtl" }
+      { code:"ar", label:"Arabic", native:"العربية", dir:"rtl" },
+      { code:"ha", label:"Hausa", native:"Hausa", dir:"ltr" },
+      { code:"yo", label:"Yoruba", native:"Yorùbá", dir:"ltr" },
+      { code:"am", label:"Amharic", native:"አማርኛ", dir:"ltr" },
     ];
 
     const I18N = {
@@ -550,6 +599,9 @@
         chip_regulatory:"Regulatory Readiness",
         hero_title:"National AI Health Program Monitoring (Demo)",
         hero_subtitle:"Institutional dashboard layout: scorecard, indicator tables, data sources, definitions, audit logs, and workflows — single HTML file.",
+        patient_portal:"Patient Portal",
+        run_ai:"Run AI Recommendation (Mock)",
+        tip_voice:"Tip: For voice features, use Chrome/Edge and allow microphone access. Hosting on HTTPS (e.g., GitHub Pages) is recommended.",
         scorecard_title:"National Summary Scorecard",
         aggregated:"Aggregated",
         scorecard_note:"Composite is a demo-weighted index across core indicators.",
@@ -558,13 +610,58 @@
         overrides_per_ai:"Overrides per AI run",
         data_source_label:"Data source:",
         data_source_demo:"Demo synthetic + local activity logs (browser localStorage).",
+        across_all:"Across all countries",
+
+        ai_title:"AI Recommendation (Mock)",
+        care_plan:"Care Plan",
+        ai_hint:"Run AI to generate recommendations.",
+        tts_read_plan:"Read Plan Aloud (Patient-friendly)",
+        stop:"Stop",
+
         comparison_title:"Country Comparison Table",
         side_by_side:"Side-by-side",
+
+        partners_title:"Consortium Partners (Reference Links)",
+        public_links:"Public websites",
+        partners_note:"Reference links to real institutions. Replace or append with your confirmed consortium members for the RFP submission.",
+
         login_demo:"Login (Demo)",
         role:"Role",
         name:"Name",
-        cancel:"Cancel"
+        cancel:"Cancel",
+
+        portal_title:"Patient Portal (Intake + Join Video Room)",
+        intake_title:"Patient Intake Form",
+        full_name:"Full Name",
+        age:"Age",
+        phone:"Phone",
+        chief_complaint:"Chief Complaint",
+        notes:"Allergies / Notes",
+        voice_capture:"Voice Symptom Capture",
+        voice_capture_note:"Speak your symptoms. We’ll transcribe and (optionally) translate to the selected UI language.",
+        start:"Start",
+        clear:"Clear",
+        live_transcript:"Live transcript",
+        translated_ui:"Translated (UI language)",
+        auto_translate:"Auto-translate",
+        to_complaint:"→ Chief Complaint",
+        to_notes:"→ Notes",
+        read_aloud:"Read Aloud",
+        submit_intake:"Submit Intake",
+        autofill:"Auto-fill",
+
+        video_room:"Video Room (Simulated)",
+        cc_note:"Captions use browser SpeechRecognition (simulated clinician speech).",
+        clinician_tile:"Clinician Video Tile",
+        simulated:"Simulated",
+        start_captions:"Start Captions",
+        cc_label:"Closed Captions (Simulated)",
+        patient_tile:"Patient Video Tile",
+        waiting_patient:"Waiting for patient…",
+        join_room:"Join Room",
+        privacy_note:"Privacy note: STT/CC stops when you close this modal."
       },
+
       sw: {
         app_tagline:"Dashibodi ya ufuatiliaji (WHO / Benki ya Dunia) — Demo",
         online:"Mtandaoni",
@@ -576,6 +673,9 @@
         chip_regulatory:"Utayari wa Udhibiti",
         hero_title:"Ufuatiliaji wa Mpango wa Taifa wa Afya wa AI (Demo)",
         hero_subtitle:"Muundo wa taasisi: scorecard, jedwali la viashiria, vyanzo vya data, ufafanuzi, na kumbukumbu za ukaguzi — faili moja ya HTML.",
+        patient_portal:"Tovuti ya Mgonjwa",
+        run_ai:"Endesha Mapendekezo ya AI (Demo)",
+        tip_voice:"Kidokezo: Kwa sauti, tumia Chrome/Edge na ruhusu kipaza sauti. HTTPS (mf. GitHub Pages) inapendekezwa.",
         scorecard_title:"Kadi ya Muhtasari wa Taifa",
         aggregated:"Jumla",
         scorecard_note:"Alama ya muhtasari ni faharasa ya demo yenye uzito.",
@@ -584,13 +684,58 @@
         overrides_per_ai:"Overrides kwa AI",
         data_source_label:"Chanzo cha data:",
         data_source_demo:"Data ya demo + kumbukumbu za ndani (localStorage).",
+        across_all:"Kwa nchi zote",
+
+        ai_title:"Mapendekezo ya AI (Demo)",
+        care_plan:"Mpango wa Huduma",
+        ai_hint:"Endesha AI ili kutoa mapendekezo.",
+        tts_read_plan:"Soma Mpango kwa Sauti",
+        stop:"Simamisha",
+
         comparison_title:"Jedwali la Ulinganisho wa Nchi",
         side_by_side:"Pembeni kwa pembeni",
+
+        partners_title:"Washirika wa Muungano (Viungo vya Marejeo)",
+        public_links:"Tovuti za umma",
+        partners_note:"Viungo vya taasisi halisi. Badilisha/ongeza washirika wenu waliothibitishwa kwa RFP.",
+
         login_demo:"Ingia (Demo)",
         role:"Jukumu",
         name:"Jina",
-        cancel:"Ghairi"
+        cancel:"Ghairi",
+
+        portal_title:"Tovuti ya Mgonjwa (Fomu + Chumba cha Video)",
+        intake_title:"Fomu ya Mgonjwa",
+        full_name:"Jina Kamili",
+        age:"Umri",
+        phone:"Simu",
+        chief_complaint:"Malalamiko Makuu",
+        notes:"Mzio / Maelezo",
+        voice_capture:"Kukusanya Dalili kwa Sauti",
+        voice_capture_note:"Sema dalili. Tutarekodi na (hiari) kutafsiri kwa lugha ya UI.",
+        start:"Anza",
+        clear:"Futa",
+        live_transcript:"Maneno yaliyorekodiwa",
+        translated_ui:"Tafsiri (lugha ya UI)",
+        auto_translate:"Tafsiri kiotomatiki",
+        to_complaint:"→ Malalamiko",
+        to_notes:"→ Maelezo",
+        read_aloud:"Soma kwa Sauti",
+        submit_intake:"Tuma Fomu",
+        autofill:"Jaza mfano",
+
+        video_room:"Chumba cha Video (Demo)",
+        cc_note:"Manukuu hutumia SpeechRecognition ya kivinjari.",
+        clinician_tile:"Kidirisha cha Daktari",
+        simulated:"Demo",
+        start_captions:"Washa Manukuu",
+        cc_label:"Manukuu (Demo)",
+        patient_tile:"Kidirisha cha Mgonjwa",
+        waiting_patient:"Inasubiri mgonjwa…",
+        join_room:"Jiunge",
+        privacy_note:"Faragha: STT/CC husimama ukifunga dirisha."
       },
+
       fr: {
         app_tagline:"Tableau de bord (OMS / Banque mondiale) — Démo",
         online:"En ligne",
@@ -602,6 +747,9 @@
         chip_regulatory:"Préparation réglementaire",
         hero_title:"Suivi du programme national de santé IA (Démo)",
         hero_subtitle:"Mise en page institutionnelle: scorecard, tableaux d’indicateurs, sources, définitions et journaux — fichier HTML unique.",
+        patient_portal:"Portail patient",
+        run_ai:"Lancer recommandation IA (démo)",
+        tip_voice:"Conseil: pour la voix, utilisez Chrome/Edge et autorisez le micro. HTTPS recommandé (ex: GitHub Pages).",
         scorecard_title:"Scorecard national",
         aggregated:"Agrégé",
         scorecard_note:"Indice composite pondéré (démo).",
@@ -610,94 +758,135 @@
         overrides_per_ai:"Overrides par IA",
         data_source_label:"Source de données:",
         data_source_demo:"Données synthétiques + journaux locaux (localStorage).",
+        across_all:"Tous les pays",
+
+        ai_title:"Recommandation IA (démo)",
+        care_plan:"Plan de soins",
+        ai_hint:"Lancez l’IA pour générer des recommandations.",
+        tts_read_plan:"Lire le plan à voix haute",
+        stop:"Arrêter",
+
         comparison_title:"Tableau comparatif des pays",
         side_by_side:"Côte à côte",
-        login_demo:"Connexion (Démo)",
+
+        partners_title:"Partenaires du consortium (liens de référence)",
+        public_links:"Sites publics",
+        partners_note:"Liens vers des institutions réelles. Remplacez/ajoutez vos partenaires confirmés pour le RFP.",
+
+        login_demo:"Connexion (démo)",
         role:"Rôle",
         name:"Nom",
-        cancel:"Annuler"
+        cancel:"Annuler",
+
+        portal_title:"Portail patient (formulaire + salle vidéo)",
+        intake_title:"Formulaire patient",
+        full_name:"Nom complet",
+        age:"Âge",
+        phone:"Téléphone",
+        chief_complaint:"Motif principal",
+        notes:"Allergies / Notes",
+        voice_capture:"Saisie des symptômes (voix)",
+        voice_capture_note:"Dites vos symptômes. Nous transcrivons et (optionnel) traduisons.",
+        start:"Démarrer",
+        clear:"Effacer",
+        live_transcript:"Transcription en direct",
+        translated_ui:"Traduit (langue UI)",
+        auto_translate:"Traduction auto",
+        to_complaint:"→ Motif",
+        to_notes:"→ Notes",
+        read_aloud:"Lire",
+        submit_intake:"Envoyer",
+        autofill:"Auto-remplir",
+
+        video_room:"Salle vidéo (démo)",
+        cc_note:"Sous-titres via SpeechRecognition du navigateur.",
+        clinician_tile:"Vignette clinicien",
+        simulated:"Simulé",
+        start_captions:"Démarrer sous-titres",
+        cc_label:"Sous-titres (démo)",
+        patient_tile:"Vignette patient",
+        waiting_patient:"En attente du patient…",
+        join_room:"Rejoindre",
+        privacy_note:"Confidentialité: STT/CC s’arrête à la fermeture."
       },
+
       pt: {
         app_tagline:"Painel (OMS / Banco Mundial) — Demo",
         online:"Online",
         export_pdf:"Exportar PDF",
         login:"Entrar",
-        chip_safety:"Segurança & Qualidade",
-        chip_indicators:"Monitoramento de Indicadores",
-        chip_telehealth:"Tele-saúde",
-        chip_regulatory:"Prontidão Regulatória",
         hero_title:"Monitoramento do Programa Nacional de Saúde com IA (Demo)",
         hero_subtitle:"Layout institucional: scorecard, tabelas de indicadores, fontes, definições e logs — arquivo HTML único.",
-        scorecard_title:"Scorecard Nacional",
-        aggregated:"Agregado",
-        scorecard_note:"Índice composto ponderado (demo).",
-        composite_score:"Pontuação composta",
-        safety_signal:"Taxa de sinal de segurança",
-        overrides_per_ai:"Overrides por IA",
-        data_source_label:"Fonte de dados:",
-        data_source_demo:"Dados sintéticos + logs locais (localStorage).",
+        patient_portal:"Portal do paciente",
+        run_ai:"Executar recomendação de IA (demo)",
+        stop:"Parar",
         comparison_title:"Tabela de comparação por país",
-        side_by_side:"Lado a lado",
-        login_demo:"Entrar (Demo)",
-        role:"Função",
-        name:"Nome",
-        cancel:"Cancelar"
+        partners_title:"Parceiros do consórcio (links de referência)",
+        public_links:"Sites públicos",
+        partners_note:"Links para instituições reais. Substitua/adicione parceiros confirmados para o RFP.",
+        portal_title:"Portal do paciente (formulário + sala de vídeo)",
+        intake_title:"Formulário do paciente",
+        submit_intake:"Enviar",
+        autofill:"Auto-preencher",
+        start:"Iniciar",
+        clear:"Limpar",
+        read_aloud:"Ler em voz alta",
+        join_room:"Entrar na sala"
       },
+
       ar: {
         app_tagline:"لوحة متابعة (منظمة الصحة/البنك الدولي) — تجريبي",
         online:"متصل",
         export_pdf:"تصدير PDF",
         login:"تسجيل الدخول",
-        chip_safety:"السلامة والجودة",
-        chip_indicators:"متابعة المؤشرات",
-        chip_telehealth:"الصحة عن بعد",
-        chip_regulatory:"الجاهزية التنظيمية",
         hero_title:"متابعة البرنامج الوطني للصحة بالذكاء الاصطناعي (تجريبي)",
         hero_subtitle:"تصميم مؤسسي: بطاقة وطنية، جداول مؤشرات، مصادر بيانات، تعريفات وسجلات — ملف HTML واحد.",
-        scorecard_title:"بطاقة ملخص وطنية",
-        aggregated:"مجمّع",
-        scorecard_note:"مؤشر مركّب موزون (تجريبي).",
-        composite_score:"النتيجة المركبة",
-        safety_signal:"معدل إشارة السلامة",
-        overrides_per_ai:"التجاوزات لكل IA",
-        data_source_label:"مصدر البيانات:",
-        data_source_demo:"بيانات تجريبية + سجلات محلية (localStorage).",
+        patient_portal:"بوابة المريض",
+        run_ai:"تشغيل توصيات الذكاء الاصطناعي (تجريبي)",
+        stop:"إيقاف",
         comparison_title:"جدول مقارنة الدول",
-        side_by_side:"جنبًا إلى جنب",
-        login_demo:"تسجيل الدخول (تجريبي)",
-        role:"الدور",
-        name:"الاسم",
-        cancel:"إلغاء"
+        partners_title:"شركاء التحالف (روابط مرجعية)",
+        public_links:"مواقع عامة",
+        partners_note:"روابط لمؤسسات حقيقية. استبدل/أضف شركاءكم المعتمدين لطلب العروض.",
+        portal_title:"بوابة المريض (نموذج + غرفة فيديو)",
+        intake_title:"نموذج بيانات المريض",
+        submit_intake:"إرسال",
+        autofill:"تعبئة تلقائية",
+        start:"بدء",
+        clear:"مسح",
+        read_aloud:"قراءة بصوت",
+        join_room:"الانضمام"
       },
-      am: { app_tagline:"የWHO/የዓለም ባንክ ዳሽቦርድ — ሙከራ", online:"በመስመር ላይ", export_pdf:"PDF ላክ", login:"ግባ", hero_title:"የብሔራዊ የAI ጤና ፕሮግራም ክትትል (ሙከራ)", comparison_title:"የአገሮች ንፅፅር ሰንጠረዥ", data_source_label:"የዳታ ምንጭ:" },
-      ha: { app_tagline:"Dashboard (WHO / Bankin Duniya) — Demo", online:"Kan layi", export_pdf:"Fitar da PDF", login:"Shiga", hero_title:"Sa-ido kan Shirin Lafiya na AI na Ƙasa (Demo)", comparison_title:"Teburin Kwatanta Ƙasashe", data_source_label:"Tushen bayanai:" },
-      yo: { app_tagline:"Dásíbọ́ọ̀dù (WHO / World Bank) — Demo", online:"Lórí ayélujára", export_pdf:"Gbé PDF jáde", login:"Wọlé", hero_title:"Ìtẹ̀lé Ètò Ìlera AI ti Orílẹ̀-èdè (Demo)", comparison_title:"Tábìlì Afíwèránṣẹ́ Orílẹ̀-èdè", data_source_label:"Orísun data:" },
-      ig: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"N'ịntanetị", export_pdf:"Wepụ PDF", login:"Banye", hero_title:"Nlekọta Mmemme Ahụike AI nke Mba (Demo)", comparison_title:"Tebụl Ntụnyere Mba", data_source_label:"Isi data:" },
-      so: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Onleen", export_pdf:"Dhoofinta PDF", login:"Gal", hero_title:"La-socodka Barnaamijka Caafimaadka AI ee Qaranka (Demo)", comparison_title:"Jadwal Isbarbardhig Dalal", data_source_label:"Isha xogta:" },
-      rw: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Kuri interineti", export_pdf:"Ohereza PDF", login:"Injira", hero_title:"Gukurikirana gahunda y’igihugu y’ubuzima bwa AI (Demo)", comparison_title:"Imbonerahamwe yo kugereranya ibihugu", data_source_label:"Inkomoko y’ amakuru:" },
-      rn: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Ku rubuga", export_pdf:"Ohereza PDF", login:"Injira", hero_title:"Gukurikirana Porogaramu y’Igihugu y’Ubuzima bwa AI (Demo)", comparison_title:"Imbonerahamwe yo kugereranya ibihugu", data_source_label:"Inkomoko y’amakuru:" },
-      ln: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Na internet", export_pdf:"Bimisa PDF", login:"Kota", hero_title:"Kolanda Programu ya bokolongono ya AI ya bokilo (Demo)", comparison_title:"Tabela ya kokokanisa mikili", data_source_label:"Esika ya ba données:" },
-      lu: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Ku mutimbagano", export_pdf:"Tuma PDF", login:"Yingira", hero_title:"Okugoberera pulogulaamu y'ebyobulamu ya AI ey'eggwanga (Demo)", comparison_title:"Olupapula lw’okugeraageranya amawanga", data_source_label:"Ensibuko ya data:" },
-      sn: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Pamhepo", export_pdf:"Buritsa PDF", login:"Pinda", hero_title:"Kutevera Chirongwa cheHutano cheAI cheNyika (Demo)", comparison_title:"Tafura yekuenzanisa Nyika", data_source_label:"Kunobva data:" },
-      zu: { app_tagline:"I-Dashboard (WHO / World Bank) — Demo", online:"Ku-inthanethi", export_pdf:"Thumela i-PDF", login:"Ngena", hero_title:"Ukuqapha uhlelo lukazwelonke lwe-AI lwezempilo (Demo)", comparison_title:"Itafula lokuqhathanisa amazwe", data_source_label:"Umthombo wedatha:" },
-      xh: { app_tagline:"Ibhodi (WHO / World Bank) — Demo", online:"Kwi-intanethi", export_pdf:"Khupha i-PDF", login:"Ngena", hero_title:"Ukulandelela inkqubo yezempilo ye-AI yesizwe (Demo)", comparison_title:"Itheyibhile yokuthelekisa amazwe", data_source_label:"Umthombo wedatha:" },
-      om: { app_tagline:"Daashboordii (WHO / World Bank) — Demo", online:"Marsariitii irratti", export_pdf:"PDF baasi", login:"Seeni", hero_title:"Hordoffii Sagantaa Fayyaa AI Biyyaalessaa (Demo)", comparison_title:"Gabatee wal-bira qabuu biyyoota", data_source_label:"Madda deetaa:" },
-      ti: { app_tagline:"ዳሽቦርድ (WHO / World Bank) — ሙከራ", online:"ኣብ መስመር ላይ", export_pdf:"PDF ላክ", login:"እቶ", hero_title:"ምክትታል መደብ ጥዕና AI ብሄራዊ (ሙከራ)", comparison_title:"ሰንጠረዥ ንፅፅር ሃገራት", data_source_label:"ምንጪ ዳታ:" }
+
+      // Short packs (fallback to EN for missing keys)
+      ha: { app_tagline:"Dashboard (WHO / Bankin Duniya) — Demo", online:"Kan layi", export_pdf:"Fitar da PDF", login:"Shiga", hero_title:"Sa-ido kan Shirin Lafiya na AI na Ƙasa (Demo)", comparison_title:"Teburin Kwatanta Ƙasashe", patient_portal:"Tashar Mara Lafiya", run_ai:"Gudanar da Shawarar AI (Demo)" },
+      yo: { app_tagline:"Dásíbọ́ọ̀dù (WHO / World Bank) — Demo", online:"Lórí ayélujára", export_pdf:"Gbé PDF jáde", login:"Wọlé", hero_title:"Ìtẹ̀lé Ètò Ìlera AI ti Orílẹ̀-èdè (Demo)", comparison_title:"Tábìlì Afíwèránṣẹ́ Orílẹ̀-èdè", patient_portal:"Pọtàálì Aláìsàn", run_ai:"Ṣiṣẹ́ AI (Demo)" },
+      am: { app_tagline:"የWHO/የዓለም ባንክ ዳሽቦርድ — ሙከራ", online:"በመስመር ላይ", export_pdf:"PDF ላክ", login:"ግባ", hero_title:"የብሔራዊ የAI ጤና ፕሮግራም ክትትል (ሙከራ)", comparison_title:"የአገሮች ንፅፅር ሰንጠረዥ", patient_portal:"የታካሚ ፖርታል", run_ai:"AI ምክር (ሙከራ)" }
     };
 
     function getLang(){ return localStorage.getItem(AFYA_LANG_KEY) || "en"; }
-    function setLang(code){
-      if(!LANGS.some(l=>l.code===code)) code="en";
-      localStorage.setItem(AFYA_LANG_KEY, code);
-      applyLang(code);
-      // keep speech recognizers aligned
-      try { if(sttRecognition) sttRecognition.lang = getLocaleFromLang(code); } catch {}
-      try { if(ccRecognition) ccRecognition.lang = getLocaleFromLang(code); } catch {}
-    }
-    function t(key){
-      const lang = getLang();
+
+    // IMPORTANT: t() can accept an explicit language (so applyLang can fully control)
+    function t(key, langOverride){
+      const lang = langOverride || getLang();
       return (I18N[lang] && I18N[lang][key]) || (I18N.en[key] || key);
     }
+
+    function populateLangDropdown(){
+      const sel = document.getElementById("langSelect");
+      if(!sel) return;
+
+      sel.innerHTML = "";
+      for(const l of LANGS){
+        const opt = document.createElement("option");
+        opt.value = l.code;
+        opt.textContent = (l.native && l.native !== l.label) ? `${l.native} — ${l.label}` : l.label;
+        sel.appendChild(opt);
+      }
+      sel.value = getLang();
+      sel.onchange = (e)=> setLang(e.target.value);
+    }
+
     function applyLang(code){
       const lang = LANGS.find(l=>l.code===code) || LANGS[0];
       document.documentElement.lang = lang.code;
@@ -705,28 +894,31 @@
 
       document.querySelectorAll("[data-i18n]").forEach(el=>{
         const key = el.getAttribute("data-i18n");
-        el.textContent = t(key);
+        el.textContent = t(key, code);
         if(code==="am") el.classList.add("amharic-text"); else el.classList.remove("amharic-text");
       });
 
+      // Keep select value in sync
       const sel = document.getElementById("langSelect");
       if(sel && sel.value !== code) sel.value = code;
+
+      // Update online label after translation
       updateOnlineStatus();
+
+      // Keep speech recognizers aligned (if initialized)
+      try { if(sttRecognition) sttRecognition.lang = getLocaleFromLang(code); } catch {}
+      try { if(ccRecognition) ccRecognition.lang = getLocaleFromLang(code); } catch {}
     }
 
-    function populateLangDropdown(){
-      const sel = document.getElementById("langSelect");
-      sel.innerHTML = LANGS.map(l=>{
-        const label = `${l.native}${l.native!==l.label ? " • "+l.label : ""}`;
-        return `<option value="${l.code}">${label}</option>`;
-      }).join("");
-      sel.value = getLang();
-      sel.addEventListener("change", (e)=>setLang(e.target.value));
+    function setLang(code){
+      if(!LANGS.some(l=>l.code===code)) code="en";
+      localStorage.setItem(AFYA_LANG_KEY, code);
+      applyLang(code);
     }
 
-    /********************
-     * Minimal demo data for comparison table
-     ********************/
+    /***************************************************************
+     * Demo data table
+     ***************************************************************/
     const COUNTRIES = ["Kenya","Nigeria","Rwanda","South Africa","Ethiopia","Ghana"];
     const BASE = {
       "Kenya":       { status:"Active", facilities:12, patients:39849, outcome:16, adoption:74, safety:12.4, dqs:94.7 },
@@ -739,6 +931,8 @@
 
     function renderComparison(){
       const tbl = document.getElementById("comparisonTable");
+      if(!tbl) return;
+
       const rows = [
         { label:"Status", key:"status" },
         { label:"Facilities", key:"facilities" },
@@ -776,13 +970,15 @@
       `;
     }
 
-    /********************
+    /***************************************************************
      * Connectivity
-     ********************/
+     ***************************************************************/
     function updateOnlineStatus(){
       const online = navigator.onLine;
       const dot = document.getElementById("netDot");
       const txt = document.getElementById("netText");
+      if(!dot || !txt) return;
+
       if(online){
         dot.className = "status-dot status-live";
         txt.textContent = t("online");
@@ -794,20 +990,29 @@
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
 
-    /********************
+    /***************************************************************
      * Modals
-     ********************/
-    function openModal(id){ document.getElementById(id).classList.remove("hidden"); }
+     ***************************************************************/
+    function openModal(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.remove("hidden");
+      el.setAttribute("aria-hidden","false");
+    }
     function closeModal(id){
-      document.getElementById(id).classList.add("hidden");
-      // Privacy: stop listening when modals close
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.add("hidden");
+      el.setAttribute("aria-hidden","true");
       try { sttStop(); } catch {}
       try { ccStop(); } catch {}
     }
+    function openLogin(){ openModal("loginModal"); }
+    function closeLogin(){ closeModal("loginModal"); }
 
-    /********************
+    /***************************************************************
      * PDF Export
-     ********************/
+     ***************************************************************/
     async function exportPDF(){
       const { jsPDF } = window.jspdf;
       const el = document.getElementById("pdfCapture");
@@ -819,8 +1024,10 @@
       const imgW = pageW;
       const imgH = canvas.height * (pageW / canvas.width);
       let y = 0, remaining = imgH;
+
       pdf.addImage(img, "PNG", 0, y, imgW, imgH);
       remaining -= pageH;
+
       while(remaining > 0){
         pdf.addPage();
         y = - (imgH - remaining);
@@ -831,7 +1038,7 @@
     }
 
     /***************************************************************
-     * ACCESSIBILITY SUITE (STT / CC / TTS) + demo translation
+     * Accessibility (STT / CC / TTS)
      ***************************************************************/
     let sttRecognition = null;
     let sttIsRunning = false;
@@ -844,7 +1051,7 @@
     let ccInterimText = "";
 
     function getLocaleFromLang(langCode){
-      const map = { en:"en-US", fr:"fr-FR", sw:"sw-KE", ha:"ha-NG", yo:"yo-NG", am:"am-ET", zu:"zu-ZA", ar:"ar-SA", pt:"pt-PT" };
+      const map = { en:"en-US", fr:"fr-FR", sw:"sw-KE", ha:"ha-NG", yo:"yo-NG", am:"am-ET", ar:"ar-SA", pt:"pt-PT" };
       return map[langCode] || "en-US";
     }
     function speechSupported(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
@@ -861,14 +1068,12 @@
       }
     }
 
-    // Offline-friendly demo translation dictionary (not a real translator)
     const DEMO_TRANSLATE = {
-      sw:{ "fever":"homa","cough":"kikohozi","headache":"maumivu ya kichwa","pain":"maumivu","chest":"kifua","breathing":"kupumua","shortness of breath":"upungufu wa pumzi","sore throat":"koo kuuma","vomiting":"kutapika","diarrhea":"kuhara","dizzy":"kizunguzungu","nausea":"kichefuchefu","weakness":"udhaifu","days":"siku","hours":"saa","since":"tangu","for":"kwa" },
-      ha:{ "fever":"zazzabi","cough":"tari","headache":"ciwon kai","pain":"ciwo","chest":"kirji","breathing":"numfashi","shortness of breath":"karancin numfashi","vomiting":"amai","diarrhea":"gudawa","nausea":"tashin zuciya","weakness":"rauni","days":"kwanaki","hours":"awanni","since":"tun","for":"na" },
-      yo:{ "fever":"ìbà","cough":"ikọ́-fèé","headache":"orififo","pain":"irora","chest":"àyà","breathing":"mímì","shortness of breath":"kíkúrú ẹ̀mí","vomiting":"ìgbẹ́gbọ̀n","diarrhea":"ìgbéyà","nausea":"ìforígbárí","weakness":"àìlera","days":"ọjọ́","hours":"wákàtí","since":"láti","for":"fún" },
-      am:{ "fever":"ትኩሳት","cough":"ሳል","headache":"ራስ ምታት","pain":"ህመም","chest":"ደረት","breathing":"መተንፈስ","shortness of breath":"እስትንፋስ እጥረት","vomiting":"ማስመለስ","diarrhea":"ተቅማጥ","nausea":"ማቅለሽለሽ","weakness":"ድካም","days":"ቀናት","hours":"ሰዓታት","since":"ከ","for":"ለ" },
-      zu:{ "fever":"umkhuhlane","cough":"ukukhwehlela","headache":"ikhanda elibuhlungu","pain":"ubuhlungu","chest":"isifuba","breathing":"ukuphefumula","shortness of breath":"ukushoda umoya","vomiting":"ukuhlanza","diarrhea":"isifo sohudo","nausea":"isicanucanu","weakness":"ubuthakathaka","days":"izinsuku","hours":"amahora","since":"kusukela","for":"ngoba" },
-      fr:{ "fever":"fièvre","cough":"toux","headache":"mal de tête","pain":"douleur","chest":"poitrine","breathing":"respiration","shortness of breath":"essoufflement","vomiting":"vomissements","diarrhea":"diarrhée","nausea":"nausée","weakness":"faiblesse","days":"jours","hours":"heures","since":"depuis","for":"pour" }
+      sw:{ "fever":"homa","cough":"kikohozi","headache":"maumivu ya kichwa","pain":"maumivu","shortness of breath":"upungufu wa pumzi","vomiting":"kutapika","diarrhea":"kuhara","nausea":"kichefuchefu","weakness":"udhaifu","days":"siku","since":"tangu" },
+      fr:{ "fever":"fièvre","cough":"toux","headache":"mal de tête","pain":"douleur","shortness of breath":"essoufflement","vomiting":"vomissements","diarrhea":"diarrhée","nausea":"nausée","weakness":"faiblesse","days":"jours","since":"depuis" },
+      ha:{ "fever":"zazzabi","cough":"tari","headache":"ciwon kai","pain":"ciwo","shortness of breath":"karancin numfashi","vomiting":"amai","diarrhea":"gudawa","nausea":"tashin zuciya","weakness":"rauni","days":"kwanaki","since":"tun" },
+      yo:{ "fever":"ìbà","cough":"ikọ́-fèé","headache":"orififo","pain":"irora","shortness of breath":"kíkúrú ẹ̀mí","vomiting":"ìgbẹ́gbọ̀n","diarrhea":"ìgbéyà","nausea":"ìforígbárí","weakness":"àìlera","days":"ọjọ́","since":"láti" },
+      am:{ "fever":"ትኩሳት","cough":"ሳል","headache":"ራስ ምታት","pain":"ህመም","shortness of breath":"እስትንፋስ እጥረት","vomiting":"ማስመለስ","diarrhea":"ተቅማጥ","nausea":"ማቅለሽለሽ","weakness":"ድካም","days":"ቀናት","since":"ከ" }
     };
 
     function demoTranslate(text, lang){
@@ -876,20 +1081,22 @@
       if(!lang || lang==="en") return text;
       const dict = DEMO_TRANSLATE[lang];
       if(!dict) return text;
-      const lower = text.toLowerCase();
-      let out = lower.replaceAll("shortness of breath", dict["shortness of breath"] || "shortness of breath");
-      Object.keys(dict).forEach(k=>{
-        if(k==="shortness of breath") return;
-        const re = new RegExp(`\\b${k.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')}\\b`, "g");
-        out = out.replace(re, dict[k]);
-      });
+
+      let out = text.toLowerCase();
+      // handle multiword first
+      if(dict["shortness of breath"]) out = out.replaceAll("shortness of breath", dict["shortness of breath"]);
+      for(const k of Object.keys(dict)){
+        if(k==="shortness of breath") continue;
+        const escaped = k.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&');
+        out = out.replace(new RegExp(`\\b${escaped}\\b`, "g"), dict[k]);
+      }
       return out;
     }
 
-    /* STT */
     function sttInit(){
       setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
       if(!speechSupported()) return;
+
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       sttRecognition = new SR();
       sttRecognition.continuous = true;
@@ -901,7 +1108,7 @@
         sttIsRunning = true;
         document.getElementById("sttStartBtn")?.setAttribute("disabled","true");
         document.getElementById("sttStopBtn")?.removeAttribute("disabled");
-        sttSetStatus("Listening… Speak now.");
+        document.getElementById("sttStatus").textContent = "Listening…";
       };
       sttRecognition.onend = ()=>{
         sttIsRunning = false;
@@ -909,9 +1116,8 @@
         document.getElementById("sttStopBtn")?.setAttribute("disabled","true");
         sttInterimText = "";
         sttUpdateUi();
-        sttSetStatus("Stopped.");
+        document.getElementById("sttStatus").textContent = "Stopped.";
       };
-      sttRecognition.onerror = (e)=> sttSetStatus("Speech error: " + (e.error || "unknown"));
       sttRecognition.onresult = (event)=>{
         let interim = "";
         for(let i=event.resultIndex;i<event.results.length;i++){
@@ -924,42 +1130,43 @@
         sttFinalText = sttFinalText.trim();
         sttUpdateUi();
       };
+      sttRecognition.onerror = (e)=>{ document.getElementById("sttStatus").textContent = "Speech error: " + (e.error || "unknown"); };
     }
-    function sttSetStatus(msg){ const el=document.getElementById("sttStatus"); if(el) el.textContent=msg; }
+
     function sttCombined(){ return (sttFinalText + (sttInterimText ? (" " + sttInterimText) : "")).trim(); }
+
     function sttUpdateUi(){
       const box = document.getElementById("sttTranscript");
       if(box) box.textContent = sttCombined() || "—";
+
       const translateBox = document.getElementById("sttTranslated");
       const auto = document.getElementById("sttAutoTranslate");
       const lang = getLang();
+
       if(translateBox){
-        if(auto && auto.checked){
-          const translated = demoTranslate(sttCombined(), lang);
-          translateBox.textContent = translated || "—";
-        } else translateBox.textContent = "—";
+        translateBox.textContent = (auto && auto.checked) ? (demoTranslate(sttCombined(), lang) || "—") : "—";
       }
     }
+
     function sttStart(){
       if(!speechSupported()){ alert("Speech-to-text not supported in this browser."); return; }
       if(!sttRecognition) sttInit();
       try { sttRecognition.lang = getLocaleFromLang(getLang()); } catch {}
       if(!sttIsRunning){
-        sttSetStatus("Starting…");
-        try { sttRecognition.start(); } catch(e){ sttSetStatus("Could not start: " + e.message); }
+        try { sttRecognition.start(); } catch(e){ document.getElementById("sttStatus").textContent = "Could not start: " + e.message; }
       }
     }
     function sttStop(){ if(sttRecognition && sttIsRunning){ try { sttRecognition.stop(); } catch {} } }
-    function sttClear(){ sttFinalText=""; sttInterimText=""; sttUpdateUi(); sttSetStatus("Cleared."); }
+    function sttClear(){ sttFinalText=""; sttInterimText=""; sttUpdateUi(); document.getElementById("sttStatus").textContent="Cleared."; }
     function sttApplyToComplaint(){
       const el = document.getElementById("ptComplaint");
       if(!el) return;
       const lang = getLang();
       const auto = document.getElementById("sttAutoTranslate");
       const txt = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
-      if(!txt){ sttSetStatus("No transcript to apply."); return; }
+      if(!txt){ document.getElementById("sttStatus").textContent="No transcript."; return; }
       el.value = txt;
-      sttSetStatus("Applied to Chief Complaint.");
+      document.getElementById("sttStatus").textContent="Applied to Chief Complaint.";
     }
     function sttApplyToNotes(){
       const el = document.getElementById("ptNotes");
@@ -967,16 +1174,16 @@
       const lang = getLang();
       const auto = document.getElementById("sttAutoTranslate");
       const txt = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
-      if(!txt){ sttSetStatus("No transcript to apply."); return; }
+      if(!txt){ document.getElementById("sttStatus").textContent="No transcript."; return; }
       const prev = (el.value || "").trim();
       el.value = prev ? (prev + "\n" + txt) : txt;
-      sttSetStatus("Applied to Notes.");
+      document.getElementById("sttStatus").textContent="Applied to Notes.";
     }
 
-    /* Captions (CC) */
     function ccInit(){
       setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
       if(!speechSupported()) return;
+
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       ccRecognition = new SR();
       ccRecognition.continuous = true;
@@ -998,7 +1205,6 @@
         ccInterimText = "";
         ccRender();
       };
-      ccRecognition.onerror = (e)=> ccSetOverlayText("Caption error: " + (e.error || "unknown"));
       ccRecognition.onresult = (event)=>{
         let interim = "";
         for(let i=event.resultIndex;i<event.results.length;i++){
@@ -1012,6 +1218,7 @@
         ccRender();
       };
     }
+
     function ccCombined(){ return (ccFinalText + (ccInterimText ? (" " + ccInterimText) : "")).trim(); }
     function ccShowOverlay(show){ const o=document.getElementById("ccOverlay"); if(o) o.style.display=show?"block":"none"; }
     function ccSetOverlayText(txt){ const t=document.getElementById("ccText"); if(t) t.textContent=txt||"—"; }
@@ -1020,24 +1227,23 @@
       if(!speechSupported()){ alert("Captions not supported in this browser."); return; }
       if(!ccRecognition) ccInit();
       try { ccRecognition.lang = getLocaleFromLang(getLang()); } catch {}
-      if(!ccIsRunning){ try { ccRecognition.start(); } catch(e){ ccSetOverlayText("Could not start captions: " + e.message); } }
+      if(!ccIsRunning){
+        try { ccRecognition.start(); } catch(e){ ccSetOverlayText("Could not start captions: " + e.message); }
+      }
     }
     function ccStop(){ if(ccRecognition && ccIsRunning){ try { ccRecognition.stop(); } catch {} } }
     function ccClear(){ ccFinalText=""; ccInterimText=""; ccRender(); }
 
-    /* TTS */
-    function ttsSupported(){ return !!window.speechSynthesis; }
     function ttsStopAll(){
       try { window.speechSynthesis?.cancel(); } catch {}
       const s = document.getElementById("ttsStatus");
       if(s) s.textContent = "Stopped.";
     }
     function ttsSpeak(text, langCode){
-      if(!ttsSupported()){ alert("Text-to-speech not supported in this browser."); return; }
+      if(!window.speechSynthesis){ alert("Text-to-speech not supported."); return; }
       if(!text) return;
       ttsStopAll();
       const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = 1.0; utter.pitch = 1.0; utter.volume = 1.0;
       utter.lang = getLocaleFromLang(langCode || "en");
       const status = document.getElementById("ttsStatus");
       if(status) status.textContent = "Reading aloud…";
@@ -1049,17 +1255,17 @@
       const el = document.getElementById("aiView");
       if(!el) return "";
       const txt = (el.innerText || "").trim();
-      if(!txt) return "";
-      return "Here is your care plan. " + txt.replace(/\s+/g," ").trim();
+      return txt ? ("Here is your care plan. " + txt.replace(/\s+/g," ").trim()) : "";
     }
 
-    function bindAccessibilityButtons(){
+    function initAccessibilitySuite(){
       document.getElementById("sttStartBtn")?.addEventListener("click", sttStart);
       document.getElementById("sttStopBtn")?.addEventListener("click", sttStop);
       document.getElementById("sttClearBtn")?.addEventListener("click", sttClear);
       document.getElementById("sttApplyToComplaintBtn")?.addEventListener("click", sttApplyToComplaint);
       document.getElementById("sttApplyToNotesBtn")?.addEventListener("click", sttApplyToNotes);
       document.getElementById("sttAutoTranslate")?.addEventListener("change", sttUpdateUi);
+
       document.getElementById("sttSpeakTranslatedBtn")?.addEventListener("click", ()=>{
         const lang = getLang();
         const auto = document.getElementById("sttAutoTranslate");
@@ -1078,20 +1284,14 @@
       });
       document.getElementById("ttsStopBtn")?.addEventListener("click", ttsStopAll);
 
-      setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
-      setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
-    }
-
-    function initAccessibilitySuite(){
-      bindAccessibilityButtons();
       sttInit();
       ccInit();
       sttUpdateUi();
     }
 
-    /********************
-     * Patient portal demo actions
-     ********************/
+    /***************************************************************
+     * Patient actions + AI mock
+     ***************************************************************/
     function fillSampleIntake(){
       document.getElementById("ptName").value = "Mary N.";
       document.getElementById("ptAge").value = "34";
@@ -1101,68 +1301,70 @@
       document.getElementById("intakeStatus").textContent = "Auto-filled sample intake.";
     }
     function submitIntake(){
-      const name = document.getElementById("ptName").value.trim();
-      const cc = document.getElementById("ptComplaint").value.trim();
+      const name = (document.getElementById("ptName")?.value || "").trim();
+      const cc = (document.getElementById("ptComplaint")?.value || "").trim();
       document.getElementById("intakeStatus").textContent =
-        name && cc ? `Submitted. Thank you, ${name}.` : "Please complete Name and Chief Complaint.";
+        (name && cc) ? `Submitted. Thank you, ${name}.` : "Please complete Name and Chief Complaint.";
     }
     function joinVideoRoom(){
-      document.getElementById("patientJoinStatus").textContent = "Patient joined (simulated).";
+      const el = document.getElementById("patientJoinStatus");
+      if(el) el.textContent = "Patient joined (simulated).";
     }
-
-    /********************
-     * AI recommendation mock
-     ********************/
     function runAiMock(){
       const t0 = performance.now();
       const complaint = (document.getElementById("ptComplaint")?.value || "").trim();
       const notes = (document.getElementById("ptNotes")?.value || "").trim();
+
       const summary = complaint ? `Reported symptoms: ${complaint}.` : "No symptom details captured yet.";
       const extra = notes ? ` Notes: ${notes}` : "";
+
       const plan = [
-        "1) Triage: Check temperature, pulse, and oxygen saturation.",
-        "2) If fever persists > 48 hours or breathing issues: seek in-person evaluation.",
+        "1) Triage: Check temperature, pulse, and oxygen saturation (SpO₂).",
+        "2) Danger signs: chest pain, severe shortness of breath, confusion, dehydration → urgent care.",
         "3) Supportive care: fluids, rest, and follow clinician guidance.",
-        "4) Safety: If chest pain, severe shortness of breath, confusion, or dehydration — go to emergency care."
+        "4) Follow-up: if fever persists >48 hours or symptoms worsen, seek in-person evaluation."
       ].join("\n");
 
-      document.getElementById("aiView").innerText = `${summary}${extra}\n\nRecommended next steps:\n${plan}`;
+      const out = `${summary}${extra}\n\nRecommended next steps:\n${plan}`;
+
+      const aiView = document.getElementById("aiView");
+      if(aiView) aiView.innerText = out;
+
       const t1 = performance.now();
-      document.getElementById("aiLatency").textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (mock)`;
+      const lat = document.getElementById("aiLatency");
+      if(lat) lat.textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (mock)`;
     }
 
-    /********************
-     * Login wiring (minimal)
-     ********************/
-    function openLogin(){ document.getElementById("loginModal").classList.remove("hidden"); }
-    function closeLogin(){ document.getElementById("loginModal").classList.add("hidden"); }
-
+    /***************************************************************
+     * Init
+     ***************************************************************/
     document.addEventListener("DOMContentLoaded", ()=>{
-      // Language dropdown + apply
       populateLangDropdown();
       applyLang(getLang());
 
-      // Render core content
       renderComparison();
       updateOnlineStatus();
-
-      // Init accessibility
       initAccessibilitySuite();
 
-      // Buttons
-      document.getElementById("pdfBtn").addEventListener("click", exportPDF);
-      document.getElementById("loginBtn").addEventListener("click", openLogin);
-      document.getElementById("cancelLogin").addEventListener("click", closeLogin);
-      document.getElementById("closeLogin").addEventListener("click", closeLogin);
+      document.getElementById("pdfBtn")?.addEventListener("click", exportPDF);
+      document.getElementById("loginBtn")?.addEventListener("click", openLogin);
+      document.getElementById("closeLogin")?.addEventListener("click", closeLogin);
+      document.getElementById("cancelLogin")?.addEventListener("click", closeLogin);
 
-      document.getElementById("openPortalBtn").addEventListener("click", ()=>openModal("patientPortalModal"));
-      document.getElementById("runAiBtn").addEventListener("click", runAiMock);
+      document.getElementById("openPortalBtn")?.addEventListener("click", ()=>openModal("patientPortalModal"));
+      document.getElementById("closePortalBtn")?.addEventListener("click", ()=>closeModal("patientPortalModal"));
 
-      // Click outside modal to close
-      document.getElementById("loginModal").addEventListener("click", function(e){
+      document.getElementById("runAiBtn")?.addEventListener("click", runAiMock);
+
+      document.getElementById("autoFillBtn")?.addEventListener("click", fillSampleIntake);
+      document.getElementById("submitIntakeBtn")?.addEventListener("click", submitIntake);
+      document.getElementById("joinRoomBtn")?.addEventListener("click", joinVideoRoom);
+
+      // Click outside modals to close
+      document.getElementById("loginModal")?.addEventListener("click", function(e){
         if(e.target === this) closeLogin();
       });
-      document.getElementById("patientPortalModal").addEventListener("click", function(e){
+      document.getElementById("patientPortalModal")?.addEventListener("click", function(e){
         if(e.target === this) closeModal("patientPortalModal");
       });
     });

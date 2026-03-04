@@ -84,6 +84,8 @@
     .btn-soft:hover{background:#eef3fb}
     .btn-slate{background:#0f172a;color:#fff}
     .btn-slate:hover{filter:brightness(.95)}
+    .btn-danger{background:var(--bad); color:#fff}
+    .btn-danger:hover{filter:brightness(.95)}
 
     .input{
       width:100%; padding:.62rem .78rem;
@@ -132,7 +134,7 @@
     .b-bad{border-color:rgba(197,48,48,.25); background:rgba(197,48,48,.08); color:var(--bad)}
     .b-info{border-color:rgba(0,114,188,.25); background:rgba(0,114,188,.08); color:var(--who-blue)}
 
-    /* ✅ Language dropdown (visible + legible; no hover required) */
+    /* Language dropdown */
     .topbar-select{
       background:#0b1220;
       color:#ffffff;
@@ -161,7 +163,7 @@
     }
     .map-wrap svg{ width:100%; height:100%; display:block; }
 
-    /* ✅ Captions overlay in video tile */
+    /* Captions overlay */
     .caption-overlay{
       position:absolute; left:12px; right:12px; bottom:12px;
       padding:.5rem .75rem;
@@ -263,8 +265,16 @@
               Institutional dashboard layout: scorecard, indicator tables, data sources, definitions, audit logs, and workflows — single HTML file.
             </p>
 
+            <!-- ✅ NEW: Start Call / End Call controls -->
             <div class="mt-4 flex flex-wrap gap-2 no-print">
-              <button class="btn btn-primary" id="openPortalBtn">
+              <button class="btn btn-primary" id="startCallBtn">
+                <i class="fa-solid fa-phone" aria-hidden="true"></i> <span data-i18n="start_call">Start Call</span>
+              </button>
+              <button class="btn btn-danger" id="endCallBtn" disabled>
+                <i class="fa-solid fa-phone-slash" aria-hidden="true"></i> <span data-i18n="end_call">End Call</span>
+              </button>
+
+              <button class="btn btn-soft" id="openPortalBtn">
                 <i class="fa-solid fa-hospital-user" aria-hidden="true"></i> <span data-i18n="patient_portal">Patient Portal</span>
               </button>
               <button class="btn btn-soft" id="runAiBtn">
@@ -566,6 +576,15 @@
                 </div>
               </div>
 
+              <div class="mt-4 flex flex-wrap gap-2 no-print">
+                <button class="btn btn-soft" type="button" id="joinRoomBtn">
+                  <i class="fa-solid fa-video" aria-hidden="true"></i> Join
+                </button>
+                <button class="btn btn-soft" type="button" id="leaveRoomBtn">
+                  <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Leave
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
@@ -618,7 +637,7 @@
     </div>
   </div>
 
-  <!-- Patient Portal modal (includes STT symptom capture) -->
+  <!-- Patient Portal modal -->
   <div id="patientPortalModal" class="modal-backdrop hidden no-print" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="portalTitle">
       <div class="modal-h">
@@ -630,7 +649,6 @@
 
       <div class="modal-b">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Intake -->
           <div class="card-flat p-4">
             <div class="text-sm font-extrabold mb-2" data-i18n="intake_title">Patient Intake Form</div>
 
@@ -658,7 +676,7 @@
               <textarea class="input mt-1" id="ptNotes" rows="3" placeholder="e.g., Penicillin allergy"></textarea>
             </div>
 
-            <!-- ✅ STT Symptom Capture -->
+            <!-- STT -->
             <div class="mt-4 card-flat p-3">
               <div class="flex items-center justify-between gap-2">
                 <div>
@@ -716,7 +734,6 @@
             <div class="text-xs muted mt-2" id="intakeStatus" aria-live="polite">—</div>
           </div>
 
-          <!-- Join room panel -->
           <div class="card-flat p-4">
             <div class="text-sm font-extrabold mb-2" data-i18n="join_room_title">Join Telehealth Room (Demo)</div>
             <div class="tiny muted" data-i18n="join_room_note">
@@ -724,10 +741,10 @@
             </div>
 
             <div class="mt-4 flex gap-2">
-              <button class="btn btn-primary w-full" type="button" id="joinRoomBtn">
+              <button class="btn btn-primary w-full" type="button" id="joinRoomBtn2">
                 <i class="fa-solid fa-video" aria-hidden="true"></i> <span data-i18n="join_room">Join Room</span>
               </button>
-              <button class="btn btn-soft w-full" type="button" id="leaveRoomBtn">
+              <button class="btn btn-soft w-full" type="button" id="leaveRoomBtn2">
                 <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span data-i18n="leave_room">Leave</span>
               </button>
             </div>
@@ -738,6 +755,22 @@
                 Audio features run locally in the browser. No audio is uploaded in this demo.
               </div>
             </div>
+
+            <!-- ✅ NEW: Start/End call shortcut inside portal -->
+            <div class="mt-4 card-flat p-4">
+              <div class="font-extrabold" data-i18n="call_controls">Call controls</div>
+              <div class="tiny muted mt-1" data-i18n="call_controls_note">Start initiates portal → join → captions. End stops audio and disconnects.</div>
+              <div class="mt-3 flex gap-2">
+                <button class="btn btn-primary w-full" type="button" id="startCallBtn2">
+                  <i class="fa-solid fa-phone" aria-hidden="true"></i> <span data-i18n="start_call">Start Call</span>
+                </button>
+                <button class="btn btn-danger w-full" type="button" id="endCallBtn2" disabled>
+                  <i class="fa-solid fa-phone-slash" aria-hidden="true"></i> <span data-i18n="end_call">End Call</span>
+                </button>
+              </div>
+              <div class="tiny muted mt-2" id="callStatus" aria-live="polite">—</div>
+            </div>
+
           </div>
         </div>
 
@@ -782,6 +815,11 @@
         tip_voice:"Tip: For voice features, use Chrome/Edge and allow microphone access. Hosting on HTTPS (e.g., GitHub Pages) is recommended.",
         tts_read_plan:"Read AI care plan aloud",
         tts_stop:"Stop",
+
+        start_call:"Start Call",
+        end_call:"End Call",
+        call_controls:"Call controls",
+        call_controls_note:"Start initiates portal → join → captions. End stops audio and disconnects.",
 
         scorecard_title:"National Summary Scorecard",
         aggregated:"Aggregated",
@@ -1312,7 +1350,7 @@
     }
 
     /***************************************************************
-     * Telehealth simulation: patient join/leave
+     * Telehealth simulation
      ***************************************************************/
     function setPatientJoinStatus(joined){
       const el = document.getElementById("patientJoinStatus");
@@ -1447,7 +1485,7 @@
       sttSetStatus("Applied to Notes.");
     }
 
-    /* CC (captions overlay) */
+    /* CC */
     function ccCombined(){ return (ccFinalText + (ccInterimText ? (" " + ccInterimText) : "")).trim(); }
     function ccShowOverlay(show){ const o=document.getElementById("ccOverlay"); if(o) o.style.display=show?"block":"none"; }
     function ccSetOverlayText(txt){ const t=document.getElementById("ccText"); if(t) t.textContent=txt||"—"; }
@@ -1529,19 +1567,16 @@
     }
 
     function initAccessibilitySuite(){
-      // Support badges
       setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
       setBadge("sttSupportBadge2", speechSupported(), "STT: Supported", "STT: Not supported");
       setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
       setBadge("ttsSupportBadge", ttsSupported(), "TTS: Supported", "TTS: Not supported");
 
-      // Init recognizers
       sttInit();
       ccInit();
       sttUpdateUi();
       ccRender();
 
-      // Bind buttons
       document.getElementById("sttStartBtn")?.addEventListener("click", sttStart);
       document.getElementById("sttStopBtn")?.addEventListener("click", sttStop);
       document.getElementById("sttClearBtn")?.addEventListener("click", sttClear);
@@ -1561,6 +1596,70 @@
         ttsSpeak(text || "No plan to read yet. Please run the AI recommendation first.");
       });
       document.getElementById("ttsStopBtn")?.addEventListener("click", ttsStopAll);
+    }
+
+    /***************************************************************
+     * ✅ NEW: Start Call / End Call Workflow
+     ***************************************************************/
+    let callActive = false;
+
+    function setCallUi(active){
+      callActive = active;
+
+      const startBtns = [document.getElementById("startCallBtn"), document.getElementById("startCallBtn2")].filter(Boolean);
+      const endBtns = [document.getElementById("endCallBtn"), document.getElementById("endCallBtn2")].filter(Boolean);
+
+      startBtns.forEach(b=>{
+        if(active) b.setAttribute("disabled","true");
+        else b.removeAttribute("disabled");
+      });
+      endBtns.forEach(b=>{
+        if(active) b.removeAttribute("disabled");
+        else b.setAttribute("disabled","true");
+      });
+
+      const status = document.getElementById("callStatus");
+      if(status) status.textContent = active ? "Call active (demo)." : "Call ended.";
+    }
+
+    async function startCallWorkflow(){
+      // 1) Open portal
+      openModal("patientPortalModal");
+
+      // 2) Optionally auto-fill intake for demo (does not overwrite if user already typed)
+      const name = (document.getElementById("ptName")?.value || "").trim();
+      const complaint = (document.getElementById("ptComplaint")?.value || "").trim();
+      if(!name && !complaint){
+        fillSampleIntake();
+      }
+
+      // 3) Simulate patient join
+      setPatientJoinStatus(true);
+
+      // 4) Start captions (best effort)
+      try { ccStart(); } catch {}
+
+      // 5) Update UI and scroll to telehealth
+      setCallUi(true);
+      focusSection("section-telehealth");
+    }
+
+    function endCallWorkflow(){
+      // Stop captions and STT for privacy
+      try { ccStop(); } catch {}
+      try { sttStop(); } catch {}
+
+      // Stop any TTS currently speaking
+      try { ttsStopAll(); } catch {}
+
+      // Reset patient tile
+      setPatientJoinStatus(false);
+
+      // Close portal
+      closeModal("patientPortalModal");
+
+      // Update UI
+      setCallUi(false);
     }
 
     /***************************************************************
@@ -1617,11 +1716,23 @@
       document.getElementById("leaveRoomBtn")?.addEventListener("click", ()=>{ setPatientJoinStatus(false); });
       document.getElementById("simulateJoinBtn")?.addEventListener("click", ()=>{ setPatientJoinStatus(true); });
 
+      document.getElementById("joinRoomBtn2")?.addEventListener("click", ()=>{ setPatientJoinStatus(true); });
+      document.getElementById("leaveRoomBtn2")?.addEventListener("click", ()=>{ setPatientJoinStatus(false); });
+
       // Chips navigation
       document.getElementById("btnSafety").addEventListener("click", ()=>focusSection("section-safety"));
       document.getElementById("btnIndicators").addEventListener("click", ()=>focusSection("section-indicators"));
       document.getElementById("btnTelehealth").addEventListener("click", ()=>focusSection("section-telehealth"));
       document.getElementById("btnRegulatory").addEventListener("click", ()=>focusSection("section-regulatory"));
+
+      // ✅ Start/End call workflow buttons (top + portal)
+      document.getElementById("startCallBtn")?.addEventListener("click", startCallWorkflow);
+      document.getElementById("endCallBtn")?.addEventListener("click", endCallWorkflow);
+      document.getElementById("startCallBtn2")?.addEventListener("click", startCallWorkflow);
+      document.getElementById("endCallBtn2")?.addEventListener("click", endCallWorkflow);
+
+      // Initialize call UI state
+      setCallUi(false);
 
       // Close on backdrop click
       ["loginModal","patientPortalModal"].forEach(id=>{
@@ -1632,4 +1743,4 @@
     });
   </script>
 </body>
-</html
+</html>

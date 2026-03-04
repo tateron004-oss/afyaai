@@ -28,6 +28,7 @@
       --warn:#b7791f;
       --bad:#c53030;
       --shadow:0 10px 30px rgba(11,18,32,.08);
+      --focus: 0 0 0 4px rgba(0,114,188,.20);
     }
     *{box-sizing:border-box}
     body{
@@ -38,6 +39,14 @@
     }
     body[dir="rtl"]{direction:rtl}
     .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;}
+
+    /* Skip link for keyboard/screen readers */
+    .skip-link{
+      position:absolute; left:-9999px; top:12px;
+      background:#fff; color:#000; padding:10px 12px;
+      border:2px solid #000; border-radius:10px; z-index:9999;
+    }
+    .skip-link:focus{ left:12px; box-shadow: var(--shadow); }
 
     .topbar{
       background:linear-gradient(90deg, var(--wb-blue) 0%, var(--who-blue) 55%, var(--wb-blue-2) 100%);
@@ -67,13 +76,17 @@
       padding:.62rem .95rem;border-radius:12px;font-weight:800;
       border:1px solid transparent; transition:all .15s ease;
       user-select:none;
+      cursor:pointer;
     }
+    .btn:focus{ outline:none; box-shadow: var(--focus); }
     .btn-primary{background:var(--who-blue);color:#fff}
     .btn-primary:hover{filter:brightness(.95)}
     .btn-soft{background:var(--surface-2); border:1px solid var(--border); color:var(--ink)}
     .btn-soft:hover{background:#eef3fb}
     .btn-slate{background:#0f172a;color:#fff}
     .btn-slate:hover{filter:brightness(.95)}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--ink)}
+    .btn-ghost:hover{background:var(--surface-2)}
     .input{
       width:100%; padding:.62rem .78rem;
       border:1px solid var(--border);
@@ -81,7 +94,7 @@
       outline:none; background:#fff;
       transition:box-shadow .15s ease, border-color .15s ease;
     }
-    .input:focus{border-color:rgba(0,114,188,.55); box-shadow:0 0 0 4px rgba(0,114,188,.12);}
+    .input:focus{border-color:rgba(0,114,188,.55); box-shadow:var(--focus);}
     .muted{color:var(--muted)}
     .tiny{font-size:12px}
     .gridline{
@@ -116,21 +129,40 @@
       white-space:nowrap;
     }
     .b-good{border-color:rgba(17,138,78,.25); background:rgba(17,138,78,.08); color:var(--good)}
+    .b-warn{border-color:rgba(183,121,31,.25); background:rgba(183,121,31,.08); color:var(--warn)}
     .b-bad{border-color:rgba(197,48,48,.25); background:rgba(197,48,48,.08); color:var(--bad)}
     .b-info{border-color:rgba(0,114,188,.25); background:rgba(0,114,188,.08); color:var(--who-blue)}
 
-    /* ✅ Make the language dropdown legible on the dark topbar */
+    /* ✅ Language dropdown — dark, legible, not hover-dependent */
     .topbar-select{
-      background:#ffffff;
-      color:var(--ink);
-      border:1px solid rgba(255,255,255,.35);
+      background:#0b1220;
+      color:#ffffff;
+      border:1px solid rgba(255,255,255,.25);
       border-radius:12px;
-      padding:.42rem .55rem;
+      padding:.46rem .6rem;
       font-weight:900;
       outline:none;
-      min-width: 210px;
+      min-width: 220px;
     }
-    .topbar-select option{ color:var(--ink); background:#fff; }
+    .topbar-select:focus{ box-shadow: 0 0 0 4px rgba(255,255,255,.18); }
+    /* Ensure options render readable */
+    .topbar-select option{
+      color:#0b1220;
+      background:#ffffff;
+      font-weight:800;
+    }
+
+    /* Map container */
+    .map-wrap{
+      width:100%;
+      aspect-ratio: 16/10;
+      min-height: 260px;
+      background: #fff;
+      border:1px solid var(--border);
+      border-radius: 16px;
+      overflow:hidden;
+    }
+    .map-wrap svg{ width:100%; height:100%; display:block; }
 
     /* Captions overlay */
     .caption-overlay{
@@ -149,22 +181,23 @@
 
     /* Modals */
     .modal-backdrop{position:fixed; inset:0; background:rgba(11,18,32,.55); backdrop-filter:blur(6px); z-index:60; display:flex; align-items:center; justify-content:center; padding:18px;}
-    .modal{max-width:980px; width:100%; max-height:90vh; overflow:auto; border-radius:18px; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow);}
+    .modal{max-width:1040px; width:100%; max-height:90vh; overflow:auto; border-radius:18px; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow);}
     .modal-h{padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
     .modal-b{padding:18px;}
     .hidden{display:none!important}
 
-    /* Partner links */
-    .partner-link{
-      display:flex; align-items:center; justify-content:space-between; gap:.75rem;
-      padding:.65rem .75rem; border-radius:14px;
-      border:1px solid var(--border);
-      background:#fff;
-      transition:transform .12s ease, box-shadow .12s ease;
+    /* Section highlight when navigating */
+    .section-focus{
+      outline: 2px solid rgba(0,114,188,.55);
+      outline-offset: 4px;
+      border-radius: 18px;
+      transition: outline .2s ease;
     }
-    .partner-link:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(11,18,32,.08); }
-    .partner-link .name{ font-weight:900; }
-    .partner-link .meta{ font-size:12px; color:var(--muted); font-weight:700; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ transition:none !important; scroll-behavior:auto !important; }
+    }
 
     @media print{
       .no-print{display:none!important}
@@ -176,57 +209,61 @@
 </head>
 
 <body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+
   <!-- TOP BAR -->
-  <header class="topbar fixed w-full z-50">
+  <header class="topbar fixed w-full z-50" role="banner">
     <div class="shell">
       <div class="h-16 flex items-center justify-between gap-2">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
+          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white" aria-hidden="true">
             <i class="fa-solid fa-globe"></i>
           </div>
           <div class="leading-tight">
             <div class="text-white font-extrabold tracking-tight" data-i18n="app_name">AfyaAI</div>
             <div class="text-white/80 text-xs font-semibold" data-i18n="app_tagline">WHO / World Bank-style Monitoring Dashboard (Demo)</div>
           </div>
-          <span class="chip border-white/20 bg-white/10 text-white/90 ml-2">
-            <span id="netDot" class="status-dot status-live"></span>
+          <span class="chip border-white/20 bg-white/10 text-white/90 ml-2" aria-live="polite">
+            <span id="netDot" class="status-dot status-live" aria-hidden="true"></span>
             <span id="netText" data-i18n="online">Online</span>
           </span>
         </div>
 
         <div class="flex items-center gap-2 no-print">
           <div class="hidden sm:flex items-center gap-2">
-            <i class="fa-solid fa-language text-white/90"></i>
+            <i class="fa-solid fa-language text-white/90" aria-hidden="true"></i>
+            <label class="sr-only" for="langSelect">Language</label>
             <select id="langSelect" class="topbar-select" aria-label="Language"></select>
           </div>
 
           <button id="pdfBtn" class="btn btn-soft" title="Export dashboard to PDF">
-            <i class="fa-solid fa-file-pdf"></i><span class="hidden sm:inline" data-i18n="export_pdf">Export PDF</span>
+            <i class="fa-solid fa-file-pdf" aria-hidden="true"></i><span class="hidden sm:inline" data-i18n="export_pdf">Export PDF</span>
           </button>
 
           <button id="loginBtn" class="btn btn-primary">
-            <i class="fa-solid fa-user-shield"></i><span class="hidden sm:inline" data-i18n="login">Login</span>
+            <i class="fa-solid fa-user-shield" aria-hidden="true"></i><span class="hidden sm:inline" data-i18n="login">Login</span>
           </button>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="shell pt-20 pb-12">
+  <main id="mainContent" class="shell pt-20 pb-12" role="main">
     <section id="pdfCapture">
 
       <!-- HERO -->
-      <section class="card p-6 md:p-7">
+      <section class="card p-6 md:p-7" id="section-hero" aria-labelledby="heroTitle">
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
           <div class="max-w-3xl">
-            <div class="flex flex-wrap items-center gap-2 mb-2">
-              <span class="chip"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="chip_safety">Safety & Quality</span></span>
-              <span class="chip"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="chip_indicators">Indicator Monitoring</span></span>
-              <span class="chip"><i class="fa-solid fa-video"></i> <span data-i18n="chip_telehealth">Telehealth</span></span>
-              <span class="chip"><i class="fa-solid fa-scale-balanced"></i> <span data-i18n="chip_regulatory">Regulatory Readiness</span></span>
+            <div class="flex flex-wrap items-center gap-2 mb-2 no-print">
+              <!-- These now WORK: they navigate + focus sections -->
+              <button class="chip" id="btnSafety"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <span data-i18n="chip_safety">Safety & Quality</span></button>
+              <button class="chip" id="btnIndicators"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i> <span data-i18n="chip_indicators">Indicator Monitoring</span></button>
+              <button class="chip" id="btnTelehealth"><i class="fa-solid fa-video" aria-hidden="true"></i> <span data-i18n="chip_telehealth">Telehealth</span></button>
+              <button class="chip" id="btnRegulatory"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="chip_regulatory">Regulatory Readiness</span></button>
             </div>
 
-            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight" data-i18n="hero_title">
+            <h1 id="heroTitle" class="text-2xl md:text-3xl font-extrabold tracking-tight" data-i18n="hero_title">
               National AI Health Program Monitoring (Demo)
             </h1>
             <p class="mt-2 text-sm md:text-base muted" data-i18n="hero_subtitle">
@@ -235,10 +272,13 @@
 
             <div class="mt-4 flex flex-wrap gap-2 no-print">
               <button class="btn btn-primary" id="openPortalBtn">
-                <i class="fa-solid fa-hospital-user"></i> <span data-i18n="patient_portal">Patient Portal</span>
+                <i class="fa-solid fa-hospital-user" aria-hidden="true"></i> <span data-i18n="patient_portal">Patient Portal</span>
               </button>
               <button class="btn btn-soft" id="runAiBtn">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="run_ai">Run AI Recommendation (Mock)</span>
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> <span data-i18n="run_ai">Run AI Recommendation (Mock)</span>
+              </button>
+              <button class="btn btn-ghost" id="openA11yBtn">
+                <i class="fa-solid fa-universal-access" aria-hidden="true"></i> <span data-i18n="a11y_checklist">Accessibility Checklist</span>
               </button>
             </div>
 
@@ -247,10 +287,10 @@
             </div>
           </div>
 
-          <div class="lg:w-[380px] card-flat p-4 gridline">
+          <div class="lg:w-[420px] card-flat p-4 gridline">
             <div class="flex items-center justify-between">
               <div class="font-extrabold" data-i18n="scorecard_title">National Summary Scorecard</div>
-              <span class="badge b-info"><i class="fa-solid fa-database"></i> <span data-i18n="aggregated">Aggregated</span></span>
+              <span class="badge b-info"><i class="fa-solid fa-database" aria-hidden="true"></i> <span data-i18n="aggregated">Aggregated</span></span>
             </div>
             <p class="tiny muted mt-1" data-i18n="scorecard_note">
               Composite is a demo-weighted index across core indicators.
@@ -259,12 +299,12 @@
             <div class="mt-3 grid grid-cols-2 gap-3">
               <div class="card-flat p-3">
                 <div class="tiny muted font-extrabold" data-i18n="composite_score">Composite Score</div>
-                <div class="text-2xl font-extrabold" id="nationalComposite">72</div>
+                <div class="text-2xl font-extrabold" id="nationalComposite">—</div>
                 <div class="tiny muted" id="nationalCompositeNote" data-i18n="across_all">Across all countries</div>
               </div>
               <div class="card-flat p-3">
                 <div class="tiny muted font-extrabold" data-i18n="safety_signal">Safety Signal Rate</div>
-                <div class="text-2xl font-extrabold" id="nationalSafetyRate">12.4%</div>
+                <div class="text-2xl font-extrabold" id="nationalSafetyRate">—</div>
                 <div class="tiny muted" data-i18n="overrides_per_ai">Overrides per AI run</div>
               </div>
             </div>
@@ -277,84 +317,241 @@
         </div>
       </section>
 
-      <!-- AI Recommendation + TTS -->
-      <section class="mt-6 card p-6 md:p-7">
+      <!-- MAP + HEAT INDEX -->
+      <section class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section class="card p-6 md:p-7" id="section-indicators" aria-labelledby="mapTitle">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <h2 id="mapTitle" class="text-lg md:text-xl font-extrabold" data-i18n="map_title">Africa Program Map (Demo)</h2>
+              <span class="badge b-info"><i class="fa-solid fa-map" aria-hidden="true"></i> <span data-i18n="responsive">Responsive</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="mapMetric" class="input font-extrabold" style="max-width:220px" aria-label="Map metric">
+                <option value="heatIndex">Heat Index</option>
+                <option value="safetySignal">Safety Signal</option>
+                <option value="adoption">Clinician Adoption</option>
+                <option value="dqs">Data Quality</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="mt-2 text-sm muted" data-i18n="map_note">
+            Demo choropleth is illustrative (not a political boundary map). Replace with GeoJSON + real data later.
+          </p>
+
+          <div class="mt-4 map-wrap" role="img" aria-label="Map of Africa (demo)">
+            <!-- Simple responsive SVG Africa silhouette + clickable country pins -->
+            <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="ocean" x1="0" x2="1">
+                  <stop offset="0" stop-color="#f5f7fb"/>
+                  <stop offset="1" stop-color="#eef3fb"/>
+                </linearGradient>
+                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="rgba(11,18,32,.18)" />
+                </filter>
+              </defs>
+              <rect x="0" y="0" width="900" height="600" fill="url(#ocean)"/>
+              <!-- Africa silhouette (stylized) -->
+              <path id="africaShape" filter="url(#softShadow)"
+                d="M430,70
+                   C390,90 350,120 330,150
+                   C310,185 310,210 290,245
+                   C265,285 240,305 250,340
+                   C260,380 290,395 295,430
+                   C305,500 330,530 390,545
+                   C450,560 520,545 565,515
+                   C610,485 610,450 640,420
+                   C675,385 705,355 690,320
+                   C675,285 650,260 650,225
+                   C650,190 665,170 640,145
+                   C610,115 565,90 520,75
+                   C490,65 460,60 430,70 Z"
+                fill="#ffffff" stroke="#d8e0ee" stroke-width="3" />
+
+              <!-- Program “pins” (clickable) -->
+              <g id="pins" font-family="Inter, sans-serif">
+                <!-- Kenya -->
+                <circle class="pin" data-country="Kenya" cx="560" cy="310" r="12" fill="#0072bc" opacity="0.85"/>
+                <text x="580" y="315" font-size="14" font-weight="800" fill="#0b1220">Kenya</text>
+
+                <!-- Nigeria -->
+                <circle class="pin" data-country="Nigeria" cx="420" cy="270" r="12" fill="#0072bc" opacity="0.85"/>
+                <text x="440" y="275" font-size="14" font-weight="800" fill="#0b1220">Nigeria</text>
+
+                <!-- Rwanda -->
+                <circle class="pin" data-country="Rwanda" cx="535" cy="330" r="10" fill="#0072bc" opacity="0.85"/>
+                <text x="555" y="335" font-size="14" font-weight="800" fill="#0b1220">Rwanda</text>
+
+                <!-- South Africa -->
+                <circle class="pin" data-country="South Africa" cx="520" cy="500" r="12" fill="#0072bc" opacity="0.85"/>
+                <text x="540" y="505" font-size="14" font-weight="800" fill="#0b1220">South Africa</text>
+
+                <!-- Ethiopia -->
+                <circle class="pin" data-country="Ethiopia" cx="585" cy="250" r="12" fill="#0072bc" opacity="0.85"/>
+                <text x="605" y="255" font-size="14" font-weight="800" fill="#0b1220">Ethiopia</text>
+
+                <!-- Ghana -->
+                <circle class="pin" data-country="Ghana" cx="385" cy="290" r="10" fill="#0072bc" opacity="0.85"/>
+                <text x="405" y="295" font-size="14" font-weight="800" fill="#0b1220">Ghana</text>
+              </g>
+
+              <text x="20" y="560" font-size="12" fill="#5b677a" font-weight="700">
+                Demo map: pins represent program countries; values shown in “Heat Index Data Sheet”.
+              </text>
+            </svg>
+          </div>
+
+          <div class="mt-4 card-flat p-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="font-extrabold" data-i18n="map_inspector">Map Inspector</div>
+              <span class="badge b-info" id="mapInspectorBadge"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Select a country pin</span>
+            </div>
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div class="card-flat p-3">
+                <div class="tiny muted font-extrabold" data-i18n="selected_country">Selected Country</div>
+                <div class="text-lg font-extrabold" id="selectedCountry">—</div>
+                <div class="tiny muted" id="selectedStatus">—</div>
+              </div>
+              <div class="card-flat p-3">
+                <div class="tiny muted font-extrabold" id="metricLabel">Heat Index</div>
+                <div class="text-lg font-extrabold" id="metricValue">—</div>
+                <div class="tiny muted" id="metricMeaning">—</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card p-6 md:p-7" id="section-safety" aria-labelledby="heatTitle">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <h2 id="heatTitle" class="text-lg md:text-xl font-extrabold" data-i18n="heat_title">Heat Index Data Sheet</h2>
+              <span class="badge b-info"><i class="fa-solid fa-table" aria-hidden="true"></i> CSV-ready</span>
+            </div>
+            <div class="flex items-center gap-2 no-print">
+              <button class="btn btn-soft" id="downloadHeatCsv">
+                <i class="fa-solid fa-download" aria-hidden="true"></i> <span data-i18n="download_csv">Download CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="mt-2 text-sm muted" data-i18n="heat_note">
+            Heat Index combines disease burden proxy + climate stress + service load. Replace with real MoH/WHO/WB data feeds.
+          </p>
+
+          <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="tiny muted font-extrabold" data-i18n="filter_country">Country</label>
+              <select id="heatCountryFilter" class="input mt-1 font-extrabold" aria-label="Heat filter country"></select>
+            </div>
+            <div>
+              <label class="tiny muted font-extrabold" data-i18n="filter_risk">Risk tier</label>
+              <select id="heatRiskFilter" class="input mt-1 font-extrabold" aria-label="Heat filter risk">
+                <option value="ALL">All</option>
+                <option value="LOW">LOW</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="HIGH">HIGH</option>
+              </select>
+            </div>
+            <div>
+              <label class="tiny muted font-extrabold" data-i18n="filter_search">Search</label>
+              <input id="heatSearch" class="input mt-1 font-extrabold" placeholder="e.g., malaria, maternal, flood" aria-label="Heat search"/>
+            </div>
+          </div>
+
+          <div class="mt-4 overflow-auto card-flat" style="max-height:360px">
+            <table class="min-w-[980px]" id="heatTable" aria-label="Heat index data table"></table>
+          </div>
+
+          <div class="mt-4 card-flat p-4">
+            <div class="font-extrabold" data-i18n="heat_definition">Heat Index definition (demo)</div>
+            <div class="mt-2 text-sm muted">
+              <ul class="list-disc pl-5 space-y-1">
+                <li><span class="font-extrabold">0–39</span>: Low stress</li>
+                <li><span class="font-extrabold">40–69</span>: Medium stress</li>
+                <li><span class="font-extrabold">70–100</span>: High stress</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- TELEHEALTH + AI -->
+      <section class="mt-6 card p-6 md:p-7" id="section-telehealth" aria-labelledby="aiTitle">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <h2 class="text-lg md:text-xl font-extrabold" data-i18n="ai_title">AI Recommendation (Mock)</h2>
-            <span class="badge b-info"><i class="fa-solid fa-brain"></i> <span data-i18n="care_plan">Care Plan</span></span>
+            <h2 id="aiTitle" class="text-lg md:text-xl font-extrabold" data-i18n="ai_title">AI Recommendation (Mock)</h2>
+            <span class="badge b-info"><i class="fa-solid fa-brain" aria-hidden="true"></i> <span data-i18n="care_plan">Care Plan</span></span>
           </div>
           <span class="text-xs muted" id="aiLatency">—</span>
         </div>
 
-        <div id="aiView" class="mt-3 text-sm text-slate-700 whitespace-pre-line">
-          <div class="text-slate-400" data-i18n="ai_hint">Run AI to generate recommendations.</div>
-        </div>
+        <div class="mt-3 grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="card-flat p-4">
+            <div class="font-extrabold" data-i18n="ai_inputs">AI Inputs</div>
+            <div class="tiny muted mt-1" data-i18n="ai_inputs_note">Uses patient intake + heat index + safety signals.</div>
 
-        <div class="mt-3 flex flex-wrap gap-2 no-print">
-          <button class="btn btn-slate" type="button" id="ttsReadPlanBtn">
-            <i class="fa-solid fa-volume-high"></i> <span data-i18n="tts_read_plan">Read Plan Aloud (Patient-friendly)</span>
-          </button>
-          <button class="btn btn-soft" type="button" id="ttsStopBtn">
-            <i class="fa-solid fa-stop"></i> <span data-i18n="stop">Stop</span>
-          </button>
+            <div class="mt-3">
+              <label class="tiny muted font-extrabold" data-i18n="ai_country">Country context</label>
+              <select id="aiCountry" class="input mt-1 font-extrabold"></select>
+            </div>
+            <div class="mt-3">
+              <label class="tiny muted font-extrabold" data-i18n="ai_mode">Mode</label>
+              <select id="aiMode" class="input mt-1 font-extrabold">
+                <option value="patient">Patient-friendly</option>
+                <option value="clinician">Clinician summary</option>
+                <option value="ministry">Ministry / donor reporting note</option>
+              </select>
+            </div>
+
+            <div class="mt-3 flex flex-wrap gap-2 no-print">
+              <button class="btn btn-primary" id="runAiBtn2">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> <span data-i18n="run_ai">Run AI Recommendation (Mock)</span>
+              </button>
+              <button class="btn btn-soft" id="openPortalBtn2">
+                <i class="fa-solid fa-hospital-user" aria-hidden="true"></i> <span data-i18n="patient_portal">Patient Portal</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2">
+            <div id="aiView" class="card-flat p-4 text-sm text-slate-800 whitespace-pre-line" aria-live="polite">
+              <div class="text-slate-400" data-i18n="ai_hint">Run AI to generate recommendations.</div>
+            </div>
+
+            <div class="mt-3 flex flex-wrap gap-2 no-print">
+              <button class="btn btn-slate" type="button" id="ttsReadPlanBtn">
+                <i class="fa-solid fa-volume-high" aria-hidden="true"></i> <span data-i18n="tts_read_plan">Read Plan Aloud (Patient-friendly)</span>
+              </button>
+              <button class="btn btn-soft" type="button" id="ttsStopBtn">
+                <i class="fa-solid fa-stop" aria-hidden="true"></i> <span data-i18n="stop">Stop</span>
+              </button>
+            </div>
+            <div class="text-xs muted mt-2" id="ttsStatus">—</div>
+          </div>
         </div>
-        <div class="text-xs muted mt-2" id="ttsStatus">—</div>
       </section>
 
-      <!-- Comparison table -->
-      <section class="mt-6 card p-6 md:p-7">
+      <!-- COUNTRY COMPARISON -->
+      <section class="mt-6 card p-6 md:p-7" id="section-regulatory" aria-labelledby="comparisonTitle">
         <div class="flex items-center gap-2">
-          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="comparison_title">Country Comparison Table</h2>
-          <span class="badge b-info"><i class="fa-solid fa-table"></i> <span data-i18n="side_by_side">Side-by-side</span></span>
+          <h2 id="comparisonTitle" class="text-lg md:text-xl font-extrabold" data-i18n="comparison_title">Country Comparison Table</h2>
+          <span class="badge b-info"><i class="fa-solid fa-table" aria-hidden="true"></i> <span data-i18n="side_by_side">Side-by-side</span></span>
         </div>
         <div class="mt-4 overflow-auto card-flat">
           <table class="min-w-[980px]" id="comparisonTable"></table>
         </div>
-      </section>
 
-      <!-- Consortium partners -->
-      <section class="mt-6 card p-6 md:p-7">
-        <div class="flex items-center gap-2">
-          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="partners_title">Consortium Partners (Reference Links)</h2>
-          <span class="badge b-info"><i class="fa-solid fa-link"></i> <span data-i18n="public_links">Public websites</span></span>
-        </div>
-        <p class="mt-2 text-sm muted" data-i18n="partners_note">
-          Reference links to real institutions. Replace or append with your confirmed consortium members for the RFP submission.
-        </p>
-
-        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-          <a class="partner-link" href="https://www.who.int" target="_blank" rel="noopener">
-            <div>
-              <div class="name">World Health Organization (WHO)</div>
-              <div class="meta">Norms, standards, digital health strategy</div>
-            </div>
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-
-          <a class="partner-link" href="https://www.worldbank.org" target="_blank" rel="noopener">
-            <div>
-              <div class="name">World Bank</div>
-              <div class="meta">Health systems strengthening, financing</div>
-            </div>
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-
-          <a class="partner-link" href="https://www.unicef.org/innovation" target="_blank" rel="noopener">
-            <div>
-              <div class="name">UNICEF Office of Innovation</div>
-              <div class="meta">Digital public goods, innovation financing</div>
-            </div>
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-
-          <a class="partner-link" href="https://www.dhis2.org" target="_blank" rel="noopener">
-            <div>
-              <div class="name">DHIS2</div>
-              <div class="meta">Health data platform used by many Ministries</div>
-            </div>
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
+        <div class="mt-4 card-flat p-4">
+          <div class="font-extrabold" data-i18n="regulatory_note_title">Regulatory Readiness (demo workflow)</div>
+          <div class="mt-2 text-sm muted">
+            <ol class="list-decimal pl-5 space-y-1">
+              <li>Define use-case + risk classification (SaMD/clinical decision support)</li>
+              <li>Privacy + data governance assessment</li>
+              <li>Model monitoring plan (drift, bias, overrides)</li>
+              <li>Clinical validation + post-market surveillance</li>
+            </ol>
+          </div>
         </div>
       </section>
 
@@ -363,10 +560,12 @@
 
   <!-- Login modal -->
   <div id="loginModal" class="modal-backdrop hidden no-print" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
       <div class="modal-h">
-        <div class="font-extrabold" data-i18n="login_demo">Login (Demo)</div>
-        <button id="closeLogin" class="btn btn-soft" style="padding:.45rem .7rem"><i class="fa-solid fa-xmark"></i></button>
+        <div id="loginTitle" class="font-extrabold" data-i18n="login_demo">Login (Demo)</div>
+        <button id="closeLogin" class="btn btn-soft" style="padding:.45rem .7rem" aria-label="Close login">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
       </div>
       <div class="modal-b space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -385,7 +584,7 @@
           </div>
         </div>
         <div class="flex gap-2">
-          <button class="btn btn-primary w-full" id="doLoginBtn"><i class="fa-solid fa-right-to-bracket"></i><span data-i18n="login">Login</span></button>
+          <button class="btn btn-primary w-full" id="doLoginBtn"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="login">Login</span></button>
           <button class="btn btn-soft w-full" id="cancelLogin" data-i18n="cancel">Cancel</button>
         </div>
       </div>
@@ -394,11 +593,11 @@
 
   <!-- Patient Portal modal -->
   <div id="patientPortalModal" class="modal-backdrop hidden no-print" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="portalTitle">
       <div class="modal-h">
-        <div class="font-extrabold" data-i18n="portal_title">Patient Portal (Intake + Join Video Room)</div>
-        <button class="btn btn-soft" style="padding:.45rem .7rem" id="closePortalBtn">
-          <i class="fa-solid fa-xmark"></i>
+        <div id="portalTitle" class="font-extrabold" data-i18n="portal_title">Patient Portal (Intake + Join Video Room)</div>
+        <button class="btn btn-soft" style="padding:.45rem .7rem" id="closePortalBtn" aria-label="Close patient portal">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
       </div>
 
@@ -439,7 +638,7 @@
                 <div class="flex items-center justify-between gap-2">
                   <div>
                     <div class="font-extrabold text-sm">
-                      <i class="fa-solid fa-microphone-lines"></i>
+                      <i class="fa-solid fa-microphone-lines" aria-hidden="true"></i>
                       <span data-i18n="voice_capture">Voice Symptom Capture</span>
                     </div>
                     <div class="tiny muted" data-i18n="voice_capture_note">
@@ -447,19 +646,19 @@
                     </div>
                   </div>
                   <span class="badge b-info" id="sttSupportBadge">
-                    <i class="fa-solid fa-universal-access"></i> STT: Checking…
+                    <i class="fa-solid fa-universal-access" aria-hidden="true"></i> STT: Checking…
                   </span>
                 </div>
 
                 <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                   <button class="btn btn-primary" type="button" id="sttStartBtn">
-                    <i class="fa-solid fa-microphone"></i><span data-i18n="start">Start</span>
+                    <i class="fa-solid fa-microphone" aria-hidden="true"></i><span data-i18n="start">Start</span>
                   </button>
                   <button class="btn btn-soft" type="button" id="sttStopBtn" disabled>
-                    <i class="fa-solid fa-stop"></i><span data-i18n="stop">Stop</span>
+                    <i class="fa-solid fa-stop" aria-hidden="true"></i><span data-i18n="stop">Stop</span>
                   </button>
                   <button class="btn btn-soft" type="button" id="sttClearBtn">
-                    <i class="fa-solid fa-eraser"></i><span data-i18n="clear">Clear</span>
+                    <i class="fa-solid fa-eraser" aria-hidden="true"></i><span data-i18n="clear">Clear</span>
                   </button>
                 </div>
 
@@ -484,13 +683,13 @@
 
                   <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                     <button class="btn btn-soft" type="button" id="sttApplyToComplaintBtn">
-                      <i class="fa-solid fa-arrow-turn-down"></i><span data-i18n="to_complaint">→ Chief Complaint</span>
+                      <i class="fa-solid fa-arrow-turn-down" aria-hidden="true"></i><span data-i18n="to_complaint">→ Chief Complaint</span>
                     </button>
                     <button class="btn btn-soft" type="button" id="sttApplyToNotesBtn">
-                      <i class="fa-solid fa-arrow-turn-down"></i><span data-i18n="to_notes">→ Notes</span>
+                      <i class="fa-solid fa-arrow-turn-down" aria-hidden="true"></i><span data-i18n="to_notes">→ Notes</span>
                     </button>
                     <button class="btn btn-slate" type="button" id="sttSpeakTranslatedBtn">
-                      <i class="fa-solid fa-volume-high"></i><span data-i18n="read_aloud">Read Aloud</span>
+                      <i class="fa-solid fa-volume-high" aria-hidden="true"></i><span data-i18n="read_aloud">Read Aloud</span>
                     </button>
                   </div>
 
@@ -500,11 +699,11 @@
 
               <div class="mt-3 flex gap-2 no-print">
                 <button class="btn btn-primary w-full" type="button" id="submitIntakeBtn">
-                  <i class="fa-solid fa-paper-plane"></i> <span data-i18n="submit_intake">Submit Intake</span>
+                  <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span data-i18n="submit_intake">Submit Intake</span>
                 </button>
                 <button class="btn btn-soft w-full" type="button" id="autoFillBtn" data-i18n="autofill">Auto-fill</button>
               </div>
-              <div class="text-xs muted mt-2" id="intakeStatus">—</div>
+              <div class="text-xs muted mt-2" id="intakeStatus" aria-live="polite">—</div>
             </div>
           </div>
 
@@ -513,26 +712,26 @@
             <div class="card-flat p-4">
               <div class="flex items-center justify-between">
                 <div class="text-sm font-extrabold" data-i18n="video_room">Video Room (Simulated)</div>
-                <span class="badge b-info" id="ccSupportBadge"><i class="fa-solid fa-universal-access"></i> CC: Checking…</span>
+                <span class="badge b-info" id="ccSupportBadge"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> CC: Checking…</span>
               </div>
               <div class="tiny muted mt-1" data-i18n="cc_note">Captions use browser SpeechRecognition (simulated clinician speech).</div>
 
               <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[170px] flex items-center justify-center overflow-hidden">
                   <div class="text-center">
-                    <i class="fa-solid fa-user-doctor text-2xl mb-2"></i>
+                    <i class="fa-solid fa-user-doctor text-2xl mb-2" aria-hidden="true"></i>
                     <div class="text-sm font-extrabold" data-i18n="clinician_tile">Clinician Video Tile</div>
                     <div class="text-xs text-slate-300" data-i18n="simulated">Simulated</div>
 
                     <div class="mt-3 flex flex-wrap gap-2 justify-center">
                       <button class="btn btn-soft text-xs" type="button" id="ccStartBtn">
-                        <i class="fa-solid fa-closed-captioning"></i> <span data-i18n="start_captions">Start Captions</span>
+                        <i class="fa-solid fa-closed-captioning" aria-hidden="true"></i> <span data-i18n="start_captions">Start Captions</span>
                       </button>
                       <button class="btn btn-soft text-xs" type="button" id="ccStopBtn" disabled>
-                        <i class="fa-solid fa-stop"></i> <span data-i18n="stop">Stop</span>
+                        <i class="fa-solid fa-stop" aria-hidden="true"></i> <span data-i18n="stop">Stop</span>
                       </button>
                       <button class="btn btn-soft text-xs" type="button" id="ccClearBtn">
-                        <i class="fa-solid fa-eraser"></i> <span data-i18n="clear">Clear</span>
+                        <i class="fa-solid fa-eraser" aria-hidden="true"></i> <span data-i18n="clear">Clear</span>
                       </button>
                     </div>
                   </div>
@@ -545,11 +744,11 @@
 
                 <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[170px] flex items-center justify-center">
                   <div class="text-center">
-                    <i class="fa-solid fa-user text-2xl mb-2"></i>
+                    <i class="fa-solid fa-user text-2xl mb-2" aria-hidden="true"></i>
                     <div class="text-sm font-extrabold" data-i18n="patient_tile">Patient Video Tile</div>
                     <div class="text-xs text-slate-300" id="patientJoinStatus" data-i18n="waiting_patient">Waiting for patient…</div>
                     <button class="btn btn-primary text-xs mt-3" type="button" id="joinRoomBtn">
-                      <i class="fa-solid fa-video"></i> <span data-i18n="join_room">Join Room</span>
+                      <i class="fa-solid fa-video" aria-hidden="true"></i> <span data-i18n="join_room">Join Room</span>
                     </button>
                   </div>
                 </div>
@@ -566,14 +765,44 @@
     </div>
   </div>
 
+  <!-- Accessibility checklist modal -->
+  <div id="a11yModal" class="modal-backdrop hidden no-print" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="a11yTitle">
+      <div class="modal-h">
+        <div id="a11yTitle" class="font-extrabold">Accessibility Checklist (ADA / WCAG-aligned)</div>
+        <button class="btn btn-soft" style="padding:.45rem .7rem" id="closeA11yBtn" aria-label="Close accessibility checklist">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="modal-b">
+        <div class="card-flat p-4">
+          <div class="text-sm font-extrabold">What this demo already does</div>
+          <ul class="mt-2 list-disc pl-5 text-sm muted space-y-1">
+            <li>Keyboard focus styles + skip link</li>
+            <li>ARIA labels for key controls + aria-live for dynamic outputs</li>
+            <li>High-contrast dropdown and buttons</li>
+            <li>Captions/STT/TTS hooks (browser dependent)</li>
+          </ul>
+        </div>
+        <div class="mt-4 card-flat p-4">
+          <div class="text-sm font-extrabold">What you still must do for “real compliance”</div>
+          <ul class="mt-2 list-disc pl-5 text-sm muted space-y-1">
+            <li>Run a WCAG 2.1 AA audit (contrast, headings, landmarks, forms)</li>
+            <li>Screen reader tests (NVDA/JAWS/VoiceOver)</li>
+            <li>Keyboard-only test (no mouse) for every workflow</li>
+            <li>Caption policy for real video + multilingual captions</li>
+            <li>Alternative text for any real images/charts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     /***************************************************************
-     * ✅ i18n “Language model” (UI translation)
-     * FIXED: Your previous build only changed what had data-i18n.
-     * This new HTML adds data-i18n across the UI so language changes
-     * actually change content.
+     * i18n (UI translation)
      ***************************************************************/
-    const AFYA_LANG_KEY = "afyaai-lang-v3";
+    const AFYA_LANG_KEY = "afyaai-lang-v4";
 
     const LANGS = [
       { code:"en", label:"English", native:"English", dir:"ltr" },
@@ -586,8 +815,9 @@
       { code:"am", label:"Amharic", native:"አማርኛ", dir:"ltr" },
     ];
 
+    // NOTE: For 20+ languages, expand LANGS + I18N packs.
     const I18N = {
-      en: {
+      en:{
         app_name:"AfyaAI",
         app_tagline:"WHO / World Bank-style Monitoring Dashboard (Demo)",
         online:"Online",
@@ -601,6 +831,7 @@
         hero_subtitle:"Institutional dashboard layout: scorecard, indicator tables, data sources, definitions, audit logs, and workflows — single HTML file.",
         patient_portal:"Patient Portal",
         run_ai:"Run AI Recommendation (Mock)",
+        a11y_checklist:"Accessibility Checklist",
         tip_voice:"Tip: For voice features, use Chrome/Edge and allow microphone access. Hosting on HTTPS (e.g., GitHub Pages) is recommended.",
         scorecard_title:"National Summary Scorecard",
         aggregated:"Aggregated",
@@ -612,18 +843,33 @@
         data_source_demo:"Demo synthetic + local activity logs (browser localStorage).",
         across_all:"Across all countries",
 
+        map_title:"Africa Program Map (Demo)",
+        responsive:"Responsive",
+        map_note:"Demo choropleth is illustrative (not a political boundary map). Replace with GeoJSON + real data later.",
+        map_inspector:"Map Inspector",
+        selected_country:"Selected Country",
+
+        heat_title:"Heat Index Data Sheet",
+        heat_note:"Heat Index combines disease burden proxy + climate stress + service load. Replace with real MoH/WHO/WB data feeds.",
+        download_csv:"Download CSV",
+        filter_country:"Country",
+        filter_risk:"Risk tier",
+        filter_search:"Search",
+        heat_definition:"Heat Index definition (demo)",
+
         ai_title:"AI Recommendation (Mock)",
         care_plan:"Care Plan",
         ai_hint:"Run AI to generate recommendations.",
+        ai_inputs:"AI Inputs",
+        ai_inputs_note:"Uses patient intake + heat index + safety signals.",
+        ai_country:"Country context",
+        ai_mode:"Mode",
         tts_read_plan:"Read Plan Aloud (Patient-friendly)",
         stop:"Stop",
 
         comparison_title:"Country Comparison Table",
         side_by_side:"Side-by-side",
-
-        partners_title:"Consortium Partners (Reference Links)",
-        public_links:"Public websites",
-        partners_note:"Reference links to real institutions. Replace or append with your confirmed consortium members for the RFP submission.",
+        regulatory_note_title:"Regulatory Readiness (demo workflow)",
 
         login_demo:"Login (Demo)",
         role:"Role",
@@ -649,7 +895,6 @@
         read_aloud:"Read Aloud",
         submit_intake:"Submit Intake",
         autofill:"Auto-fill",
-
         video_room:"Video Room (Simulated)",
         cc_note:"Captions use browser SpeechRecognition (simulated clinician speech).",
         clinician_tile:"Clinician Video Tile",
@@ -661,8 +906,7 @@
         join_room:"Join Room",
         privacy_note:"Privacy note: STT/CC stops when you close this modal."
       },
-
-      sw: {
+      sw:{
         app_tagline:"Dashibodi ya ufuatiliaji (WHO / Benki ya Dunia) — Demo",
         online:"Mtandaoni",
         export_pdf:"Hamisha PDF",
@@ -672,210 +916,63 @@
         chip_telehealth:"Telehealth",
         chip_regulatory:"Utayari wa Udhibiti",
         hero_title:"Ufuatiliaji wa Mpango wa Taifa wa Afya wa AI (Demo)",
-        hero_subtitle:"Muundo wa taasisi: scorecard, jedwali la viashiria, vyanzo vya data, ufafanuzi, na kumbukumbu za ukaguzi — faili moja ya HTML.",
+        hero_subtitle:"Muundo wa taasisi: scorecard, jedwali la viashiria, vyanzo vya data, ufafanuzi, na kumbukumbu — faili moja ya HTML.",
         patient_portal:"Tovuti ya Mgonjwa",
         run_ai:"Endesha Mapendekezo ya AI (Demo)",
-        tip_voice:"Kidokezo: Kwa sauti, tumia Chrome/Edge na ruhusu kipaza sauti. HTTPS (mf. GitHub Pages) inapendekezwa.",
+        a11y_checklist:"Orodha ya Ufikivu",
         scorecard_title:"Kadi ya Muhtasari wa Taifa",
-        aggregated:"Jumla",
-        scorecard_note:"Alama ya muhtasari ni faharasa ya demo yenye uzito.",
         composite_score:"Alama ya Muhtasari",
         safety_signal:"Kiwango cha Ishara ya Usalama",
-        overrides_per_ai:"Overrides kwa AI",
-        data_source_label:"Chanzo cha data:",
-        data_source_demo:"Data ya demo + kumbukumbu za ndani (localStorage).",
-        across_all:"Kwa nchi zote",
-
-        ai_title:"Mapendekezo ya AI (Demo)",
-        care_plan:"Mpango wa Huduma",
-        ai_hint:"Endesha AI ili kutoa mapendekezo.",
-        tts_read_plan:"Soma Mpango kwa Sauti",
-        stop:"Simamisha",
-
         comparison_title:"Jedwali la Ulinganisho wa Nchi",
-        side_by_side:"Pembeni kwa pembeni",
-
-        partners_title:"Washirika wa Muungano (Viungo vya Marejeo)",
-        public_links:"Tovuti za umma",
-        partners_note:"Viungo vya taasisi halisi. Badilisha/ongeza washirika wenu waliothibitishwa kwa RFP.",
-
-        login_demo:"Ingia (Demo)",
-        role:"Jukumu",
-        name:"Jina",
-        cancel:"Ghairi",
-
-        portal_title:"Tovuti ya Mgonjwa (Fomu + Chumba cha Video)",
-        intake_title:"Fomu ya Mgonjwa",
-        full_name:"Jina Kamili",
-        age:"Umri",
-        phone:"Simu",
-        chief_complaint:"Malalamiko Makuu",
-        notes:"Mzio / Maelezo",
-        voice_capture:"Kukusanya Dalili kwa Sauti",
-        voice_capture_note:"Sema dalili. Tutarekodi na (hiari) kutafsiri kwa lugha ya UI.",
-        start:"Anza",
-        clear:"Futa",
-        live_transcript:"Maneno yaliyorekodiwa",
-        translated_ui:"Tafsiri (lugha ya UI)",
-        auto_translate:"Tafsiri kiotomatiki",
-        to_complaint:"→ Malalamiko",
-        to_notes:"→ Maelezo",
-        read_aloud:"Soma kwa Sauti",
-        submit_intake:"Tuma Fomu",
-        autofill:"Jaza mfano",
-
-        video_room:"Chumba cha Video (Demo)",
-        cc_note:"Manukuu hutumia SpeechRecognition ya kivinjari.",
-        clinician_tile:"Kidirisha cha Daktari",
-        simulated:"Demo",
-        start_captions:"Washa Manukuu",
-        cc_label:"Manukuu (Demo)",
-        patient_tile:"Kidirisha cha Mgonjwa",
-        waiting_patient:"Inasubiri mgonjwa…",
-        join_room:"Jiunge",
-        privacy_note:"Faragha: STT/CC husimama ukifunga dirisha."
+        map_title:"Ramani ya Programu Afrika (Demo)",
+        heat_title:"Jedwali la Heat Index",
       },
-
-      fr: {
+      fr:{
         app_tagline:"Tableau de bord (OMS / Banque mondiale) — Démo",
         online:"En ligne",
         export_pdf:"Exporter PDF",
         login:"Connexion",
-        chip_safety:"Sécurité & Qualité",
-        chip_indicators:"Suivi des indicateurs",
-        chip_telehealth:"Télésanté",
-        chip_regulatory:"Préparation réglementaire",
         hero_title:"Suivi du programme national de santé IA (Démo)",
-        hero_subtitle:"Mise en page institutionnelle: scorecard, tableaux d’indicateurs, sources, définitions et journaux — fichier HTML unique.",
         patient_portal:"Portail patient",
         run_ai:"Lancer recommandation IA (démo)",
-        tip_voice:"Conseil: pour la voix, utilisez Chrome/Edge et autorisez le micro. HTTPS recommandé (ex: GitHub Pages).",
-        scorecard_title:"Scorecard national",
-        aggregated:"Agrégé",
-        scorecard_note:"Indice composite pondéré (démo).",
-        composite_score:"Score composite",
-        safety_signal:"Taux de signal de sécurité",
-        overrides_per_ai:"Overrides par IA",
-        data_source_label:"Source de données:",
-        data_source_demo:"Données synthétiques + journaux locaux (localStorage).",
-        across_all:"Tous les pays",
-
-        ai_title:"Recommandation IA (démo)",
-        care_plan:"Plan de soins",
-        ai_hint:"Lancez l’IA pour générer des recommandations.",
-        tts_read_plan:"Lire le plan à voix haute",
-        stop:"Arrêter",
-
         comparison_title:"Tableau comparatif des pays",
-        side_by_side:"Côte à côte",
-
-        partners_title:"Partenaires du consortium (liens de référence)",
-        public_links:"Sites publics",
-        partners_note:"Liens vers des institutions réelles. Remplacez/ajoutez vos partenaires confirmés pour le RFP.",
-
-        login_demo:"Connexion (démo)",
-        role:"Rôle",
-        name:"Nom",
-        cancel:"Annuler",
-
-        portal_title:"Portail patient (formulaire + salle vidéo)",
-        intake_title:"Formulaire patient",
-        full_name:"Nom complet",
-        age:"Âge",
-        phone:"Téléphone",
-        chief_complaint:"Motif principal",
-        notes:"Allergies / Notes",
-        voice_capture:"Saisie des symptômes (voix)",
-        voice_capture_note:"Dites vos symptômes. Nous transcrivons et (optionnel) traduisons.",
-        start:"Démarrer",
-        clear:"Effacer",
-        live_transcript:"Transcription en direct",
-        translated_ui:"Traduit (langue UI)",
-        auto_translate:"Traduction auto",
-        to_complaint:"→ Motif",
-        to_notes:"→ Notes",
-        read_aloud:"Lire",
-        submit_intake:"Envoyer",
-        autofill:"Auto-remplir",
-
-        video_room:"Salle vidéo (démo)",
-        cc_note:"Sous-titres via SpeechRecognition du navigateur.",
-        clinician_tile:"Vignette clinicien",
-        simulated:"Simulé",
-        start_captions:"Démarrer sous-titres",
-        cc_label:"Sous-titres (démo)",
-        patient_tile:"Vignette patient",
-        waiting_patient:"En attente du patient…",
-        join_room:"Rejoindre",
-        privacy_note:"Confidentialité: STT/CC s’arrête à la fermeture."
+        map_title:"Carte Afrique du programme (démo)",
+        heat_title:"Feuille d’indice de chaleur",
       },
-
-      pt: {
+      pt:{
         app_tagline:"Painel (OMS / Banco Mundial) — Demo",
-        online:"Online",
-        export_pdf:"Exportar PDF",
         login:"Entrar",
-        hero_title:"Monitoramento do Programa Nacional de Saúde com IA (Demo)",
-        hero_subtitle:"Layout institucional: scorecard, tabelas de indicadores, fontes, definições e logs — arquivo HTML único.",
+        export_pdf:"Exportar PDF",
         patient_portal:"Portal do paciente",
         run_ai:"Executar recomendação de IA (demo)",
-        stop:"Parar",
         comparison_title:"Tabela de comparação por país",
-        partners_title:"Parceiros do consórcio (links de referência)",
-        public_links:"Sites públicos",
-        partners_note:"Links para instituições reais. Substitua/adicione parceiros confirmados para o RFP.",
-        portal_title:"Portal do paciente (formulário + sala de vídeo)",
-        intake_title:"Formulário do paciente",
-        submit_intake:"Enviar",
-        autofill:"Auto-preencher",
-        start:"Iniciar",
-        clear:"Limpar",
-        read_aloud:"Ler em voz alta",
-        join_room:"Entrar na sala"
+        map_title:"Mapa de África (demo)",
+        heat_title:"Planilha de Heat Index",
       },
-
-      ar: {
+      ar:{
         app_tagline:"لوحة متابعة (منظمة الصحة/البنك الدولي) — تجريبي",
         online:"متصل",
         export_pdf:"تصدير PDF",
         login:"تسجيل الدخول",
-        hero_title:"متابعة البرنامج الوطني للصحة بالذكاء الاصطناعي (تجريبي)",
-        hero_subtitle:"تصميم مؤسسي: بطاقة وطنية، جداول مؤشرات، مصادر بيانات، تعريفات وسجلات — ملف HTML واحد.",
         patient_portal:"بوابة المريض",
         run_ai:"تشغيل توصيات الذكاء الاصطناعي (تجريبي)",
-        stop:"إيقاف",
         comparison_title:"جدول مقارنة الدول",
-        partners_title:"شركاء التحالف (روابط مرجعية)",
-        public_links:"مواقع عامة",
-        partners_note:"روابط لمؤسسات حقيقية. استبدل/أضف شركاءكم المعتمدين لطلب العروض.",
-        portal_title:"بوابة المريض (نموذج + غرفة فيديو)",
-        intake_title:"نموذج بيانات المريض",
-        submit_intake:"إرسال",
-        autofill:"تعبئة تلقائية",
-        start:"بدء",
-        clear:"مسح",
-        read_aloud:"قراءة بصوت",
-        join_room:"الانضمام"
+        map_title:"خريطة أفريقيا (تجريبي)",
+        heat_title:"جدول مؤشر الحرارة",
       },
-
-      // Short packs (fallback to EN for missing keys)
-      ha: { app_tagline:"Dashboard (WHO / Bankin Duniya) — Demo", online:"Kan layi", export_pdf:"Fitar da PDF", login:"Shiga", hero_title:"Sa-ido kan Shirin Lafiya na AI na Ƙasa (Demo)", comparison_title:"Teburin Kwatanta Ƙasashe", patient_portal:"Tashar Mara Lafiya", run_ai:"Gudanar da Shawarar AI (Demo)" },
-      yo: { app_tagline:"Dásíbọ́ọ̀dù (WHO / World Bank) — Demo", online:"Lórí ayélujára", export_pdf:"Gbé PDF jáde", login:"Wọlé", hero_title:"Ìtẹ̀lé Ètò Ìlera AI ti Orílẹ̀-èdè (Demo)", comparison_title:"Tábìlì Afíwèránṣẹ́ Orílẹ̀-èdè", patient_portal:"Pọtàálì Aláìsàn", run_ai:"Ṣiṣẹ́ AI (Demo)" },
-      am: { app_tagline:"የWHO/የዓለም ባንክ ዳሽቦርድ — ሙከራ", online:"በመስመር ላይ", export_pdf:"PDF ላክ", login:"ግባ", hero_title:"የብሔራዊ የAI ጤና ፕሮግራም ክትትል (ሙከራ)", comparison_title:"የአገሮች ንፅፅር ሰንጠረዥ", patient_portal:"የታካሚ ፖርታል", run_ai:"AI ምክር (ሙከራ)" }
+      ha:{ app_tagline:"Dashboard (WHO / Bankin Duniya) — Demo", online:"Kan layi", export_pdf:"Fitar da PDF", login:"Shiga" },
+      yo:{ app_tagline:"Dásíbọ́ọ̀dù (WHO / World Bank) — Demo", online:"Lórí ayélujára", export_pdf:"Gbé PDF jáde", login:"Wọlé" },
+      am:{ app_tagline:"የWHO/የዓለም ባንክ ዳሽቦርድ — ሙከራ", online:"በመስመር ላይ", export_pdf:"PDF ላክ", login:"ግባ" }
     };
 
     function getLang(){ return localStorage.getItem(AFYA_LANG_KEY) || "en"; }
-
-    // IMPORTANT: t() can accept an explicit language (so applyLang can fully control)
     function t(key, langOverride){
       const lang = langOverride || getLang();
       return (I18N[lang] && I18N[lang][key]) || (I18N.en[key] || key);
     }
-
     function populateLangDropdown(){
       const sel = document.getElementById("langSelect");
       if(!sel) return;
-
       sel.innerHTML = "";
       for(const l of LANGS){
         const opt = document.createElement("option");
@@ -886,7 +983,6 @@
       sel.value = getLang();
       sel.onchange = (e)=> setLang(e.target.value);
     }
-
     function applyLang(code){
       const lang = LANGS.find(l=>l.code===code) || LANGS[0];
       document.documentElement.lang = lang.code;
@@ -898,41 +994,56 @@
         if(code==="am") el.classList.add("amharic-text"); else el.classList.remove("amharic-text");
       });
 
-      // Keep select value in sync
       const sel = document.getElementById("langSelect");
       if(sel && sel.value !== code) sel.value = code;
 
-      // Update online label after translation
       updateOnlineStatus();
-
-      // Keep speech recognizers aligned (if initialized)
-      try { if(sttRecognition) sttRecognition.lang = getLocaleFromLang(code); } catch {}
-      try { if(ccRecognition) ccRecognition.lang = getLocaleFromLang(code); } catch {}
     }
-
     function setLang(code){
       if(!LANGS.some(l=>l.code===code)) code="en";
       localStorage.setItem(AFYA_LANG_KEY, code);
       applyLang(code);
+      // also realign STT/CC language if running
+      try { if(sttRecognition) sttRecognition.lang = getLocaleFromLang(code); } catch {}
+      try { if(ccRecognition) ccRecognition.lang = getLocaleFromLang(code); } catch {}
     }
 
     /***************************************************************
-     * Demo data table
+     * Demo datasets
      ***************************************************************/
     const COUNTRIES = ["Kenya","Nigeria","Rwanda","South Africa","Ethiopia","Ghana"];
+
+    // Core indicators (used in comparison + scorecard)
     const BASE = {
       "Kenya":       { status:"Active", facilities:12, patients:39849, outcome:16, adoption:74, safety:12.4, dqs:94.7 },
       "Nigeria":     { status:"Active", facilities:15, patients:24500, outcome:12, adoption:61, safety:14.8, dqs:92.1 },
       "Rwanda":      { status:"Active", facilities:8,  patients:15600, outcome:14, adoption:68, safety:10.2, dqs:95.4 },
       "South Africa":{ status:"Active", facilities:12, patients:48501, outcome:11, adoption:59, safety:9.6,  dqs:96.2 },
-      "Ethiopia":    { status:"Pilot",  facilities:6,  patients:0,     outcome:8,  adoption:41, safety:15.9, dqs:90.8 },
+      "Ethiopia":    { status:"Pilot",  facilities:6,  patients:9400,  outcome:8,  adoption:41, safety:15.9, dqs:90.8 },
       "Ghana":       { status:"Planned",facilities:4,  patients:0,     outcome:6,  adoption:33, safety:null, dqs:null }
     };
 
+    // Heat index “datasheet”
+    const HEAT_ROWS = [
+      { country:"Kenya", risk:"MEDIUM", heatIndex:62, climate:"Drought", burden:"Respiratory, maternal", serviceLoad:"Moderate", note:"Seasonal respiratory spikes", tags:"respiratory drought" },
+      { country:"Nigeria", risk:"HIGH", heatIndex:78, climate:"Flood", burden:"Malaria, maternal", serviceLoad:"High", note:"Flood + malaria burden proxy", tags:"malaria flood maternal" },
+      { country:"Rwanda", risk:"MEDIUM", heatIndex:55, climate:"Rain", burden:"Maternal, NCD", serviceLoad:"Moderate", note:"Stable services, watch NCD", tags:"maternal ncd" },
+      { country:"South Africa", risk:"LOW", heatIndex:38, climate:"Heatwave", burden:"NCD, mental health", serviceLoad:"Moderate", note:"Urban NCD & heat events", tags:"ncd heatwave" },
+      { country:"Ethiopia", risk:"HIGH", heatIndex:81, climate:"Drought", burden:"Nutrition, respiratory", serviceLoad:"High", note:"Drought + nutrition proxy", tags:"nutrition drought" },
+      { country:"Ghana", risk:"MEDIUM", heatIndex:49, climate:"Rain", burden:"Malaria", serviceLoad:"Low", note:"Planned rollout", tags:"malaria" }
+    ];
+
+    function riskFromHeat(n){
+      if(n >= 70) return "HIGH";
+      if(n >= 40) return "MEDIUM";
+      return "LOW";
+    }
+
+    /***************************************************************
+     * Render: comparison table
+     ***************************************************************/
     function renderComparison(){
       const tbl = document.getElementById("comparisonTable");
-      if(!tbl) return;
-
       const rows = [
         { label:"Status", key:"status" },
         { label:"Facilities", key:"facilities" },
@@ -971,14 +1082,170 @@
     }
 
     /***************************************************************
+     * Scorecard (simple composite)
+     ***************************************************************/
+    function computeScorecard(){
+      // Composite: adoption + dqs - safety (normalized-ish)
+      let comps = [];
+      let safetyVals = [];
+      for(const c of COUNTRIES){
+        const d = BASE[c];
+        const adoption = (typeof d.adoption==="number") ? d.adoption : 0;
+        const dqs = (typeof d.dqs==="number") ? d.dqs : 0;
+        const safety = (typeof d.safety==="number") ? d.safety : 0;
+        const score = Math.max(0, Math.min(100, (0.45*adoption + 0.45*dqs - 0.8*safety)));
+        comps.push(score);
+        if(typeof d.safety==="number") safetyVals.push(d.safety);
+      }
+      const avg = comps.reduce((a,b)=>a+b,0)/comps.length;
+      const safetyAvg = safetyVals.length ? (safetyVals.reduce((a,b)=>a+b,0)/safetyVals.length) : 0;
+
+      document.getElementById("nationalComposite").textContent = avg.toFixed(0);
+      document.getElementById("nationalSafetyRate").textContent = safetyAvg.toFixed(1) + "%";
+    }
+
+    /***************************************************************
+     * Heat table rendering + filters
+     ***************************************************************/
+    function populateHeatFilters(){
+      const csel = document.getElementById("heatCountryFilter");
+      csel.innerHTML = `<option value="ALL">All</option>` + COUNTRIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+      csel.value = "ALL";
+    }
+
+    function renderHeatTable(){
+      const tbl = document.getElementById("heatTable");
+      const country = document.getElementById("heatCountryFilter").value;
+      const risk = document.getElementById("heatRiskFilter").value;
+      const q = (document.getElementById("heatSearch").value || "").trim().toLowerCase();
+
+      const filtered = HEAT_ROWS.filter(r=>{
+        if(country !== "ALL" && r.country !== country) return false;
+        if(risk !== "ALL" && r.risk !== risk) return false;
+        if(q){
+          const hay = `${r.country} ${r.risk} ${r.climate} ${r.burden} ${r.serviceLoad} ${r.note} ${r.tags}`.toLowerCase();
+          if(!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      tbl.innerHTML = `
+        <thead>
+          <tr>
+            <th style="width:160px">Country</th>
+            <th>Risk</th>
+            <th>Heat Index</th>
+            <th>Climate Stress</th>
+            <th>Burden Proxy</th>
+            <th>Service Load</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(r=>{
+            const b = r.risk==="HIGH" ? "b-bad" : (r.risk==="MEDIUM" ? "b-warn" : "b-good");
+            return `
+              <tr>
+                <td class="font-extrabold">${r.country}</td>
+                <td><span class="badge ${b}">${r.risk}</span></td>
+                <td class="font-extrabold">${r.heatIndex}</td>
+                <td>${r.climate}</td>
+                <td>${r.burden}</td>
+                <td>${r.serviceLoad}</td>
+                <td class="muted">${r.note}</td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      `;
+    }
+
+    function downloadHeatCsv(){
+      const headers = ["country","risk","heatIndex","climate","burden","serviceLoad","note","tags"];
+      const lines = [headers.join(",")];
+      for(const r of HEAT_ROWS){
+        const row = headers.map(k => `"${String(r[k] ?? "").replace(/"/g,'""')}"`).join(",");
+        lines.push(row);
+      }
+      const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "afyaai_heat_index_datasheet.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    /***************************************************************
+     * Map inspector (pins) + metric selection
+     ***************************************************************/
+    function metricValueFor(country, metric){
+      const heat = HEAT_ROWS.find(r=>r.country===country)?.heatIndex ?? null;
+      const base = BASE[country];
+      if(metric==="heatIndex") return heat;
+      if(metric==="safetySignal") return (typeof base.safety==="number") ? base.safety : null;
+      if(metric==="adoption") return (typeof base.adoption==="number") ? base.adoption : null;
+      if(metric==="dqs") return (typeof base.dqs==="number") ? base.dqs : null;
+      return null;
+    }
+
+    function metricMeaning(metric, v){
+      if(v===null || v===undefined) return "—";
+      if(metric==="heatIndex") return (v>=70) ? "High stress" : (v>=40 ? "Medium stress" : "Low stress");
+      if(metric==="safetySignal") return (v>=15) ? "Elevated overrides" : (v>=10 ? "Moderate overrides" : "Lower overrides");
+      if(metric==="adoption") return (v>=70) ? "Strong adoption" : (v>=45 ? "Moderate adoption" : "Low adoption");
+      if(metric==="dqs") return (v>=95) ? "Excellent quality" : (v>=90 ? "Good quality" : "Needs improvement");
+      return "—";
+    }
+
+    function attachMapPins(){
+      document.querySelectorAll(".pin").forEach(pin=>{
+        pin.style.cursor = "pointer";
+        pin.setAttribute("tabindex","0");
+        pin.setAttribute("role","button");
+        pin.setAttribute("aria-label","Select country");
+        const select = ()=> {
+          const country = pin.getAttribute("data-country");
+          const metric = document.getElementById("mapMetric").value;
+
+          document.getElementById("selectedCountry").textContent = country;
+          document.getElementById("selectedStatus").textContent = `Status: ${BASE[country]?.status || "—"}`;
+
+          const v = metricValueFor(country, metric);
+          const labelMap = { heatIndex:"Heat Index", safetySignal:"Safety Signal (%)", adoption:"Clinician Adoption (%)", dqs:"Data Quality (%)" };
+          document.getElementById("metricLabel").textContent = labelMap[metric] || "Metric";
+          document.getElementById("metricValue").textContent = (v===null) ? "—" : (metric==="safetySignal" ? (v.toFixed(1)+"%") : (metric==="heatIndex" ? String(v) : String(v)+"%"));
+          document.getElementById("metricMeaning").textContent = metricMeaning(metric, v);
+
+          document.getElementById("mapInspectorBadge").innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${country} selected`;
+          document.getElementById("aiCountry").value = country; // sync AI context
+        };
+
+        pin.addEventListener("click", select);
+        pin.addEventListener("keydown",(e)=>{
+          if(e.key==="Enter" || e.key===" "){ e.preventDefault(); select(); }
+        });
+      });
+
+      document.getElementById("mapMetric").addEventListener("change", ()=>{
+        const cur = document.getElementById("selectedCountry").textContent;
+        if(cur && cur !== "—"){
+          // retrigger metric update
+          const fake = document.querySelector(`.pin[data-country="${cur}"]`);
+          fake?.click();
+        }
+      });
+    }
+
+    /***************************************************************
      * Connectivity
      ***************************************************************/
     function updateOnlineStatus(){
       const online = navigator.onLine;
       const dot = document.getElementById("netDot");
       const txt = document.getElementById("netText");
-      if(!dot || !txt) return;
-
       if(online){
         dot.className = "status-dot status-live";
         txt.textContent = t("online");
@@ -989,6 +1256,21 @@
     }
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
+
+    /***************************************************************
+     * Navigation buttons (chips) now functional
+     ***************************************************************/
+    function focusSection(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.scrollIntoView({behavior:"smooth", block:"start"});
+      el.classList.add("section-focus");
+      setTimeout(()=>el.classList.remove("section-focus"), 1500);
+      // Move focus for SR users (not perfect but helpful)
+      el.setAttribute("tabindex","-1");
+      el.focus({preventScroll:true});
+      setTimeout(()=>el.removeAttribute("tabindex"), 1200);
+    }
 
     /***************************************************************
      * Modals
@@ -1004,11 +1286,10 @@
       if(!el) return;
       el.classList.add("hidden");
       el.setAttribute("aria-hidden","true");
+      // privacy: stop listening
       try { sttStop(); } catch {}
       try { ccStop(); } catch {}
     }
-    function openLogin(){ openModal("loginModal"); }
-    function closeLogin(){ closeModal("loginModal"); }
 
     /***************************************************************
      * PDF Export
@@ -1024,10 +1305,8 @@
       const imgW = pageW;
       const imgH = canvas.height * (pageW / canvas.width);
       let y = 0, remaining = imgH;
-
       pdf.addImage(img, "PNG", 0, y, imgW, imgH);
       remaining -= pageH;
-
       while(remaining > 0){
         pdf.addPage();
         y = - (imgH - remaining);
@@ -1038,7 +1317,7 @@
     }
 
     /***************************************************************
-     * Accessibility (STT / CC / TTS)
+     * Accessibility suite (STT/CC/TTS) — browser dependent
      ***************************************************************/
     let sttRecognition = null;
     let sttIsRunning = false;
@@ -1061,29 +1340,23 @@
       if(!el) return;
       if(ok){
         el.className = "badge b-good";
-        el.innerHTML = `<i class="fa-solid fa-check"></i> ${okText}`;
+        el.innerHTML = `<i class="fa-solid fa-check" aria-hidden="true"></i> ${okText}`;
       } else {
         el.className = "badge b-bad";
-        el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${badText}`;
+        el.innerHTML = `<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> ${badText}`;
       }
     }
 
     const DEMO_TRANSLATE = {
       sw:{ "fever":"homa","cough":"kikohozi","headache":"maumivu ya kichwa","pain":"maumivu","shortness of breath":"upungufu wa pumzi","vomiting":"kutapika","diarrhea":"kuhara","nausea":"kichefuchefu","weakness":"udhaifu","days":"siku","since":"tangu" },
-      fr:{ "fever":"fièvre","cough":"toux","headache":"mal de tête","pain":"douleur","shortness of breath":"essoufflement","vomiting":"vomissements","diarrhea":"diarrhée","nausea":"nausée","weakness":"faiblesse","days":"jours","since":"depuis" },
-      ha:{ "fever":"zazzabi","cough":"tari","headache":"ciwon kai","pain":"ciwo","shortness of breath":"karancin numfashi","vomiting":"amai","diarrhea":"gudawa","nausea":"tashin zuciya","weakness":"rauni","days":"kwanaki","since":"tun" },
-      yo:{ "fever":"ìbà","cough":"ikọ́-fèé","headache":"orififo","pain":"irora","shortness of breath":"kíkúrú ẹ̀mí","vomiting":"ìgbẹ́gbọ̀n","diarrhea":"ìgbéyà","nausea":"ìforígbárí","weakness":"àìlera","days":"ọjọ́","since":"láti" },
-      am:{ "fever":"ትኩሳት","cough":"ሳል","headache":"ራስ ምታት","pain":"ህመም","shortness of breath":"እስትንፋስ እጥረት","vomiting":"ማስመለስ","diarrhea":"ተቅማጥ","nausea":"ማቅለሽለሽ","weakness":"ድካም","days":"ቀናት","since":"ከ" }
+      fr:{ "fever":"fièvre","cough":"toux","headache":"mal de tête","pain":"douleur","shortness of breath":"essoufflement","vomiting":"vomissements","diarrhea":"diarrhée","nausea":"nausée","weakness":"faiblesse","days":"jours","since":"depuis" }
     };
-
     function demoTranslate(text, lang){
       if(!text) return "";
       if(!lang || lang==="en") return text;
       const dict = DEMO_TRANSLATE[lang];
       if(!dict) return text;
-
       let out = text.toLowerCase();
-      // handle multiword first
       if(dict["shortness of breath"]) out = out.replaceAll("shortness of breath", dict["shortness of breath"]);
       for(const k of Object.keys(dict)){
         if(k==="shortness of breath") continue;
@@ -1096,7 +1369,6 @@
     function sttInit(){
       setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
       if(!speechSupported()) return;
-
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       sttRecognition = new SR();
       sttRecognition.continuous = true;
@@ -1132,22 +1404,17 @@
       };
       sttRecognition.onerror = (e)=>{ document.getElementById("sttStatus").textContent = "Speech error: " + (e.error || "unknown"); };
     }
-
     function sttCombined(){ return (sttFinalText + (sttInterimText ? (" " + sttInterimText) : "")).trim(); }
-
     function sttUpdateUi(){
       const box = document.getElementById("sttTranscript");
       if(box) box.textContent = sttCombined() || "—";
-
       const translateBox = document.getElementById("sttTranslated");
       const auto = document.getElementById("sttAutoTranslate");
       const lang = getLang();
-
       if(translateBox){
         translateBox.textContent = (auto && auto.checked) ? (demoTranslate(sttCombined(), lang) || "—") : "—";
       }
     }
-
     function sttStart(){
       if(!speechSupported()){ alert("Speech-to-text not supported in this browser."); return; }
       if(!sttRecognition) sttInit();
@@ -1183,7 +1450,6 @@
     function ccInit(){
       setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
       if(!speechSupported()) return;
-
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       ccRecognition = new SR();
       ccRecognition.continuous = true;
@@ -1218,7 +1484,6 @@
         ccRender();
       };
     }
-
     function ccCombined(){ return (ccFinalText + (ccInterimText ? (" " + ccInterimText) : "")).trim(); }
     function ccShowOverlay(show){ const o=document.getElementById("ccOverlay"); if(o) o.style.display=show?"block":"none"; }
     function ccSetOverlayText(txt){ const t=document.getElementById("ccText"); if(t) t.textContent=txt||"—"; }
@@ -1253,9 +1518,7 @@
     }
     function extractAiPlanPlainText(){
       const el = document.getElementById("aiView");
-      if(!el) return "";
-      const txt = (el.innerText || "").trim();
-      return txt ? ("Here is your care plan. " + txt.replace(/\s+/g," ").trim()) : "";
+      return el ? (el.innerText || "").trim() : "";
     }
 
     function initAccessibilitySuite(){
@@ -1290,7 +1553,7 @@
     }
 
     /***************************************************************
-     * Patient actions + AI mock
+     * Patient actions + AI mock engine (improved)
      ***************************************************************/
     function fillSampleIntake(){
       document.getElementById("ptName").value = "Mary N.";
@@ -1310,62 +1573,125 @@
       const el = document.getElementById("patientJoinStatus");
       if(el) el.textContent = "Patient joined (simulated).";
     }
-    function runAiMock(){
+
+    function aiMockEngine(){
       const t0 = performance.now();
+
+      const country = document.getElementById("aiCountry").value;
+      const mode = document.getElementById("aiMode").value;
+
       const complaint = (document.getElementById("ptComplaint")?.value || "").trim();
       const notes = (document.getElementById("ptNotes")?.value || "").trim();
 
-      const summary = complaint ? `Reported symptoms: ${complaint}.` : "No symptom details captured yet.";
-      const extra = notes ? ` Notes: ${notes}` : "";
+      const heat = HEAT_ROWS.find(r=>r.country===country)?.heatIndex ?? null;
+      const risk = (heat!==null) ? riskFromHeat(heat) : "—";
+      const safety = (typeof BASE[country]?.safety==="number") ? BASE[country].safety : null;
 
-      const plan = [
-        "1) Triage: Check temperature, pulse, and oxygen saturation (SpO₂).",
-        "2) Danger signs: chest pain, severe shortness of breath, confusion, dehydration → urgent care.",
-        "3) Supportive care: fluids, rest, and follow clinician guidance.",
-        "4) Follow-up: if fever persists >48 hours or symptoms worsen, seek in-person evaluation."
+      const symptomText = complaint ? `Reported symptoms: ${complaint}.` : "No symptom details captured yet.";
+      const noteText = notes ? `Notes: ${notes}` : "";
+
+      const context = [
+        `Country context: ${country}`,
+        `Heat Index: ${heat ?? "—"} (${risk})`,
+        `Safety signal overrides: ${safety!==null ? safety.toFixed(1)+"%" : "—"}`
       ].join("\n");
 
-      const out = `${summary}${extra}\n\nRecommended next steps:\n${plan}`;
+      let plan = "";
+      if(mode==="patient"){
+        plan = [
+          "Patient-friendly care guidance (demo):",
+          "1) Check temperature and breathing. If you have severe shortness of breath, chest pain, confusion, or fainting — seek urgent care now.",
+          "2) Stay hydrated, rest, and follow clinician instructions.",
+          "3) If fever lasts more than 48 hours or symptoms worsen, go for in-person evaluation.",
+          "4) Bring your medication list and allergy info."
+        ].join("\n");
+      } else if(mode==="clinician"){
+        plan = [
+          "Clinician summary (demo):",
+          "- Suggested triage: vitals, SpO₂, respiratory assessment.",
+          "- Consider local burden + climate stress. Use guidelines for febrile illness and respiratory symptoms.",
+          "- Safety monitoring: track overrides and adverse events; confirm clinical judgment."
+        ].join("\n");
+      } else {
+        plan = [
+          "Ministry / donor note (demo):",
+          `- ${country} risk tier: ${risk} (Heat Index ${heat ?? "—"}).`,
+          "- Recommended actions: strengthen triage pathways, deploy decision support, and monitor model safety signals.",
+          "- KPIs: adoption, data quality, safety overrides, and outcome index."
+        ].join("\n");
+      }
 
+      const output = `${context}\n\n${symptomText}\n${noteText}\n\n${plan}`;
       const aiView = document.getElementById("aiView");
-      if(aiView) aiView.innerText = out;
+      if(aiView) aiView.innerText = output;
 
       const t1 = performance.now();
-      const lat = document.getElementById("aiLatency");
-      if(lat) lat.textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (mock)`;
+      document.getElementById("aiLatency").textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (mock)`;
     }
 
     /***************************************************************
      * Init
      ***************************************************************/
+    function populateAiCountry(){
+      const sel = document.getElementById("aiCountry");
+      sel.innerHTML = COUNTRIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+      sel.value = "Kenya";
+    }
+
     document.addEventListener("DOMContentLoaded", ()=>{
       populateLangDropdown();
       applyLang(getLang());
 
       renderComparison();
+      populateHeatFilters();
+      renderHeatTable();
+      computeScorecard();
       updateOnlineStatus();
+      populateAiCountry();
+      attachMapPins();
       initAccessibilitySuite();
 
+      // Filters
+      document.getElementById("heatCountryFilter").addEventListener("change", renderHeatTable);
+      document.getElementById("heatRiskFilter").addEventListener("change", renderHeatTable);
+      document.getElementById("heatSearch").addEventListener("input", renderHeatTable);
+
+      // CSV
+      document.getElementById("downloadHeatCsv").addEventListener("click", downloadHeatCsv);
+
+      // Buttons
       document.getElementById("pdfBtn")?.addEventListener("click", exportPDF);
-      document.getElementById("loginBtn")?.addEventListener("click", openLogin);
-      document.getElementById("closeLogin")?.addEventListener("click", closeLogin);
-      document.getElementById("cancelLogin")?.addEventListener("click", closeLogin);
+
+      document.getElementById("loginBtn")?.addEventListener("click", ()=>openModal("loginModal"));
+      document.getElementById("closeLogin")?.addEventListener("click", ()=>closeModal("loginModal"));
+      document.getElementById("cancelLogin")?.addEventListener("click", ()=>closeModal("loginModal"));
 
       document.getElementById("openPortalBtn")?.addEventListener("click", ()=>openModal("patientPortalModal"));
+      document.getElementById("openPortalBtn2")?.addEventListener("click", ()=>openModal("patientPortalModal"));
       document.getElementById("closePortalBtn")?.addEventListener("click", ()=>closeModal("patientPortalModal"));
 
-      document.getElementById("runAiBtn")?.addEventListener("click", runAiMock);
+      document.getElementById("openA11yBtn")?.addEventListener("click", ()=>openModal("a11yModal"));
+      document.getElementById("closeA11yBtn")?.addEventListener("click", ()=>closeModal("a11yModal"));
 
       document.getElementById("autoFillBtn")?.addEventListener("click", fillSampleIntake);
       document.getElementById("submitIntakeBtn")?.addEventListener("click", submitIntake);
       document.getElementById("joinRoomBtn")?.addEventListener("click", joinVideoRoom);
 
-      // Click outside modals to close
-      document.getElementById("loginModal")?.addEventListener("click", function(e){
-        if(e.target === this) closeLogin();
-      });
-      document.getElementById("patientPortalModal")?.addEventListener("click", function(e){
-        if(e.target === this) closeModal("patientPortalModal");
+      // AI
+      document.getElementById("runAiBtn")?.addEventListener("click", aiMockEngine);
+      document.getElementById("runAiBtn2")?.addEventListener("click", aiMockEngine);
+
+      // Chips navigation (now functional)
+      document.getElementById("btnSafety").addEventListener("click", ()=>focusSection("section-safety"));
+      document.getElementById("btnIndicators").addEventListener("click", ()=>focusSection("section-indicators"));
+      document.getElementById("btnTelehealth").addEventListener("click", ()=>focusSection("section-telehealth"));
+      document.getElementById("btnRegulatory").addEventListener("click", ()=>focusSection("section-regulatory"));
+
+      // Close on backdrop click
+      ["loginModal","patientPortalModal","a11yModal"].forEach(id=>{
+        document.getElementById(id)?.addEventListener("click", function(e){
+          if(e.target === this) closeModal(id);
+        });
       });
     });
   </script>

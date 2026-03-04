@@ -38,7 +38,6 @@
     }
     body[dir="rtl"]{direction:rtl}
     .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
 
     .topbar{
       background:linear-gradient(90deg, var(--wb-blue) 0%, var(--who-blue) 55%, var(--wb-blue-2) 100%);
@@ -61,17 +60,17 @@
       padding:.28rem .55rem;border-radius:999px;
       border:1px solid var(--border);
       background:var(--surface-2);
-      font-size:12px;font-weight:700;color:var(--muted);
+      font-size:12px;font-weight:800;color:var(--muted);
     }
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-      padding:.62rem .95rem;border-radius:12px;font-weight:700;
+      padding:.62rem .95rem;border-radius:12px;font-weight:800;
       border:1px solid transparent; transition:all .15s ease;
       user-select:none;
     }
     .btn-primary{background:var(--who-blue);color:#fff}
     .btn-primary:hover{filter:brightness(.95)}
-    .btn-soft{background:var(--surface-2); border-color:var(--border); color:var(--ink); border:1px solid var(--border)}
+    .btn-soft{background:var(--surface-2); border:1px solid var(--border); color:var(--ink)}
     .btn-soft:hover{background:#eef3fb}
     .btn-slate{background:#0f172a;color:#fff}
     .btn-slate:hover{filter:brightness(.95)}
@@ -98,16 +97,18 @@
     .status-dot{width:9px;height:9px;border-radius:999px;display:inline-block}
     .status-live{background:var(--good); box-shadow:0 0 0 4px rgba(17,138,78,.12)}
     .status-offline{background:var(--bad); box-shadow:0 0 0 4px rgba(197,48,48,.12)}
+
     table{border-collapse:separate;border-spacing:0;width:100%}
     th,td{padding:10px 10px; border-bottom:1px solid var(--border); vertical-align:top}
     th{
-      text-align:left;font-size:12px;color:var(--muted);font-weight:800;
+      text-align:left;font-size:12px;color:var(--muted);font-weight:900;
       background:linear-gradient(180deg,#fbfdff 0%, #f5f7fb 100%);
       position:sticky; top:0; z-index:1;
     }
     tr:hover td{background:#fbfdff}
+
     .badge{
-      font-size:12px;font-weight:800;
+      font-size:12px;font-weight:900;
       padding:.2rem .5rem;border-radius:999px;
       border:1px solid var(--border);
       background:var(--surface-2);
@@ -120,7 +121,7 @@
     .b-bad{border-color:rgba(197,48,48,.25); background:rgba(197,48,48,.08); color:var(--bad)}
     .b-info{border-color:rgba(0,114,188,.25); background:rgba(0,114,188,.08); color:var(--who-blue)}
 
-    /* Accessibility helpers */
+    /* Captions overlay */
     .caption-overlay{
       position:absolute; left:12px; right:12px; bottom:12px;
       padding:.5rem .75rem;
@@ -132,22 +133,33 @@
       border:1px solid rgba(255,255,255,.15);
       backdrop-filter: blur(6px);
     }
-    .caption-overlay .label{ font-size:11px; opacity:.8; font-weight:800; margin-bottom:.25rem; }
-    .caption-overlay .text{ font-weight:700; }
+    .caption-overlay .label{ font-size:11px; opacity:.85; font-weight:900; margin-bottom:.25rem; }
+    .caption-overlay .text{ font-weight:800; }
 
-    /* Modal */
+    /* Modals */
     .modal-backdrop{position:fixed; inset:0; background:rgba(11,18,32,.55); backdrop-filter:blur(6px); z-index:60; display:flex; align-items:center; justify-content:center; padding:18px;}
     .modal{max-width:980px; width:100%; max-height:90vh; overflow:auto; border-radius:18px; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow);}
     .modal-h{padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
     .modal-b{padding:18px;}
     .hidden{display:none!important}
-    .no-print{}
     @media print{
       .no-print{display:none!important}
       body{background:#fff}
       .card{box-shadow:none}
       th{position:static}
     }
+
+    /* Partner list links */
+    .partner-link{
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+      padding:.65rem .75rem; border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .partner-link:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(11,18,32,.08); }
+    .partner-link .name{ font-weight:900; }
+    .partner-link .meta{ font-size:12px; color:var(--muted); font-weight:700; }
   </style>
 </head>
 
@@ -174,7 +186,7 @@
           <!-- Language dropdown -->
           <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
             <i class="fa-solid fa-language text-white/90"></i>
-            <select id="langSelect" class="bg-transparent text-white text-sm font-bold outline-none">
+            <select id="langSelect" class="bg-transparent text-white text-sm font-extrabold outline-none">
               <!-- injected by JS -->
             </select>
           </div>
@@ -182,7 +194,7 @@
           <!-- Country filter -->
           <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
             <i class="fa-solid fa-flag text-white/90"></i>
-            <select id="countryFilter" class="bg-transparent text-white text-sm font-bold outline-none">
+            <select id="countryFilter" class="bg-transparent text-white text-sm font-extrabold outline-none">
               <option value="ALL">All countries</option>
               <option value="Kenya">Kenya</option>
               <option value="Nigeria">Nigeria</option>
@@ -233,6 +245,10 @@
                 <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Recommendation (Mock)
               </button>
             </div>
+
+            <div class="mt-3 text-xs muted">
+              Tip: For voice features, use Chrome/Edge and allow microphone access. Hosting on HTTPS (e.g., GitHub Pages) is recommended.
+            </div>
           </div>
 
           <div class="lg:w-[380px] card-flat p-4 gridline">
@@ -275,7 +291,7 @@
           <span class="text-xs muted" id="aiLatency">—</span>
         </div>
 
-        <div id="aiView" class="mt-3 text-sm text-slate-700">
+        <div id="aiView" class="mt-3 text-sm text-slate-700 whitespace-pre-line">
           <div class="text-slate-400">Run AI to generate recommendations.</div>
         </div>
 
@@ -301,12 +317,74 @@
         </div>
       </section>
 
+      <!-- Consortium partners (real links) -->
+      <section class="mt-6 card p-6 md:p-7">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg md:text-xl font-extrabold">Consortium Partners (Reference Links)</h2>
+          <span class="badge b-info"><i class="fa-solid fa-link"></i> Public websites</span>
+        </div>
+        <p class="mt-2 text-sm muted">
+          These are reference links to real institutions commonly involved in digital health / governance programs.
+          Replace or append with your confirmed consortium members for the RFP submission.
+        </p>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <a class="partner-link" href="https://www.who.int" target="_blank" rel="noopener">
+            <div>
+              <div class="name">World Health Organization (WHO)</div>
+              <div class="meta">Norms, standards, digital health strategy</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://www.worldbank.org" target="_blank" rel="noopener">
+            <div>
+              <div class="name">World Bank</div>
+              <div class="meta">Health systems strengthening, financing</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://www.unicef.org/innovation" target="_blank" rel="noopener">
+            <div>
+              <div class="name">UNICEF Office of Innovation</div>
+              <div class="meta">Digital public goods, innovation financing</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://digitalhealthatlas.org" target="_blank" rel="noopener">
+            <div>
+              <div class="name">Digital Health Atlas</div>
+              <div class="meta">National digital health program registry</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://www.dhis2.org" target="_blank" rel="noopener">
+            <div>
+              <div class="name">DHIS2</div>
+              <div class="meta">Health data platform used by many Ministries</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+
+          <a class="partner-link" href="https://www.path.org" target="_blank" rel="noopener">
+            <div>
+              <div class="name">PATH</div>
+              <div class="meta">Global health implementation & partnerships</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </section>
+
     </section>
   </main>
 
   <!-- Login modal -->
-  <div id="loginModal" class="modal-backdrop hidden no-print">
-    <div class="modal">
+  <div id="loginModal" class="modal-backdrop hidden no-print" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-h">
         <div class="font-extrabold" data-i18n="login_demo">Login (Demo)</div>
         <button id="closeLogin" class="btn btn-soft" style="padding:.45rem .7rem"><i class="fa-solid fa-xmark"></i></button>
@@ -315,7 +393,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="tiny muted font-extrabold" data-i18n="role">Role</label>
-            <select class="input mt-1 font-bold" id="loginRole">
+            <select class="input mt-1 font-extrabold" id="loginRole">
               <option value="Clinician">Clinician</option>
               <option value="Patient">Patient</option>
               <option value="Ministry">Ministry</option>
@@ -324,7 +402,7 @@
           </div>
           <div>
             <label class="tiny muted font-extrabold" data-i18n="name">Name</label>
-            <input class="input mt-1 font-bold" id="loginName" placeholder="e.g., Dr. Amina" />
+            <input class="input mt-1 font-extrabold" id="loginName" placeholder="e.g., Dr. Amina" />
           </div>
         </div>
         <div class="flex gap-2">
@@ -336,11 +414,11 @@
   </div>
 
   <!-- Patient Portal modal -->
-  <div id="patientPortalModal" class="modal-backdrop hidden no-print">
-    <div class="modal">
+  <div id="patientPortalModal" class="modal-backdrop hidden no-print" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-h">
         <div class="font-extrabold">Patient Portal (Intake + Join Video Room)</div>
-        <button class="btn btn-soft" style="padding:.45rem .7rem" onclick="closeModal('patientPortalModal')">
+        <button class="btn btn-soft" style="padding:.45rem .7rem" id="closePortalBtn">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -409,9 +487,9 @@
                 <div class="mt-3">
                   <div class="tiny muted font-extrabold">Live transcript</div>
                   <div id="sttTranscript"
-                    class="mt-1 p-3 rounded-xl border border-slate-200 bg-white text-sm"
-                    style="min-height:72px"
-                    aria-live="polite">—</div>
+                       class="mt-1 p-3 rounded-xl border border-slate-200 bg-white text-sm"
+                       style="min-height:72px"
+                       aria-live="polite">—</div>
 
                   <div class="mt-3 flex items-center justify-between">
                     <div class="tiny muted font-extrabold">Translated (UI language)</div>
@@ -421,9 +499,9 @@
                     </label>
                   </div>
                   <div id="sttTranslated"
-                    class="mt-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm"
-                    style="min-height:64px"
-                    aria-live="polite">—</div>
+                       class="mt-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm"
+                       style="min-height:64px"
+                       aria-live="polite">—</div>
 
                   <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                     <button class="btn btn-soft" type="button" id="sttApplyToComplaintBtn">
@@ -442,8 +520,10 @@
               </div>
 
               <div class="mt-3 flex gap-2 no-print">
-                <button class="btn btn-primary w-full" onclick="submitIntake()"><i class="fa-solid fa-paper-plane"></i> Submit Intake</button>
-                <button class="btn btn-soft w-full" onclick="fillSampleIntake()">Auto-fill</button>
+                <button class="btn btn-primary w-full" type="button" id="submitIntakeBtn">
+                  <i class="fa-solid fa-paper-plane"></i> Submit Intake
+                </button>
+                <button class="btn btn-soft w-full" type="button" id="autoFillBtn">Auto-fill</button>
               </div>
               <div class="text-xs muted mt-2" id="intakeStatus">—</div>
             </div>
@@ -460,7 +540,7 @@
 
               <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                 <!-- Clinician tile with captions overlay -->
-                <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center overflow-hidden">
+                <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[170px] flex items-center justify-center overflow-hidden">
                   <div class="text-center">
                     <i class="fa-solid fa-user-doctor text-2xl mb-2"></i>
                     <div class="text-sm font-extrabold">Clinician Video Tile</div>
@@ -486,12 +566,12 @@
                 </div>
 
                 <!-- Patient tile -->
-                <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center">
+                <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[170px] flex items-center justify-center">
                   <div class="text-center">
                     <i class="fa-solid fa-user text-2xl mb-2"></i>
                     <div class="text-sm font-extrabold">Patient Video Tile</div>
                     <div class="text-xs text-slate-300" id="patientJoinStatus">Waiting for patient…</div>
-                    <button class="btn btn-primary text-xs mt-3" type="button" onclick="joinVideoRoom()">
+                    <button class="btn btn-primary text-xs mt-3" type="button" id="joinRoomBtn">
                       <i class="fa-solid fa-video"></i> Join Room
                     </button>
                   </div>
@@ -511,7 +591,7 @@
 
   <script>
     /***************************************************************
-     * i18n + Language Dropdown (Single-File)
+     * ✅ LANGUAGE MODEL (Single-file i18n)
      ***************************************************************/
     const AFYA_LANG_KEY = "afyaai-lang-v2";
 
@@ -669,6 +749,7 @@
         name:"الاسم",
         cancel:"إلغاء"
       },
+      // Short packs (fallback to EN for missing keys)
       am: { app_tagline:"የWHO/የዓለም ባንክ ዳሽቦርድ — ሙከራ", online:"በመስመር ላይ", export_pdf:"PDF ላክ", login:"ግባ", hero_title:"የብሔራዊ የAI ጤና ፕሮግራም ክትትል (ሙከራ)", comparison_title:"የአገሮች ንፅፅር ሰንጠረዥ", data_source_label:"የዳታ ምንጭ:" },
       ha: { app_tagline:"Dashboard (WHO / Bankin Duniya) — Demo", online:"Kan layi", export_pdf:"Fitar da PDF", login:"Shiga", hero_title:"Sa-ido kan Shirin Lafiya na AI na Ƙasa (Demo)", comparison_title:"Teburin Kwatanta Ƙasashe", data_source_label:"Tushen bayanai:" },
       yo: { app_tagline:"Dásíbọ́ọ̀dù (WHO / World Bank) — Demo", online:"Lórí ayélujára", export_pdf:"Gbé PDF jáde", login:"Wọlé", hero_title:"Ìtẹ̀lé Ètò Ìlera AI ti Orílẹ̀-èdè (Demo)", comparison_title:"Tábìlì Afíwèránṣẹ́ Orílẹ̀-èdè", data_source_label:"Orísun data:" },
@@ -686,18 +767,11 @@
     };
 
     function getLang(){ return localStorage.getItem(AFYA_LANG_KEY) || "en"; }
-    function setLang(code){
-      if(!LANGS.some(l=>l.code===code)) code="en";
-      localStorage.setItem(AFYA_LANG_KEY, code);
-      applyLang(code);
-      // keep speech recognizers aligned
-      try { if(sttRecognition) sttRecognition.lang = getLocaleFromLang(code); } catch {}
-      try { if(ccRecognition) ccRecognition.lang = getLocaleFromLang(code); } catch {}
-    }
     function t(key){
       const lang = getLang();
       return (I18N[lang] && I18N[lang][key]) || (I18N.en[key] || key);
     }
+
     function applyLang(code){
       const lang = LANGS.find(l=>l.code===code) || LANGS[0];
       document.documentElement.lang = lang.code;
@@ -711,11 +785,26 @@
 
       const sel = document.getElementById("langSelect");
       if(sel && sel.value !== code) sel.value = code;
+
+      // Keep speech recognizers aligned with UI language (if initialized)
+      try { if(sttRecognition) sttRecognition.lang = getLocaleFromLang(code); } catch {}
+      try { if(ccRecognition) ccRecognition.lang = getLocaleFromLang(code); } catch {}
+
+      // Update online label after translation
       updateOnlineStatus();
+      // Update STT translated box (if any text exists)
+      try { sttUpdateUi(); } catch {}
+    }
+
+    function setLang(code){
+      if(!LANGS.some(l=>l.code===code)) code="en";
+      localStorage.setItem(AFYA_LANG_KEY, code);
+      applyLang(code);
     }
 
     function populateLangDropdown(){
       const sel = document.getElementById("langSelect");
+      if(!sel) return;
       sel.innerHTML = LANGS.map(l=>{
         const label = `${l.native}${l.native!==l.label ? " • "+l.label : ""}`;
         return `<option value="${l.code}">${label}</option>`;
@@ -724,9 +813,9 @@
       sel.addEventListener("change", (e)=>setLang(e.target.value));
     }
 
-    /********************
-     * Minimal demo data for comparison table
-     ********************/
+    /***************************************************************
+     * DEMO DATA + TABLE
+     ***************************************************************/
     const COUNTRIES = ["Kenya","Nigeria","Rwanda","South Africa","Ethiopia","Ghana"];
     const BASE = {
       "Kenya":       { status:"Active", facilities:12, patients:39849, outcome:16, adoption:74, safety:12.4, dqs:94.7 },
@@ -739,6 +828,8 @@
 
     function renderComparison(){
       const tbl = document.getElementById("comparisonTable");
+      if(!tbl) return;
+
       const rows = [
         { label:"Status", key:"status" },
         { label:"Facilities", key:"facilities" },
@@ -776,13 +867,15 @@
       `;
     }
 
-    /********************
-     * Connectivity
-     ********************/
+    /***************************************************************
+     * CONNECTIVITY
+     ***************************************************************/
     function updateOnlineStatus(){
       const online = navigator.onLine;
       const dot = document.getElementById("netDot");
       const txt = document.getElementById("netText");
+      if(!dot || !txt) return;
+
       if(online){
         dot.className = "status-dot status-live";
         txt.textContent = t("online");
@@ -794,20 +887,30 @@
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
 
-    /********************
-     * Modals
-     ********************/
-    function openModal(id){ document.getElementById(id).classList.remove("hidden"); }
+    /***************************************************************
+     * MODALS
+     ***************************************************************/
+    function openModal(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.remove("hidden");
+      el.setAttribute("aria-hidden","false");
+    }
     function closeModal(id){
-      document.getElementById(id).classList.add("hidden");
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.add("hidden");
+      el.setAttribute("aria-hidden","true");
       // Privacy: stop listening when modals close
       try { sttStop(); } catch {}
       try { ccStop(); } catch {}
     }
+    function openLogin(){ openModal("loginModal"); }
+    function closeLogin(){ closeModal("loginModal"); }
 
-    /********************
-     * PDF Export
-     ********************/
+    /***************************************************************
+     * PDF EXPORT
+     ***************************************************************/
     async function exportPDF(){
       const { jsPDF } = window.jspdf;
       const el = document.getElementById("pdfCapture");
@@ -819,8 +922,10 @@
       const imgW = pageW;
       const imgH = canvas.height * (pageW / canvas.width);
       let y = 0, remaining = imgH;
+
       pdf.addImage(img, "PNG", 0, y, imgW, imgH);
       remaining -= pageH;
+
       while(remaining > 0){
         pdf.addPage();
         y = - (imgH - remaining);
@@ -844,7 +949,7 @@
     let ccInterimText = "";
 
     function getLocaleFromLang(langCode){
-      const map = { en:"en-US", fr:"fr-FR", sw:"sw-KE", ha:"ha-NG", yo:"yo-NG", am:"am-ET", zu:"zu-ZA", ar:"ar-SA", pt:"pt-PT" };
+      const map = { en:"en-US", fr:"fr-FR", sw:"sw-KE", ha:"ha-NG", yo:"yo-NG", ig:"en-NG", am:"am-ET", zu:"zu-ZA", xh:"xh-ZA", ar:"ar-SA", pt:"pt-PT" };
       return map[langCode] || "en-US";
     }
     function speechSupported(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
@@ -876,13 +981,17 @@
       if(!lang || lang==="en") return text;
       const dict = DEMO_TRANSLATE[lang];
       if(!dict) return text;
+
       const lower = text.toLowerCase();
       let out = lower.replaceAll("shortness of breath", dict["shortness of breath"] || "shortness of breath");
+
       Object.keys(dict).forEach(k=>{
         if(k==="shortness of breath") return;
-        const re = new RegExp(`\\b${k.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')}\\b`, "g");
+        const escaped = k.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&');
+        const re = new RegExp(`\\b${escaped}\\b`, "g");
         out = out.replace(re, dict[k]);
       });
+
       return out;
     }
 
@@ -890,6 +999,7 @@
     function sttInit(){
       setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
       if(!speechSupported()) return;
+
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       sttRecognition = new SR();
       sttRecognition.continuous = true;
@@ -930,14 +1040,18 @@
     function sttUpdateUi(){
       const box = document.getElementById("sttTranscript");
       if(box) box.textContent = sttCombined() || "—";
+
       const translateBox = document.getElementById("sttTranslated");
       const auto = document.getElementById("sttAutoTranslate");
       const lang = getLang();
+
       if(translateBox){
         if(auto && auto.checked){
           const translated = demoTranslate(sttCombined(), lang);
           translateBox.textContent = translated || "—";
-        } else translateBox.textContent = "—";
+        } else {
+          translateBox.textContent = "—";
+        }
       }
     }
     function sttStart(){
@@ -977,6 +1091,7 @@
     function ccInit(){
       setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
       if(!speechSupported()) return;
+
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       ccRecognition = new SR();
       ccRecognition.continuous = true;
@@ -1020,7 +1135,10 @@
       if(!speechSupported()){ alert("Captions not supported in this browser."); return; }
       if(!ccRecognition) ccInit();
       try { ccRecognition.lang = getLocaleFromLang(getLang()); } catch {}
-      if(!ccIsRunning){ try { ccRecognition.start(); } catch(e){ ccSetOverlayText("Could not start captions: " + e.message); } }
+      if(!ccIsRunning){
+        try { ccRecognition.start(); }
+        catch(e){ ccSetOverlayText("Could not start captions: " + e.message); }
+      }
     }
     function ccStop(){ if(ccRecognition && ccIsRunning){ try { ccRecognition.stop(); } catch {} } }
     function ccClear(){ ccFinalText=""; ccInterimText=""; ccRender(); }
@@ -1035,14 +1153,18 @@
     function ttsSpeak(text, langCode){
       if(!ttsSupported()){ alert("Text-to-speech not supported in this browser."); return; }
       if(!text) return;
+
       ttsStopAll();
       const utter = new SpeechSynthesisUtterance(text);
       utter.rate = 1.0; utter.pitch = 1.0; utter.volume = 1.0;
       utter.lang = getLocaleFromLang(langCode || "en");
+
       const status = document.getElementById("ttsStatus");
       if(status) status.textContent = "Reading aloud…";
+
       utter.onend = ()=>{ if(status) status.textContent = "Done."; };
       utter.onerror = ()=>{ if(status) status.textContent = "TTS error."; };
+
       window.speechSynthesis.speak(utter);
     }
     function extractAiPlanPlainText(){
@@ -1060,6 +1182,7 @@
       document.getElementById("sttApplyToComplaintBtn")?.addEventListener("click", sttApplyToComplaint);
       document.getElementById("sttApplyToNotesBtn")?.addEventListener("click", sttApplyToNotes);
       document.getElementById("sttAutoTranslate")?.addEventListener("change", sttUpdateUi);
+
       document.getElementById("sttSpeakTranslatedBtn")?.addEventListener("click", ()=>{
         const lang = getLang();
         const auto = document.getElementById("sttAutoTranslate");
@@ -1089,80 +1212,126 @@
       sttUpdateUi();
     }
 
-    /********************
-     * Patient portal demo actions
-     ********************/
+    /***************************************************************
+     * PATIENT PORTAL ACTIONS
+     ***************************************************************/
     function fillSampleIntake(){
-      document.getElementById("ptName").value = "Mary N.";
-      document.getElementById("ptAge").value = "34";
-      document.getElementById("ptPhone").value = "+254700000000";
-      document.getElementById("ptComplaint").value = "fever and cough for 2 days";
-      document.getElementById("ptNotes").value = "No known allergies.";
-      document.getElementById("intakeStatus").textContent = "Auto-filled sample intake.";
-    }
-    function submitIntake(){
-      const name = document.getElementById("ptName").value.trim();
-      const cc = document.getElementById("ptComplaint").value.trim();
-      document.getElementById("intakeStatus").textContent =
-        name && cc ? `Submitted. Thank you, ${name}.` : "Please complete Name and Chief Complaint.";
-    }
-    function joinVideoRoom(){
-      document.getElementById("patientJoinStatus").textContent = "Patient joined (simulated).";
+      const $ = (id)=>document.getElementById(id);
+      $("ptName").value = "Mary N.";
+      $("ptAge").value = "34";
+      $("ptPhone").value = "+254700000000";
+      $("ptComplaint").value = "fever and cough for 2 days";
+      $("ptNotes").value = "No known allergies.";
+      $("intakeStatus").textContent = "Auto-filled sample intake.";
     }
 
-    /********************
-     * AI recommendation mock
-     ********************/
+    function submitIntake(){
+      const name = (document.getElementById("ptName")?.value || "").trim();
+      const cc = (document.getElementById("ptComplaint")?.value || "").trim();
+      const status = document.getElementById("intakeStatus");
+      if(!status) return;
+
+      status.textContent = (name && cc)
+        ? `Submitted. Thank you, ${name}.`
+        : "Please complete Name and Chief Complaint.";
+    }
+
+    function joinVideoRoom(){
+      const el = document.getElementById("patientJoinStatus");
+      if(el) el.textContent = "Patient joined (simulated).";
+    }
+
+    /***************************************************************
+     * AI RECOMMENDATION MOCK
+     ***************************************************************/
     function runAiMock(){
       const t0 = performance.now();
+
       const complaint = (document.getElementById("ptComplaint")?.value || "").trim();
       const notes = (document.getElementById("ptNotes")?.value || "").trim();
-      const summary = complaint ? `Reported symptoms: ${complaint}.` : "No symptom details captured yet.";
+
+      const summary = complaint
+        ? `Reported symptoms: ${complaint}.`
+        : "No symptom details captured yet.";
+
       const extra = notes ? ` Notes: ${notes}` : "";
+
       const plan = [
-        "1) Triage: Check temperature, pulse, and oxygen saturation.",
-        "2) If fever persists > 48 hours or breathing issues: seek in-person evaluation.",
+        "1) Triage: Check temperature, pulse, and oxygen saturation (SpO₂).",
+        "2) Danger signs: chest pain, severe shortness of breath, confusion, dehydration → urgent care.",
         "3) Supportive care: fluids, rest, and follow clinician guidance.",
-        "4) Safety: If chest pain, severe shortness of breath, confusion, or dehydration — go to emergency care."
+        "4) Follow-up: if fever persists >48 hours or symptoms worsen, seek in-person evaluation."
       ].join("\n");
 
-      document.getElementById("aiView").innerText = `${summary}${extra}\n\nRecommended next steps:\n${plan}`;
+      const out = `${summary}${extra}\n\nRecommended next steps:\n${plan}`;
+
+      const aiView = document.getElementById("aiView");
+      if(aiView) aiView.innerText = out;
+
       const t1 = performance.now();
-      document.getElementById("aiLatency").textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (mock)`;
+      const lat = document.getElementById("aiLatency");
+      if(lat) lat.textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (mock)`;
     }
 
-    /********************
-     * Login wiring (minimal)
-     ********************/
-    function openLogin(){ document.getElementById("loginModal").classList.remove("hidden"); }
-    function closeLogin(){ document.getElementById("loginModal").classList.add("hidden"); }
+    /***************************************************************
+     * COUNTRY FILTER (DEMO)
+     * - Updates scorecard note only (table remains complete demo)
+     ***************************************************************/
+    function bindCountryFilter(){
+      const sel = document.getElementById("countryFilter");
+      if(!sel) return;
 
+      sel.addEventListener("change", ()=>{
+        const v = sel.value;
+        const note = document.getElementById("nationalCompositeNote");
+        if(!note) return;
+
+        if(v === "ALL") note.textContent = "Across all countries";
+        else note.textContent = `Focus: ${v} (demo)`;
+      });
+    }
+
+    /***************************************************************
+     * SAFETY: Prevent page errors from stopping everything
+     ***************************************************************/
+    function safe(fn){
+      try { fn(); } catch(e){ console.error(e); }
+    }
+
+    /***************************************************************
+     * ✅ INITIALIZATION (FIXED)
+     ***************************************************************/
     document.addEventListener("DOMContentLoaded", ()=>{
-      // Language dropdown + apply
-      populateLangDropdown();
-      applyLang(getLang());
+      // Core UI
+      safe(populateLangDropdown);
+      safe(()=>applyLang(getLang()));
+      safe(renderComparison);
+      safe(updateOnlineStatus);
+      safe(bindCountryFilter);
 
-      // Render core content
-      renderComparison();
-      updateOnlineStatus();
+      // Accessibility suite
+      safe(initAccessibilitySuite);
 
-      // Init accessibility
-      initAccessibilitySuite();
+      // Buttons / wiring
+      document.getElementById("pdfBtn")?.addEventListener("click", exportPDF);
+      document.getElementById("loginBtn")?.addEventListener("click", openLogin);
+      document.getElementById("closeLogin")?.addEventListener("click", closeLogin);
+      document.getElementById("cancelLogin")?.addEventListener("click", closeLogin);
 
-      // Buttons
-      document.getElementById("pdfBtn").addEventListener("click", exportPDF);
-      document.getElementById("loginBtn").addEventListener("click", openLogin);
-      document.getElementById("cancelLogin").addEventListener("click", closeLogin);
-      document.getElementById("closeLogin").addEventListener("click", closeLogin);
+      document.getElementById("openPortalBtn")?.addEventListener("click", ()=>openModal("patientPortalModal"));
+      document.getElementById("closePortalBtn")?.addEventListener("click", ()=>closeModal("patientPortalModal"));
 
-      document.getElementById("openPortalBtn").addEventListener("click", ()=>openModal("patientPortalModal"));
-      document.getElementById("runAiBtn").addEventListener("click", runAiMock);
+      document.getElementById("runAiBtn")?.addEventListener("click", runAiMock);
 
-      // Click outside modal to close
-      document.getElementById("loginModal").addEventListener("click", function(e){
+      document.getElementById("autoFillBtn")?.addEventListener("click", fillSampleIntake);
+      document.getElementById("submitIntakeBtn")?.addEventListener("click", submitIntake);
+      document.getElementById("joinRoomBtn")?.addEventListener("click", joinVideoRoom);
+
+      // Click outside modals to close
+      document.getElementById("loginModal")?.addEventListener("click", function(e){
         if(e.target === this) closeLogin();
       });
-      document.getElementById("patientPortalModal").addEventListener("click", function(e){
+      document.getElementById("patientPortalModal")?.addEventListener("click", function(e){
         if(e.target === this) closeModal("patientPortalModal");
       });
     });

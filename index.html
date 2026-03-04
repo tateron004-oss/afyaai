@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>AfyaAI — WHO / World Bank Dashboard (Single-File)</title>
+  <title>AfyaAI — WHO / World Bank Dashboard (Single-File Demo)</title>
 
   <!-- Tailwind + FontAwesome + Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@400;700&family=Noto+Sans+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@400;700&family=Noto+Sans+Ethiopic:wght@400;700&display=swap" rel="stylesheet" />
 
   <!-- PDF Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -19,17 +19,20 @@
       --wb-blue:#1f4e79;
       --wb-blue-2:#2b6cb0;
       --who-blue:#0072bc;
+
       --ink:#0b1220;
       --muted:#5b677a;
       --surface:#ffffff;
       --surface-2:#f5f7fb;
       --border:#d8e0ee;
+
       --good:#118a4e;
       --warn:#b7791f;
       --bad:#c53030;
+
       --shadow:0 10px 30px rgba(11,18,32,.08);
-      --focus: 0 0 0 4px rgba(0,114,188,.20);
     }
+
     *{box-sizing:border-box}
     body{
       font-family:'Inter','Noto Sans',sans-serif;
@@ -39,19 +42,12 @@
     }
     body[dir="rtl"]{direction:rtl}
     .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;}
-
-    .skip-link{
-      position:absolute; left:-9999px; top:12px;
-      background:#fff; color:#000; padding:10px 12px;
-      border:2px solid #000; border-radius:10px; z-index:9999;
-    }
-    .skip-link:focus{ left:12px; box-shadow: var(--shadow); }
+    .shell{max-width:1280px;margin:0 auto;padding:0 16px;}
 
     .topbar{
       background:linear-gradient(90deg, var(--wb-blue) 0%, var(--who-blue) 55%, var(--wb-blue-2) 100%);
       border-bottom:1px solid rgba(255,255,255,.18);
     }
-    .shell{max-width:1280px;margin:0 auto;padding:0 16px;}
     .card{
       background:var(--surface);
       border:1px solid var(--border);
@@ -63,41 +59,6 @@
       border:1px solid var(--border);
       border-radius:14px;
     }
-    .chip{
-      display:inline-flex;align-items:center;gap:.4rem;
-      padding:.28rem .55rem;border-radius:999px;
-      border:1px solid var(--border);
-      background:var(--surface-2);
-      font-size:12px;font-weight:900;color:var(--muted);
-      cursor:pointer;
-    }
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-      padding:.62rem .95rem;border-radius:12px;font-weight:900;
-      border:1px solid transparent; transition:all .15s ease;
-      user-select:none; cursor:pointer;
-    }
-    .btn:focus{ outline:none; box-shadow: var(--focus); }
-    .btn-primary{background:var(--who-blue);color:#fff}
-    .btn-primary:hover{filter:brightness(.95)}
-    .btn-soft{background:var(--surface-2); border:1px solid var(--border); color:var(--ink)}
-    .btn-soft:hover{background:#eef3fb}
-    .btn-slate{background:#0f172a;color:#fff}
-    .btn-slate:hover{filter:brightness(.95)}
-    .btn-danger{background:var(--bad); color:#fff}
-    .btn-danger:hover{filter:brightness(.95)}
-
-    .input{
-      width:100%; padding:.62rem .78rem;
-      border:1px solid var(--border);
-      border-radius:12px;
-      outline:none; background:#fff;
-      transition:box-shadow .15s ease, border-color .15s ease;
-      font-weight:900;
-    }
-    .input:focus{border-color:rgba(0,114,188,.55); box-shadow:var(--focus);}
-    .muted{color:var(--muted)}
-    .tiny{font-size:12px}
     .gridline{
       background:
         linear-gradient(var(--border) 1px, transparent 1px),
@@ -106,20 +67,39 @@
       background-position: -1px -1px;
       border-radius:16px;
     }
-
-    .status-dot{width:9px;height:9px;border-radius:999px;display:inline-block}
-    .status-live{background:var(--good); box-shadow:0 0 0 4px rgba(17,138,78,.12)}
-    .status-offline{background:var(--bad); box-shadow:0 0 0 4px rgba(197,48,48,.12)}
-
-    table{border-collapse:separate;border-spacing:0;width:100%}
-    th,td{padding:10px 10px; border-bottom:1px solid var(--border); vertical-align:top}
-    th{
-      text-align:left;font-size:12px;color:var(--muted);font-weight:900;
-      background:linear-gradient(180deg,#fbfdff 0%, #f5f7fb 100%);
-      position:sticky; top:0; z-index:1;
+    .chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.28rem .55rem;border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--surface-2);
+      font-size:12px;font-weight:800;color:var(--muted);
+      user-select:none;
     }
-    tr:hover td{background:#fbfdff}
-
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+      padding:.62rem .95rem;border-radius:12px;font-weight:800;
+      border:1px solid transparent; transition:all .15s ease;
+      user-select:none;
+    }
+    .btn-primary{background:var(--who-blue);color:#fff}
+    .btn-primary:hover{filter:brightness(.95)}
+    .btn-soft{background:var(--surface-2); border-color:var(--border); color:var(--ink)}
+    .btn-soft:hover{background:#eef3fb}
+    .btn-ink{background:var(--ink);color:#fff}
+    .btn-danger{background:var(--bad);color:#fff}
+    .btn-danger:hover{filter:brightness(.95)}
+    .btn-slate{background:#0f172a;color:#fff}
+    .btn-slate:hover{filter:brightness(.95)}
+    .input{
+      width:100%; padding:.62rem .78rem;
+      border:1px solid var(--border);
+      border-radius:12px;
+      outline:none; background:#fff;
+      transition:box-shadow .15s ease, border-color .15s ease;
+    }
+    .input:focus{border-color:rgba(0,114,188,.55); box-shadow:0 0 0 4px rgba(0,114,188,.12);}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px}
     .badge{
       font-size:12px;font-weight:900;
       padding:.2rem .5rem;border-radius:999px;
@@ -134,36 +114,34 @@
     .b-bad{border-color:rgba(197,48,48,.25); background:rgba(197,48,48,.08); color:var(--bad)}
     .b-info{border-color:rgba(0,114,188,.25); background:rgba(0,114,188,.08); color:var(--who-blue)}
 
-    /* Language dropdown (legible, no hover needed) */
-    .topbar-select{
-      background:#0b1220;
-      color:#ffffff;
-      border:1px solid rgba(255,255,255,.30);
-      border-radius:12px;
-      padding:.46rem .6rem;
-      font-weight:900;
-      outline:none;
-      min-width: 240px;
+    .status-dot{width:9px;height:9px;border-radius:999px;display:inline-block}
+    .status-live{background:var(--good); box-shadow:0 0 0 4px rgba(17,138,78,.12)}
+    .status-offline{background:var(--bad); box-shadow:0 0 0 4px rgba(197,48,48,.12)}
+
+    table{border-collapse:separate;border-spacing:0;width:100%}
+    th,td{padding:10px 10px; border-bottom:1px solid var(--border); vertical-align:top}
+    th{
+      text-align:left;font-size:12px;color:var(--muted);font-weight:900;
+      background:linear-gradient(180deg,#fbfdff 0%, #f5f7fb 100%);
+      position:sticky; top:0; z-index:1;
     }
-    .topbar-select:focus{ box-shadow: 0 0 0 4px rgba(255,255,255,.18); }
-    .topbar-select option{
-      color:#0b1220;
-      background:#ffffff;
-      font-weight:900;
+    tr:hover td{background:#fbfdff}
+
+    /* Modals */
+    .modal-backdrop{position:fixed; inset:0; background:rgba(11,18,32,.55); backdrop-filter:blur(6px); z-index:60; display:flex; align-items:center; justify-content:center; padding:18px;}
+    .modal{max-width:1080px; width:100%; max-height:90vh; overflow:auto; border-radius:18px; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow);}
+    .modal-h{padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
+    .modal-b{padding:18px;}
+    .hidden{display:none!important}
+    .no-print{}
+    @media print{
+      .no-print{display:none!important}
+      body{background:#fff}
+      .card{box-shadow:none}
+      th{position:static}
     }
 
-    .map-wrap{
-      width:100%;
-      aspect-ratio: 16/10;
-      min-height: 260px;
-      background: #fff;
-      border:1px solid var(--border);
-      border-radius: 16px;
-      overflow:hidden;
-    }
-    .map-wrap svg{ width:100%; height:100%; display:block; }
-
-    /* Captions overlay */
+    /* Accessibility captions overlay in video tile */
     .caption-overlay{
       position:absolute; left:12px; right:12px; bottom:12px;
       padding:.5rem .75rem;
@@ -175,131 +153,117 @@
       border:1px solid rgba(255,255,255,.15);
       backdrop-filter: blur(6px);
     }
-    .caption-overlay .label{ font-size:11px; opacity:.85; font-weight:900; margin-bottom:.25rem; }
-    .caption-overlay .text{ font-weight:900; }
-
-    /* Modals */
-    .modal-backdrop{position:fixed; inset:0; background:rgba(11,18,32,.55); backdrop-filter:blur(6px); z-index:60; display:flex; align-items:center; justify-content:center; padding:18px;}
-    .modal{max-width:1100px; width:100%; max-height:90vh; overflow:auto; border-radius:18px; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow);}
-    .modal-h{padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
-    .modal-b{padding:18px;}
-    .hidden{display:none!important}
-    .no-print{}
-
-    .section-focus{
-      outline: 2px solid rgba(0,114,188,.55);
-      outline-offset: 4px;
-      border-radius: 18px;
-      transition: outline .2s ease;
+    .caption-overlay .label{
+      font-size:11px; opacity:.8; font-weight:900; margin-bottom:.25rem;
     }
+    .caption-overlay .text{ font-weight:800; }
 
-    @media (prefers-reduced-motion: reduce){
-      *{ transition:none !important; scroll-behavior:auto !important; }
+    /* LEGIBLE language select */
+    .lang-wrap{
+      display:flex;align-items:center;gap:.5rem;
+      padding:.45rem .6rem;border-radius:12px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.55);
     }
-    @media print{
-      .no-print{display:none!important}
-      body{background:#fff}
-      .card{box-shadow:none}
-      th{position:static}
+    .lang-wrap i{color:#0b1220}
+    .lang-select{
+      color:#0b1220;
+      font-weight:900;
+      background:transparent;
+      outline:none;
     }
+    .lang-select option{color:#0b1220;background:#fff;}
   </style>
 </head>
 
 <body>
-  <a class="skip-link" href="#mainContent">Skip to main content</a>
-
   <!-- TOP BAR -->
-  <header class="topbar fixed w-full z-50" role="banner">
+  <header class="topbar fixed w-full z-50">
     <div class="shell">
       <div class="h-16 flex items-center justify-between gap-2">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white" aria-hidden="true">
+          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
             <i class="fa-solid fa-globe"></i>
           </div>
           <div class="leading-tight">
             <div class="text-white font-extrabold tracking-tight" data-i18n="app_name">AfyaAI</div>
             <div class="text-white/80 text-xs font-semibold" data-i18n="app_tagline">WHO / World Bank-style Monitoring Dashboard (Demo)</div>
           </div>
-          <span class="chip border-white/20 bg-white/10 text-white/90 ml-2" aria-live="polite">
-            <span id="netDot" class="status-dot status-live" aria-hidden="true"></span>
+          <span class="chip border-white/20 bg-white/10 text-white/90 ml-2">
+            <span id="netDot" class="status-dot status-live"></span>
             <span id="netText" data-i18n="online">Online</span>
           </span>
         </div>
 
         <div class="flex items-center gap-2 no-print">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-language text-white/90" aria-hidden="true"></i>
-            <select id="langSelect" class="topbar-select" aria-label="Language"></select>
+          <!-- Language -->
+          <div class="lang-wrap">
+            <i class="fa-solid fa-language"></i>
+            <select id="langSelect" class="lang-select text-sm">
+              <!-- injected by JS -->
+            </select>
           </div>
 
           <button id="pdfBtn" class="btn btn-soft" title="Export dashboard to PDF">
-            <i class="fa-solid fa-file-pdf" aria-hidden="true"></i><span class="hidden sm:inline" data-i18n="export_pdf">Export PDF</span>
+            <i class="fa-solid fa-file-pdf"></i><span class="hidden sm:inline" data-i18n="export_pdf">Export PDF</span>
           </button>
 
-          <button id="loginBtn" class="btn btn-primary">
-            <i class="fa-solid fa-user-shield" aria-hidden="true"></i><span class="hidden sm:inline" data-i18n="login">Login</span>
+          <button id="startCallBtn" class="btn btn-primary">
+            <i class="fa-solid fa-phone"></i><span class="hidden sm:inline" data-i18n="start_call">Start Call</span>
+          </button>
+          <button id="endCallBtn" class="btn btn-danger hidden">
+            <i class="fa-solid fa-phone-slash"></i><span class="hidden sm:inline" data-i18n="end_call">End Call</span>
+          </button>
+
+          <button id="portalBtn" class="btn btn-soft">
+            <i class="fa-solid fa-hospital-user"></i><span class="hidden sm:inline" data-i18n="patient_portal">Patient Portal</span>
           </button>
         </div>
       </div>
     </div>
   </header>
 
-  <main id="mainContent" class="shell pt-20 pb-12" role="main">
-    <section id="pdfCapture">
+  <main class="shell pt-20 pb-12">
+    <section id="pdfCapture" class="space-y-6">
 
       <!-- HERO -->
-      <section class="card p-6 md:p-7" id="section-hero" aria-labelledby="heroTitle">
+      <section class="card p-6 md:p-7">
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
           <div class="max-w-3xl">
-            <div class="flex flex-wrap items-center gap-2 mb-2 no-print">
-              <button class="chip" id="btnSafety"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <span data-i18n="chip_safety">Safety & Quality</span></button>
-              <button class="chip" id="btnIndicators"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i> <span data-i18n="chip_indicators">Indicator Monitoring</span></button>
-              <button class="chip" id="btnTelehealth"><i class="fa-solid fa-video" aria-hidden="true"></i> <span data-i18n="chip_telehealth">Telehealth</span></button>
-              <button class="chip" id="btnRegulatory"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="chip_regulatory">Regulatory Readiness</span></button>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <button class="chip" id="chipSafety"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="chip_safety">Safety & Quality</span></button>
+              <button class="chip" id="chipIndicators"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="chip_indicators">Indicator Monitoring</span></button>
+              <button class="chip" id="chipTelehealth"><i class="fa-solid fa-video"></i> <span data-i18n="chip_telehealth">Telehealth</span></button>
+              <button class="chip" id="chipRegulatory"><i class="fa-solid fa-scale-balanced"></i> <span data-i18n="chip_regulatory">Regulatory Readiness</span></button>
             </div>
-
-            <h1 id="heroTitle" class="text-2xl md:text-3xl font-extrabold tracking-tight" data-i18n="hero_title">
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight" data-i18n="hero_title">
               National AI Health Program Monitoring (Demo)
             </h1>
             <p class="mt-2 text-sm md:text-base muted" data-i18n="hero_subtitle">
               Institutional dashboard layout: scorecard, indicator tables, data sources, definitions, audit logs, and workflows — single HTML file.
             </p>
 
-            <div class="mt-4 flex flex-wrap gap-2 no-print">
-              <button class="btn btn-primary" id="startCallBtn">
-                <i class="fa-solid fa-phone" aria-hidden="true"></i> <span data-i18n="start_call">Start Call</span>
-              </button>
-              <button class="btn btn-danger" id="endCallBtn" disabled>
-                <i class="fa-solid fa-phone-slash" aria-hidden="true"></i> <span data-i18n="end_call">End Call</span>
-              </button>
-
-              <button class="btn btn-soft" id="openPortalBtn">
-                <i class="fa-solid fa-hospital-user" aria-hidden="true"></i> <span data-i18n="patient_portal">Patient Portal</span>
-              </button>
-              <button class="btn btn-soft" id="runAiBtn">
-                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> <span data-i18n="run_ai">Run AI Recommendation (Mock)</span>
-              </button>
-            </div>
-
-            <div class="mt-3 text-xs muted" data-i18n="tip_voice">
-              Tip: For voice features, use Chrome/Edge and allow microphone access. Hosting on HTTPS (e.g., GitHub Pages) is recommended.
-            </div>
-
-            <div class="mt-3 flex flex-wrap gap-2 no-print">
-              <button class="btn btn-slate" type="button" id="ttsReadPlanBtn">
-                <i class="fa-solid fa-volume-high" aria-hidden="true"></i> <span data-i18n="tts_read_plan">Read AI care plan aloud</span>
-              </button>
-              <button class="btn btn-soft" type="button" id="ttsStopBtn">
-                <i class="fa-solid fa-stop" aria-hidden="true"></i> <span data-i18n="tts_stop">Stop</span>
-              </button>
-              <span class="text-xs muted self-center" id="ttsStatus" aria-live="polite">—</span>
+            <div class="mt-4 card-flat p-4">
+              <div class="flex items-center justify-between">
+                <div class="font-extrabold" data-i18n="consortium_title">Consortium Partners (Demo)</div>
+                <span class="badge b-info"><i class="fa-solid fa-handshake"></i> <span data-i18n="partners">Partners</span></span>
+              </div>
+              <ul class="mt-2 text-sm muted list-disc pl-5 space-y-1">
+                <li><a class="underline font-bold" href="https://www.who.int/" target="_blank" rel="noopener">World Health Organization (WHO)</a></li>
+                <li><a class="underline font-bold" href="https://www.worldbank.org/" target="_blank" rel="noopener">World Bank</a></li>
+                <li><a class="underline font-bold" href="https://africacdc.org/" target="_blank" rel="noopener">Africa CDC</a></li>
+                <li><a class="underline font-bold" href="https://www.unicef.org/" target="_blank" rel="noopener">UNICEF</a></li>
+              </ul>
+              <div class="tiny muted mt-2" data-i18n="consortium_note">
+                Links above are real partner websites for demonstration.
+              </div>
             </div>
           </div>
 
-          <div class="lg:w-[420px] card-flat p-4 gridline">
+          <div class="lg:w-[380px] card-flat p-4 gridline">
             <div class="flex items-center justify-between">
               <div class="font-extrabold" data-i18n="scorecard_title">National Summary Scorecard</div>
-              <span class="badge b-info"><i class="fa-solid fa-database" aria-hidden="true"></i> <span data-i18n="aggregated">Aggregated</span></span>
+              <span class="badge b-info"><i class="fa-solid fa-database"></i> <span data-i18n="aggregated">Aggregated</span></span>
             </div>
             <p class="tiny muted mt-1" data-i18n="scorecard_note">
               Composite is a demo-weighted index across core indicators.
@@ -308,12 +272,12 @@
             <div class="mt-3 grid grid-cols-2 gap-3">
               <div class="card-flat p-3">
                 <div class="tiny muted font-extrabold" data-i18n="composite_score">Composite Score</div>
-                <div class="text-2xl font-extrabold" id="nationalComposite">—</div>
+                <div class="text-2xl font-extrabold" id="nationalComposite">72</div>
                 <div class="tiny muted" id="nationalCompositeNote" data-i18n="across_all">Across all countries</div>
               </div>
               <div class="card-flat p-3">
                 <div class="tiny muted font-extrabold" data-i18n="safety_signal">Safety Signal Rate</div>
-                <div class="text-2xl font-extrabold" id="nationalSafetyRate">—</div>
+                <div class="text-2xl font-extrabold" id="nationalSafetyRate">12.4%</div>
                 <div class="tiny muted" data-i18n="overrides_per_ai">Overrides per AI run</div>
               </div>
             </div>
@@ -326,273 +290,245 @@
         </div>
       </section>
 
-      <!-- MAP + HEAT INDEX -->
-      <section class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section class="card p-6 md:p-7" id="section-indicators" aria-labelledby="mapTitle">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <h2 id="mapTitle" class="text-lg md:text-xl font-extrabold" data-i18n="map_title">Africa Program Map (Demo)</h2>
-              <span class="badge b-info"><i class="fa-solid fa-map" aria-hidden="true"></i> <span data-i18n="responsive">Responsive</span></span>
-            </div>
-            <div class="flex items-center gap-2">
-              <select id="mapMetric" class="input" style="max-width:240px" aria-label="Map metric">
-                <option value="heatIndex" data-i18n-opt="metric_heat">Heat Index</option>
-                <option value="safetySignal" data-i18n-opt="metric_safety">Safety Signal</option>
-                <option value="adoption" data-i18n-opt="metric_adoption">Clinician Adoption</option>
-                <option value="dqs" data-i18n-opt="metric_dqs">Data Quality</option>
-              </select>
-            </div>
-          </div>
-
-          <p class="mt-2 text-sm muted" data-i18n="map_note">
-            Demo map is illustrative (not political boundaries). Replace with GeoJSON + real data later.
-          </p>
-
-          <div class="mt-4 map-wrap" role="img" aria-label="Map of Africa (demo)">
-            <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="ocean" x1="0" x2="1">
-                  <stop offset="0" stop-color="#f5f7fb"/>
-                  <stop offset="1" stop-color="#eef3fb"/>
-                </linearGradient>
-                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="rgba(11,18,32,.18)" />
-                </filter>
-              </defs>
-              <rect x="0" y="0" width="900" height="600" fill="url(#ocean)"/>
-              <path filter="url(#softShadow)"
-                d="M430,70
-                   C390,90 350,120 330,150
-                   C310,185 310,210 290,245
-                   C265,285 240,305 250,340
-                   C260,380 290,395 295,430
-                   C305,500 330,530 390,545
-                   C450,560 520,545 565,515
-                   C610,485 610,450 640,420
-                   C675,385 705,355 690,320
-                   C675,285 650,260 650,225
-                   C650,190 665,170 640,145
-                   C610,115 565,90 520,75
-                   C490,65 460,60 430,70 Z"
-                fill="#ffffff" stroke="#d8e0ee" stroke-width="3" />
-              <g id="pins" font-family="Inter, sans-serif">
-                <circle class="pin" data-country="Kenya" cx="560" cy="310" r="12" fill="#0072bc" opacity="0.85"/>
-                <text x="580" y="315" font-size="14" font-weight="900" fill="#0b1220">Kenya</text>
-
-                <circle class="pin" data-country="Nigeria" cx="420" cy="270" r="12" fill="#0072bc" opacity="0.85"/>
-                <text x="440" y="275" font-size="14" font-weight="900" fill="#0b1220">Nigeria</text>
-
-                <circle class="pin" data-country="Rwanda" cx="535" cy="330" r="10" fill="#0072bc" opacity="0.85"/>
-                <text x="555" y="335" font-size="14" font-weight="900" fill="#0b1220">Rwanda</text>
-
-                <circle class="pin" data-country="South Africa" cx="520" cy="500" r="12" fill="#0072bc" opacity="0.85"/>
-                <text x="540" y="505" font-size="14" font-weight="900" fill="#0b1220">South Africa</text>
-
-                <circle class="pin" data-country="Ethiopia" cx="585" cy="250" r="12" fill="#0072bc" opacity="0.85"/>
-                <text x="605" y="255" font-size="14" font-weight="900" fill="#0b1220">Ethiopia</text>
-
-                <circle class="pin" data-country="Ghana" cx="385" cy="290" r="10" fill="#0072bc" opacity="0.85"/>
-                <text x="405" y="295" font-size="14" font-weight="900" fill="#0b1220">Ghana</text>
-              </g>
-              <text x="20" y="560" font-size="12" fill="#5b677a" font-weight="800" data-i18n="map_footer">
-                Demo map: pins represent program countries; values shown in “Heat Index Data Sheet”.
-              </text>
-            </svg>
-          </div>
-
-          <div class="mt-4 card-flat p-4">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <div class="font-extrabold" data-i18n="map_inspector">Map Inspector</div>
-              <span class="badge b-info" id="mapInspectorBadge"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span data-i18n="select_pin">Select a country pin</span></span>
-            </div>
-            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-              <div class="card-flat p-3">
-                <div class="tiny muted font-extrabold" data-i18n="selected_country">Selected Country</div>
-                <div class="text-lg font-extrabold" id="selectedCountry">—</div>
-                <div class="tiny muted" id="selectedStatus">—</div>
-              </div>
-              <div class="card-flat p-3">
-                <div class="tiny muted font-extrabold" id="metricLabel">—</div>
-                <div class="text-lg font-extrabold" id="metricValue">—</div>
-                <div class="tiny muted" id="metricMeaning">—</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card p-6 md:p-7" id="section-safety" aria-labelledby="heatTitle">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <h2 id="heatTitle" class="text-lg md:text-xl font-extrabold" data-i18n="heat_title">Heat Index Data Sheet</h2>
-              <span class="badge b-info"><i class="fa-solid fa-table" aria-hidden="true"></i> <span data-i18n="csv_ready">CSV-ready</span></span>
-            </div>
-            <div class="flex items-center gap-2 no-print">
-              <button class="btn btn-soft" id="downloadHeatCsv">
-                <i class="fa-solid fa-download" aria-hidden="true"></i> <span data-i18n="download_csv">Download CSV</span>
-              </button>
-            </div>
-          </div>
-
-          <p class="mt-2 text-sm muted" data-i18n="heat_note">
-            Heat Index combines disease burden proxy + climate stress + service load. Replace with real MoH/WHO/WB data feeds.
-          </p>
-
-          <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label class="tiny muted font-extrabold" data-i18n="filter_country">Country</label>
-              <select id="heatCountryFilter" class="input mt-1" aria-label="Heat filter country"></select>
-            </div>
-            <div>
-              <label class="tiny muted font-extrabold" data-i18n="filter_risk">Risk tier</label>
-              <select id="heatRiskFilter" class="input mt-1" aria-label="Heat filter risk">
-                <option value="ALL" data-i18n-opt="all">All</option>
-                <option value="LOW">LOW</option>
-                <option value="MEDIUM">MEDIUM</option>
-                <option value="HIGH">HIGH</option>
-              </select>
-            </div>
-            <div>
-              <label class="tiny muted font-extrabold" data-i18n="filter_search">Search</label>
-              <input id="heatSearch" class="input mt-1" data-i18n-ph="ph_search_heat" placeholder="e.g., malaria, maternal, flood" aria-label="Heat search"/>
-            </div>
-          </div>
-
-          <div class="mt-4 overflow-auto card-flat" style="max-height:360px">
-            <table class="min-w-[980px]" id="heatTable" aria-label="Heat index data table"></table>
-          </div>
-        </section>
-      </section>
-
-      <!-- TELEHEALTH + AI -->
-      <section class="mt-6 card p-6 md:p-7" id="section-telehealth" aria-labelledby="teleTitle">
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <h2 id="teleTitle" class="text-lg md:text-xl font-extrabold" data-i18n="tele_title">Telehealth Room (Simulated)</h2>
-            <span class="badge b-info"><i class="fa-solid fa-video" aria-hidden="true"></i> <span data-i18n="simulated">Simulated</span></span>
-          </div>
-          <span class="text-xs muted" id="aiLatency">—</span>
+      <!-- MAP + INSPECTOR -->
+      <section class="card p-6 md:p-7" id="sectionIndicators">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="map_title">Africa Program Map (Demo)</h2>
+          <span class="badge b-info"><i class="fa-solid fa-map"></i> <span data-i18n="interactive">Interactive</span></span>
         </div>
+        <p class="tiny muted mt-1" data-i18n="map_note">
+          Click a country pin to update the Map Inspector. Change the metric to recolor pins.
+        </p>
 
         <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <!-- AI Controls -->
-          <div class="card-flat p-4">
-            <div class="font-extrabold" data-i18n="ai_title">AI Recommendation (Mock)</div>
-            <div class="tiny muted mt-1" data-i18n="ai_inputs_note">Uses patient intake + heat index + safety signals.</div>
-
-            <div class="mt-3">
-              <label class="tiny muted font-extrabold" data-i18n="ai_country">Country context</label>
-              <select id="aiCountry" class="input mt-1"></select>
-            </div>
-
-            <div class="mt-3">
-              <label class="tiny muted font-extrabold" data-i18n="ai_mode">Mode</label>
-              <select id="aiMode" class="input mt-1">
-                <option value="patient" data-i18n-opt="mode_patient">Patient-friendly</option>
-                <option value="clinician" data-i18n-opt="mode_clinician">Clinician summary</option>
-                <option value="ministry" data-i18n-opt="mode_ministry">Ministry / donor reporting note</option>
+          <div class="lg:col-span-2 card-flat p-4">
+            <div class="flex items-center justify-between gap-2">
+              <div class="font-extrabold" data-i18n="map_metric">Map Metric</div>
+              <select id="mapMetric" class="input font-extrabold" style="max-width:280px">
+                <option value="heatIndex" data-i18n="metric_heat">Heat Index</option>
+                <option value="safetySignal" data-i18n="metric_safety">Safety Signal</option>
+                <option value="adoption" data-i18n="metric_adoption">Adoption</option>
+                <option value="dqs" data-i18n="metric_dqs">Data Quality</option>
               </select>
             </div>
 
-            <div class="mt-3 flex flex-wrap gap-2 no-print">
-              <button class="btn btn-primary" id="runAiBtn2">
-                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> <span data-i18n="run_ai">Run AI Recommendation (Mock)</span>
-              </button>
-              <button class="btn btn-soft" id="openPortalBtn2">
-                <i class="fa-solid fa-hospital-user" aria-hidden="true"></i> <span data-i18n="patient_portal">Patient Portal</span>
-              </button>
+            <!-- Responsive Africa SVG (simplified silhouette) -->
+            <div class="mt-3 w-full">
+              <svg id="africaMap" viewBox="0 0 800 800" class="w-full h-auto" role="img" aria-label="Africa map demo">
+                <!-- silhouette -->
+                <path d="M422 88c43 17 68 63 97 98 22 26 58 33 70 67 10 27-9 50-23 72-13 20-10 37-1 58 12 28 14 61 0 90-9 19-26 31-34 50-7 18 2 39-4 57-6 18-27 30-39 44-19 23-18 58-39 81-27 30-77 16-114 10-36-6-73-5-101-28-25-21-22-58-38-83-16-25-48-36-59-63-12-31 7-65 0-97-6-28-30-49-37-76-8-31 13-63 30-87 17-24 40-43 53-69 16-31 6-69 20-101 19-43 86-53 119-23 21 19 35 45 59 58 27 15 55-2 80 12z"
+                      fill="#e8eef8" stroke="#c9d6ea" stroke-width="3" />
+
+                <!-- pins (must match BASE/HEAT_ROWS country names) -->
+                <circle class="pin" data-country="Kenya" cx="520" cy="420" r="12"></circle>
+                <circle class="pin" data-country="Nigeria" cx="330" cy="360" r="12"></circle>
+                <circle class="pin" data-country="Rwanda" cx="500" cy="445" r="12"></circle>
+                <circle class="pin" data-country="South Africa" cx="480" cy="660" r="12"></circle>
+                <circle class="pin" data-country="Ethiopia" cx="560" cy="360" r="12"></circle>
+                <circle class="pin" data-country="Ghana" cx="285" cy="395" r="12"></circle>
+
+                <!-- pin labels -->
+                <g font-family="Inter" font-size="14" fill="#0b1220" font-weight="800" opacity="0.9">
+                  <text x="538" y="425">KE</text>
+                  <text x="348" y="365">NG</text>
+                  <text x="518" y="450">RW</text>
+                  <text x="498" y="665">ZA</text>
+                  <text x="578" y="365">ET</text>
+                  <text x="303" y="400">GH</text>
+                </g>
+              </svg>
+            </div>
+
+            <div class="tiny muted mt-3" data-i18n="map_hint">
+              Tip: Select a pin, then switch metrics to see the colors update.
+            </div>
+          </div>
+
+          <!-- Map Inspector -->
+          <div class="card-flat p-4">
+            <div class="flex items-center justify-between">
+              <div class="font-extrabold" data-i18n="inspector_title">Map Inspector</div>
+              <span class="badge b-info" id="mapInspectorBadge"><i class="fa-solid fa-location-dot"></i> —</span>
             </div>
 
             <div class="mt-3 card-flat p-3">
-              <div class="tiny muted font-extrabold" data-i18n="accessibility_status">Accessibility status</div>
-              <div class="mt-2 flex flex-wrap gap-2">
-                <span class="badge b-info" id="sttSupportBadge"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> STT: Checking…</span>
-                <span class="badge b-info" id="ccSupportBadge"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> CC: Checking…</span>
-                <span class="badge b-info" id="ttsSupportBadge"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> TTS: Checking…</span>
-              </div>
-              <div class="tiny muted mt-2" data-i18n="accessibility_note">
-                Note: STT/CC require Chrome/Edge and microphone permissions.
-              </div>
+              <div class="tiny muted font-extrabold" data-i18n="selected_country">Selected Country</div>
+              <div class="text-xl font-extrabold" id="selectedCountry">—</div>
+              <div class="tiny muted" id="selectedStatus">Status: —</div>
             </div>
-          </div>
 
-          <!-- Video room tiles -->
-          <div class="lg:col-span-2">
-            <div class="card-flat p-4">
-              <div class="font-extrabold" data-i18n="video_room">Video Room</div>
-              <div class="tiny muted mt-1" data-i18n="video_room_note">Demo tiles for clinician + patient. Captions overlay can be enabled on clinician tile.</div>
+            <div class="mt-3 card-flat p-3">
+              <div class="tiny muted font-extrabold" id="metricLabel">Heat Index</div>
+              <div class="text-2xl font-extrabold" id="metricValue">—</div>
+              <div class="tiny muted mt-1" id="metricMeaning">—</div>
+            </div>
 
-              <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- Clinician tile with CC overlay -->
-                <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[180px] flex items-center justify-center overflow-hidden">
-                  <div class="text-center">
-                    <i class="fa-solid fa-user-doctor text-3xl mb-2" aria-hidden="true"></i>
-                    <div class="text-sm font-extrabold" data-i18n="clinician_tile">Clinician Video Tile</div>
-                    <div class="text-xs text-slate-300" data-i18n="simulated">Simulated</div>
-
-                    <div class="mt-3 flex flex-wrap gap-2 justify-center no-print">
-                      <button class="btn btn-soft text-xs" type="button" id="ccStartBtn">
-                        <i class="fa-solid fa-closed-captioning" aria-hidden="true"></i> <span data-i18n="cc_start">Start Captions</span>
-                      </button>
-                      <button class="btn btn-soft text-xs" type="button" id="ccStopBtn" disabled>
-                        <i class="fa-solid fa-stop" aria-hidden="true"></i> <span data-i18n="cc_stop">Stop</span>
-                      </button>
-                      <button class="btn btn-soft text-xs" type="button" id="ccClearBtn">
-                        <i class="fa-solid fa-eraser" aria-hidden="true"></i> <span data-i18n="clear">Clear</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="caption-overlay" id="ccOverlay" style="display:none;">
-                    <div class="label" data-i18n="cc_label">Closed Captions (Simulated)</div>
-                    <div class="text" id="ccText">—</div>
-                  </div>
-                </div>
-
-                <!-- Patient tile -->
-                <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[180px] flex items-center justify-center">
-                  <div class="text-center">
-                    <i class="fa-solid fa-user text-3xl mb-2" aria-hidden="true"></i>
-                    <div class="text-sm font-extrabold" data-i18n="patient_tile">Patient Video Tile</div>
-                    <div class="text-xs text-slate-300" id="patientJoinStatus" data-i18n="waiting_patient">Waiting for patient…</div>
-                    <div class="mt-3 no-print">
-                      <button class="btn btn-soft text-xs" type="button" id="simulateJoinBtn">
-                        <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> <span data-i18n="simulate_join">Simulate Join</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+            <div class="mt-3 card-flat p-3">
+              <div class="tiny muted font-extrabold" data-i18n="inspector_note_title">What this means</div>
+              <div class="tiny muted" data-i18n="inspector_note">
+                In production, these pins would reflect real-time program telemetry and validated climate/health data sources.
               </div>
-
-              <!-- AI output -->
-              <div class="mt-4">
-                <div class="flex items-center justify-between">
-                  <div class="font-extrabold" data-i18n="ai_output">AI Output</div>
-                  <span class="text-xs muted" id="aiStamp">—</span>
-                </div>
-                <div id="aiView" class="mt-2 card-flat p-4 text-sm whitespace-pre-line" aria-live="polite">
-                  <div class="text-slate-400" data-i18n="ai_hint">Run AI to generate recommendations.</div>
-                </div>
-              </div>
-
-              <div class="mt-4 flex flex-wrap gap-2 no-print">
-                <button class="btn btn-soft" type="button" id="joinRoomBtn">
-                  <i class="fa-solid fa-video" aria-hidden="true"></i> <span data-i18n="join_btn">Join</span>
-                </button>
-                <button class="btn btn-soft" type="button" id="leaveRoomBtn">
-                  <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span data-i18n="leave_btn">Leave</span>
-                </button>
-              </div>
-
             </div>
           </div>
         </div>
       </section>
 
-      <!-- COUNTRY COMPARISON -->
-      <section class="mt-6 card p-6 md:p-7" id="section-regulatory" aria-labelledby="comparisonTitle">
+      <!-- HEAT INDEX DATA SHEET -->
+      <section class="card p-6 md:p-7" id="sectionSafety">
         <div class="flex items-center gap-2">
-          <h2 id="comparisonTitle" class="text-lg md:text-xl font-extrabold" data-i18n="comparison_title">Country Comparison Table</h2>
-          <span class="badge b-info"><i class="fa-solid fa-table" aria-hidden="true"></i> <span data-i18n="side_by_side">Side-by-side</span></span>
+          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="heat_title">Heat Index Data Sheet (Demo)</h2>
+          <span class="badge b-info"><i class="fa-solid fa-table"></i> <span data-i18n="filterable">Filterable</span></span>
+        </div>
+        <p class="tiny muted mt-1" data-i18n="heat_note">
+          Demo dataset for climate-related health risk monitoring. Exportable to CSV.
+        </p>
+
+        <div class="mt-4 grid grid-cols-1 lg:grid-cols-4 gap-3">
+          <div>
+            <label class="tiny muted font-extrabold" data-i18n="filter_country">Country</label>
+            <select id="heatCountry" class="input font-extrabold mt-1"></select>
+          </div>
+          <div>
+            <label class="tiny muted font-extrabold" data-i18n="filter_tier">Risk Tier</label>
+            <select id="heatTier" class="input font-extrabold mt-1">
+              <option value="ALL">All</option>
+              <option value="High">High</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="lg:col-span-2">
+            <label class="tiny muted font-extrabold" data-i18n="filter_search">Search</label>
+            <input id="heatSearch" class="input font-extrabold mt-1" placeholder="e.g., malaria, flood, maternal" />
+          </div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap gap-2">
+          <button id="heatCsvBtn" class="btn btn-soft"><i class="fa-solid fa-download"></i><span data-i18n="download_csv">Download CSV</span></button>
+          <span class="tiny muted" id="heatCount">—</span>
+        </div>
+
+        <div class="mt-4 overflow-auto card-flat">
+          <table class="min-w-[980px]" id="heatTable"></table>
+        </div>
+      </section>
+
+      <!-- TELEHEALTH + AI -->
+      <section class="card p-6 md:p-7" id="sectionTelehealth">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="telehealth_title">Telehealth + AI Decision Support (Demo)</h2>
+          <span class="badge b-info"><i class="fa-solid fa-stethoscope"></i> <span data-i18n="workflow">Workflow</span></span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- AI panel -->
+          <div class="card-flat p-4">
+            <div class="flex items-center justify-between">
+              <div class="font-extrabold" data-i18n="ai_reco_title">AI Recommendation (Mock)</div>
+              <span class="text-xs muted" id="aiLatency">—</span>
+            </div>
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="tiny muted font-extrabold" data-i18n="ai_country_context">Country context</label>
+                <select id="aiCountry" class="input mt-1 font-extrabold"></select>
+              </div>
+              <div>
+                <label class="tiny muted font-extrabold" data-i18n="ai_mode">Mode</label>
+                <select id="aiMode" class="input mt-1 font-extrabold">
+                  <option value="triage" data-i18n="ai_mode_triage">Triage</option>
+                  <option value="followup" data-i18n="ai_mode_followup">Follow-up</option>
+                  <option value="education" data-i18n="ai_mode_education">Patient education</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button id="runAiBtn" class="btn btn-primary"><i class="fa-solid fa-wand-magic-sparkles"></i><span data-i18n="run_ai">Run AI Recommendations</span></button>
+              <button id="clearAiBtn" class="btn btn-soft"><i class="fa-solid fa-eraser"></i><span data-i18n="clear">Clear</span></button>
+            </div>
+
+            <div class="mt-3 card-flat p-3">
+              <div id="aiView" class="text-sm text-slate-700">
+                <div class="text-slate-400" data-i18n="ai_hint">Run AI to generate recommendations.</div>
+              </div>
+
+              <!-- TTS controls -->
+              <div class="mt-3 flex flex-wrap gap-2 no-print">
+                <button class="btn btn-slate" type="button" id="ttsReadPlanBtn">
+                  <i class="fa-solid fa-volume-high"></i> <span data-i18n="read_plan">Read Plan Aloud</span>
+                </button>
+                <button class="btn btn-soft" type="button" id="ttsStopBtn">
+                  <i class="fa-solid fa-stop"></i> <span data-i18n="stop">Stop</span>
+                </button>
+              </div>
+              <div class="text-xs muted mt-2" id="ttsStatus">—</div>
+            </div>
+          </div>
+
+          <!-- Video room -->
+          <div class="card-flat p-4">
+            <div class="flex items-center justify-between">
+              <div class="font-extrabold" data-i18n="video_room">Telehealth Video Room (Simulated)</div>
+              <span class="badge b-info"><i class="fa-solid fa-video"></i> <span id="callStateText" data-i18n="call_idle">Idle</span></span>
+            </div>
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+              <!-- Clinician tile with captions -->
+              <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center overflow-hidden">
+                <div class="text-center">
+                  <i class="fa-solid fa-user-doctor text-2xl mb-2"></i>
+                  <div class="text-sm font-extrabold" data-i18n="clinician_tile">Clinician Video Tile</div>
+                  <div class="text-xs text-slate-300" data-i18n="simulated">Simulated</div>
+
+                  <div class="mt-3 flex flex-wrap gap-2 justify-center">
+                    <button class="btn btn-soft text-xs" type="button" id="ccStartBtn">
+                      <i class="fa-solid fa-closed-captioning"></i> <span data-i18n="start_captions">Start Captions</span>
+                    </button>
+                    <button class="btn btn-soft text-xs" type="button" id="ccStopBtn" disabled>
+                      <i class="fa-solid fa-stop"></i> <span data-i18n="stop">Stop</span>
+                    </button>
+                    <button class="btn btn-soft text-xs" type="button" id="ccClearBtn">
+                      <i class="fa-solid fa-eraser"></i> <span data-i18n="clear">Clear</span>
+                    </button>
+                  </div>
+
+                  <div class="mt-2">
+                    <span class="badge b-info" id="ccSupportBadge">
+                      <i class="fa-solid fa-universal-access"></i> CC: Checking…
+                    </span>
+                  </div>
+                </div>
+
+                <div class="caption-overlay" id="ccOverlay" style="display:none;">
+                  <div class="label" data-i18n="closed_captions">Closed Captions (Demo)</div>
+                  <div class="text" id="ccText">—</div>
+                </div>
+              </div>
+
+              <!-- Patient tile -->
+              <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center">
+                <div class="text-center">
+                  <i class="fa-solid fa-user text-2xl mb-2"></i>
+                  <div class="text-sm font-extrabold" data-i18n="patient_tile">Patient Video Tile</div>
+                  <div class="text-xs text-slate-300" id="patientJoinStatus" data-i18n="waiting_patient">Waiting for patient…</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 card-flat p-3">
+              <div class="tiny muted font-extrabold" data-i18n="telehealth_note_title">Demo note</div>
+              <div class="tiny muted" data-i18n="telehealth_note">
+                In production, the video room would connect to a secure telehealth service (e.g., WebRTC + compliant hosting).
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COUNTRY COMPARISON TABLE -->
+      <section class="card p-6 md:p-7" id="sectionRegulatory">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="comparison_title">Country Comparison Table</h2>
+          <span class="badge b-info"><i class="fa-solid fa-table"></i> <span data-i18n="side_by_side">Side-by-side</span></span>
         </div>
         <div class="mt-4 overflow-auto card-flat">
           <table class="min-w-[980px]" id="comparisonTable"></table>
@@ -602,215 +538,214 @@
     </section>
   </main>
 
-  <!-- Login modal -->
-  <div id="loginModal" class="modal-backdrop hidden no-print" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-      <div class="modal-h">
-        <div id="loginTitle" class="font-extrabold" data-i18n="login_demo">Login (Demo)</div>
-        <button id="closeLogin" class="btn btn-soft" style="padding:.45rem .7rem" aria-label="Close login">
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-        </button>
-      </div>
-      <div class="modal-b space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="tiny muted font-extrabold" data-i18n="role">Role</label>
-            <select class="input mt-1" id="loginRole">
-              <option value="Clinician">Clinician</option>
-              <option value="Patient">Patient</option>
-              <option value="Ministry">Ministry</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-          <div>
-            <label class="tiny muted font-extrabold" data-i18n="name">Name</label>
-            <input class="input mt-1" id="loginName" data-i18n-ph="ph_name" placeholder="e.g., Dr. Amina" />
-          </div>
-        </div>
-        <div class="flex gap-2">
-          <button class="btn btn-primary w-full" id="doLoginBtn"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="login">Login</span></button>
-          <button class="btn btn-soft w-full" id="cancelLogin" data-i18n="cancel">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Patient Portal modal -->
+  <!-- PATIENT PORTAL MODAL -->
   <div id="patientPortalModal" class="modal-backdrop hidden no-print" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="portalTitle">
+    <div class="modal">
       <div class="modal-h">
-        <div id="portalTitle" class="font-extrabold" data-i18n="portal_title">Patient Portal (Intake + Join Video Room)</div>
-        <button class="btn btn-soft" style="padding:.45rem .7rem" id="closePortalBtn" aria-label="Close patient portal">
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-        </button>
+        <div class="font-extrabold" data-i18n="portal_title">Patient Portal (Intake + Join Video Room)</div>
+        <button id="closePortalBtn" class="btn btn-soft" style="padding:.45rem .7rem"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
       <div class="modal-b">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <!-- Intake -->
           <div class="card-flat p-4">
-            <div class="text-sm font-extrabold mb-2" data-i18n="intake_title">Patient Intake Form</div>
+            <div class="text-sm font-extrabold" data-i18n="intake_form">Patient Intake Form</div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
               <div>
-                <label class="tiny muted font-extrabold" data-i18n="full_name">Full Name</label>
-                <input class="input mt-1" id="ptName" data-i18n-ph="ph_fullname" placeholder="e.g., Mary N." />
+                <label class="tiny muted font-extrabold" data-i18n="pt_name">Name</label>
+                <input class="input mt-1 font-extrabold" id="ptName" placeholder="e.g., Amina" />
               </div>
               <div>
-                <label class="tiny muted font-extrabold" data-i18n="age">Age</label>
-                <input class="input mt-1" id="ptAge" data-i18n-ph="ph_age" placeholder="e.g., 34" />
+                <label class="tiny muted font-extrabold" data-i18n="pt_age">Age</label>
+                <input class="input mt-1 font-extrabold" id="ptAge" placeholder="e.g., 34" />
               </div>
               <div>
-                <label class="tiny muted font-extrabold" data-i18n="phone">Phone</label>
-                <input class="input mt-1" id="ptPhone" data-i18n-ph="ph_phone" placeholder="+254..." />
+                <label class="tiny muted font-extrabold" data-i18n="pt_phone">Phone</label>
+                <input class="input mt-1 font-extrabold" id="ptPhone" placeholder="+254…" />
               </div>
               <div>
-                <label class="tiny muted font-extrabold" data-i18n="chief_complaint">Chief Complaint</label>
-                <input class="input mt-1" id="ptComplaint" data-i18n-ph="ph_complaint" placeholder="e.g., fever and cough" />
+                <label class="tiny muted font-extrabold" data-i18n="pt_country">Country</label>
+                <select class="input mt-1 font-extrabold" id="ptCountry"></select>
               </div>
             </div>
 
             <div class="mt-3">
-              <label class="tiny muted font-extrabold" data-i18n="notes">Allergies / Notes</label>
-              <textarea class="input mt-1" id="ptNotes" rows="3" data-i18n-ph="ph_notes" placeholder="e.g., Penicillin allergy"></textarea>
+              <label class="tiny muted font-extrabold" data-i18n="pt_complaint">Chief Complaint</label>
+              <input class="input mt-1 font-extrabold" id="ptComplaint" placeholder="e.g., fever and cough for 3 days" />
             </div>
 
-            <!-- STT -->
-            <div class="mt-4 card-flat p-3">
+            <div class="mt-3">
+              <label class="tiny muted font-extrabold" data-i18n="pt_notes">Allergies / Notes</label>
+              <textarea class="input mt-1 font-extrabold" id="ptNotes" rows="3" placeholder="e.g., Penicillin allergy"></textarea>
+            </div>
+
+            <!-- Accessibility: STT + Translate + Read Aloud -->
+            <div class="mt-3 card-flat p-3">
               <div class="flex items-center justify-between gap-2">
                 <div>
                   <div class="font-extrabold text-sm">
-                    <i class="fa-solid fa-microphone-lines" aria-hidden="true"></i>
-                    <span data-i18n="stt_title">Voice Symptom Capture (STT)</span>
+                    <i class="fa-solid fa-microphone-lines"></i>
+                    <span data-i18n="voice_capture">Voice Symptom Capture</span>
                   </div>
-                  <div class="tiny muted" data-i18n="stt_note">
-                    Speak your symptoms. We’ll transcribe and you can apply the text to Chief Complaint or Notes.
+                  <div class="tiny muted" data-i18n="voice_capture_note">
+                    Speak your symptoms. We’ll transcribe and (optionally) translate to the selected UI language.
                   </div>
                 </div>
-                <span class="badge b-info" id="sttSupportBadge2">
-                  <i class="fa-solid fa-universal-access" aria-hidden="true"></i> STT: Checking…
+                <span class="badge b-info" id="sttSupportBadge">
+                  <i class="fa-solid fa-universal-access"></i> STT: Checking…
                 </span>
               </div>
 
               <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                 <button class="btn btn-primary" type="button" id="sttStartBtn">
-                  <i class="fa-solid fa-microphone" aria-hidden="true"></i><span data-i18n="start">Start</span>
+                  <i class="fa-solid fa-microphone"></i><span data-i18n="start">Start</span>
                 </button>
                 <button class="btn btn-soft" type="button" id="sttStopBtn" disabled>
-                  <i class="fa-solid fa-stop" aria-hidden="true"></i><span data-i18n="stop">Stop</span>
+                  <i class="fa-solid fa-stop"></i><span data-i18n="stop">Stop</span>
                 </button>
                 <button class="btn btn-soft" type="button" id="sttClearBtn">
-                  <i class="fa-solid fa-eraser" aria-hidden="true"></i><span data-i18n="clear">Clear</span>
+                  <i class="fa-solid fa-eraser"></i><span data-i18n="clear">Clear</span>
                 </button>
               </div>
 
               <div class="mt-3">
                 <div class="tiny muted font-extrabold" data-i18n="live_transcript">Live transcript</div>
-                <div id="sttTranscript" class="mt-1 p-3 rounded-xl border border-slate-200 bg-white text-sm" style="min-height:72px" aria-live="polite">—</div>
+                <div id="sttTranscript"
+                  class="mt-1 p-3 rounded-xl border border-slate-200 bg-white text-sm"
+                  style="min-height:72px"
+                  aria-live="polite">—</div>
+
+                <div class="mt-3 flex items-center justify-between">
+                  <div class="tiny muted font-extrabold" data-i18n="translated_ui">Translated (UI language)</div>
+                  <label class="flex items-center gap-2 tiny muted">
+                    <input type="checkbox" id="sttAutoTranslate" checked />
+                    <span data-i18n="auto_translate">Auto-translate</span>
+                  </label>
+                </div>
+                <div id="sttTranslated"
+                  class="mt-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm"
+                  style="min-height:64px"
+                  aria-live="polite">—</div>
 
                 <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
                   <button class="btn btn-soft" type="button" id="sttApplyToComplaintBtn">
-                    <i class="fa-solid fa-arrow-turn-down" aria-hidden="true"></i><span data-i18n="to_complaint">→ Chief Complaint</span>
+                    <i class="fa-solid fa-arrow-turn-down"></i><span data-i18n="to_complaint">→ Chief Complaint</span>
                   </button>
                   <button class="btn btn-soft" type="button" id="sttApplyToNotesBtn">
-                    <i class="fa-solid fa-arrow-turn-down" aria-hidden="true"></i><span data-i18n="to_notes">→ Notes</span>
+                    <i class="fa-solid fa-arrow-turn-down"></i><span data-i18n="to_notes">→ Notes</span>
                   </button>
-                  <button class="btn btn-slate" type="button" id="sttSpeakBtn">
-                    <i class="fa-solid fa-volume-high" aria-hidden="true"></i><span data-i18n="read_aloud">Read Aloud</span>
+                  <button class="btn btn-slate" type="button" id="sttSpeakTranslatedBtn">
+                    <i class="fa-solid fa-volume-high"></i><span data-i18n="read_aloud">Read Aloud</span>
                   </button>
                 </div>
 
-                <div class="tiny muted mt-2" id="sttStatus" aria-live="polite">—</div>
+                <div class="tiny muted mt-2" id="sttStatus">—</div>
               </div>
             </div>
 
             <div class="mt-3 flex gap-2">
-              <button class="btn btn-soft w-full" type="button" id="autoFillBtn" data-i18n="autofill">Auto-fill</button>
-              <button class="btn btn-primary w-full" type="button" id="submitIntakeBtn">
-                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span data-i18n="submit_intake">Submit Intake</span>
-              </button>
+              <button class="btn btn-primary w-full" id="submitIntakeBtn"><i class="fa-solid fa-paper-plane"></i><span data-i18n="submit_intake">Submit Intake</span></button>
+              <button class="btn btn-soft w-full" id="fillSampleBtn"><i class="fa-solid fa-wand-magic-sparkles"></i><span data-i18n="autofill">Auto-fill</span></button>
             </div>
-            <div class="text-xs muted mt-2" id="intakeStatus" aria-live="polite">—</div>
+            <div class="text-xs muted mt-2" id="intakeStatus">—</div>
           </div>
 
+          <!-- Portal help -->
           <div class="card-flat p-4">
-            <div class="text-sm font-extrabold mb-2" data-i18n="join_room_title">Join Telehealth Room (Demo)</div>
-            <div class="tiny muted" data-i18n="join_room_note">
-              Clicking “Join” simulates a patient joining the video room tile on the main page.
-            </div>
-
-            <div class="mt-4 flex gap-2">
-              <button class="btn btn-primary w-full" type="button" id="joinRoomBtn2">
-                <i class="fa-solid fa-video" aria-hidden="true"></i> <span data-i18n="join_room">Join Room</span>
-              </button>
-              <button class="btn btn-soft w-full" type="button" id="leaveRoomBtn2">
-                <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span data-i18n="leave_room">Leave</span>
-              </button>
-            </div>
+            <div class="font-extrabold" data-i18n="portal_help_title">How this portal works</div>
+            <ul class="mt-2 text-sm muted list-disc pl-5 space-y-2">
+              <li data-i18n="portal_help_1">Patients enter symptoms and basic information.</li>
+              <li data-i18n="portal_help_2">Speech-to-Text helps capture symptoms quickly.</li>
+              <li data-i18n="portal_help_3">Starting a call simulates joining a telehealth room.</li>
+              <li data-i18n="portal_help_4">AI recommendations are generated from the intake + risk context (demo).</li>
+            </ul>
 
             <div class="mt-4 card-flat p-4">
-              <div class="font-extrabold" data-i18n="privacy_title">Privacy note (demo)</div>
-              <div class="tiny muted mt-1" data-i18n="privacy_note">
-                Audio features run locally in the browser. No audio is uploaded in this demo.
+              <div class="flex items-center justify-between">
+                <div class="font-extrabold" data-i18n="call_controls">Call controls</div>
+                <span class="badge b-info"><i class="fa-solid fa-phone"></i> <span data-i18n="demo">Demo</span></span>
               </div>
-            </div>
-
-            <div class="mt-4 card-flat p-4">
-              <div class="font-extrabold" data-i18n="call_controls">Call controls</div>
-              <div class="tiny muted mt-1" data-i18n="call_controls_note">Start initiates portal → join → captions. End stops audio and disconnects.</div>
               <div class="mt-3 flex gap-2">
-                <button class="btn btn-primary w-full" type="button" id="startCallBtn2">
-                  <i class="fa-solid fa-phone" aria-hidden="true"></i> <span data-i18n="start_call">Start Call</span>
-                </button>
-                <button class="btn btn-danger w-full" type="button" id="endCallBtn2" disabled>
-                  <i class="fa-solid fa-phone-slash" aria-hidden="true"></i> <span data-i18n="end_call">End Call</span>
-                </button>
+                <button id="portalStartCallBtn" class="btn btn-primary w-full"><i class="fa-solid fa-phone"></i><span data-i18n="start_call">Start Call</span></button>
+                <button id="portalEndCallBtn" class="btn btn-danger w-full hidden"><i class="fa-solid fa-phone-slash"></i><span data-i18n="end_call">End Call</span></button>
               </div>
-              <div class="tiny muted mt-2" id="callStatus" aria-live="polite">—</div>
+              <div class="tiny muted mt-2" data-i18n="call_workflow_note">
+                Start Call opens portal → auto-joins room → starts captions (if supported).
+              </div>
+            </div>
+
+            <div class="mt-4 card-flat p-4">
+              <div class="font-extrabold" data-i18n="privacy_title">Privacy note</div>
+              <div class="tiny muted" data-i18n="privacy_note">
+                This is a demo. In production, data is encrypted, access is role-based, and the system complies with local policy and clinical governance.
+              </div>
             </div>
 
           </div>
         </div>
-
       </div>
     </div>
   </div>
 
   <script>
     /***************************************************************
-     * ✅ FIXED i18n SYSTEM (NOW ACTUALLY TRANSLATES)
+     * SINGLE SOURCE OF TRUTH FOR LANGUAGE KEY
      ***************************************************************/
-    const AFYA_LANG_KEY = "afyaai-lang-v7";
+    const AFYA_LANG_KEY = "afyaai-lang"; // ✅ ONE KEY used everywhere (i18n + STT/CC/TTS)
 
+    /***************************************************************
+     * LANGUAGES
+     ***************************************************************/
     const LANGS = [
       { code:"en", label:"English", native:"English", dir:"ltr" },
-      { code:"fr", label:"French", native:"Français", dir:"ltr" },
+
+      // Commonly used across Africa
       { code:"sw", label:"Swahili", native:"Kiswahili", dir:"ltr" },
+      { code:"ha", label:"Hausa", native:"Hausa", dir:"ltr" },
+      { code:"yo", label:"Yoruba", native:"Yorùbá", dir:"ltr" },
+      { code:"ig", label:"Igbo", native:"Igbo", dir:"ltr" },
+      { code:"am", label:"Amharic", native:"አማርኛ", dir:"ltr" },
+      { code:"om", label:"Oromo", native:"Afaan Oromoo", dir:"ltr" },
+      { code:"ti", label:"Tigrinya", native:"ትግርኛ", dir:"ltr" },
+      { code:"so", label:"Somali", native:"Soomaali", dir:"ltr" },
+      { code:"rw", label:"Kinyarwanda", native:"Ikinyarwanda", dir:"ltr" },
+      { code:"rn", label:"Kirundi", native:"Ikirundi", dir:"ltr" },
+      { code:"ln", label:"Lingala", native:"Lingála", dir:"ltr" },
+      { code:"lu", label:"Luganda", native:"Luganda", dir:"ltr" },
+      { code:"sn", label:"Shona", native:"chiShona", dir:"ltr" },
+      { code:"zu", label:"Zulu", native:"isiZulu", dir:"ltr" },
+      { code:"xh", label:"Xhosa", native:"isiXhosa", dir:"ltr" },
+
+      // Widely used administrative languages in Africa
+      { code:"fr", label:"French", native:"Français", dir:"ltr" },
       { code:"pt", label:"Portuguese", native:"Português", dir:"ltr" },
       { code:"ar", label:"Arabic", native:"العربية", dir:"rtl" }
     ];
 
+    // Keep translations focused on visible UI; missing keys fall back to English.
     const I18N = {
-      en:{
+      en: {
         app_name:"AfyaAI",
         app_tagline:"WHO / World Bank-style Monitoring Dashboard (Demo)",
         online:"Online",
         export_pdf:"Export PDF",
-        login:"Login",
+        start_call:"Start Call",
+        end_call:"End Call",
+        patient_portal:"Patient Portal",
+
         chip_safety:"Safety & Quality",
         chip_indicators:"Indicator Monitoring",
         chip_telehealth:"Telehealth",
         chip_regulatory:"Regulatory Readiness",
+
         hero_title:"National AI Health Program Monitoring (Demo)",
         hero_subtitle:"Institutional dashboard layout: scorecard, indicator tables, data sources, definitions, audit logs, and workflows — single HTML file.",
-        patient_portal:"Patient Portal",
-        run_ai:"Run AI Recommendation (Mock)",
-        tip_voice:"Tip: For voice features, use Chrome/Edge and allow microphone access. Hosting on HTTPS (e.g., GitHub Pages) is recommended.",
-        tts_read_plan:"Read AI care plan aloud",
-        tts_stop:"Stop",
-        start_call:"Start Call",
-        end_call:"End Call",
-        call_controls:"Call controls",
-        call_controls_note:"Start initiates portal → join → captions. End stops audio and disconnects.",
+
+        consortium_title:"Consortium Partners (Demo)",
+        partners:"Partners",
+        consortium_note:"Links above are real partner websites for demonstration.",
+
         scorecard_title:"National Summary Scorecard",
         aggregated:"Aggregated",
         scorecard_note:"Composite is a demo-weighted index across core indicators.",
@@ -820,564 +755,193 @@
         data_source_label:"Data source:",
         data_source_demo:"Demo synthetic + local activity logs (browser localStorage).",
         across_all:"Across all countries",
+
         map_title:"Africa Program Map (Demo)",
-        responsive:"Responsive",
-        map_note:"Demo map is illustrative (not political boundaries). Replace with GeoJSON + real data later.",
-        map_footer:"Demo map: pins represent program countries; values shown in “Heat Index Data Sheet”.",
-        map_inspector:"Map Inspector",
-        select_pin:"Select a country pin",
-        selected_country:"Selected Country",
+        interactive:"Interactive",
+        map_note:"Click a country pin to update the Map Inspector. Change the metric to recolor pins.",
+        map_metric:"Map Metric",
         metric_heat:"Heat Index",
         metric_safety:"Safety Signal",
-        metric_adoption:"Clinician Adoption",
+        metric_adoption:"Adoption",
         metric_dqs:"Data Quality",
-        heat_title:"Heat Index Data Sheet",
-        csv_ready:"CSV-ready",
-        download_csv:"Download CSV",
-        heat_note:"Heat Index combines disease burden proxy + climate stress + service load. Replace with real MoH/WHO/WB data feeds.",
+        map_hint:"Tip: Select a pin, then switch metrics to see the colors update.",
+
+        inspector_title:"Map Inspector",
+        selected_country:"Selected Country",
+        inspector_note_title:"What this means",
+        inspector_note:"In production, these pins would reflect real-time program telemetry and validated climate/health data sources.",
+
+        heat_title:"Heat Index Data Sheet (Demo)",
+        filterable:"Filterable",
+        heat_note:"Demo dataset for climate-related health risk monitoring. Exportable to CSV.",
         filter_country:"Country",
-        filter_risk:"Risk tier",
+        filter_tier:"Risk Tier",
         filter_search:"Search",
-        all:"All",
-        tele_title:"Telehealth Room (Simulated)",
-        simulated:"Simulated",
-        accessibility_status:"Accessibility status",
-        accessibility_note:"Note: STT/CC require Chrome/Edge and microphone permissions.",
-        video_room:"Video Room",
-        video_room_note:"Demo tiles for clinician + patient. Captions overlay can be enabled on clinician tile.",
+        download_csv:"Download CSV",
+
+        telehealth_title:"Telehealth + AI Decision Support (Demo)",
+        workflow:"Workflow",
+
+        ai_reco_title:"AI Recommendation (Mock)",
+        ai_country_context:"Country context",
+        ai_mode:"Mode",
+        ai_mode_triage:"Triage",
+        ai_mode_followup:"Follow-up",
+        ai_mode_education:"Patient education",
+        run_ai:"Run AI Recommendations",
+        clear:"Clear",
+        ai_hint:"Run AI to generate recommendations.",
+        read_plan:"Read Plan Aloud",
+        stop:"Stop",
+
+        video_room:"Telehealth Video Room (Simulated)",
+        call_idle:"Idle",
         clinician_tile:"Clinician Video Tile",
+        simulated:"Simulated",
+        start_captions:"Start Captions",
+        closed_captions:"Closed Captions (Demo)",
         patient_tile:"Patient Video Tile",
         waiting_patient:"Waiting for patient…",
-        simulate_join:"Simulate Join",
-        cc_start:"Start Captions",
-        cc_stop:"Stop",
-        cc_label:"Closed Captions (Simulated)",
-        clear:"Clear",
-        ai_title:"AI Recommendation (Mock)",
-        ai_inputs_note:"Uses patient intake + heat index + safety signals.",
-        ai_country:"Country context",
-        ai_mode:"Mode",
-        mode_patient:"Patient-friendly",
-        mode_clinician:"Clinician summary",
-        mode_ministry:"Ministry / donor reporting note",
-        ai_output:"AI Output",
-        ai_hint:"Run AI to generate recommendations.",
+        telehealth_note_title:"Demo note",
+        telehealth_note:"In production, the video room would connect to a secure telehealth service (e.g., WebRTC + compliant hosting).",
+
         comparison_title:"Country Comparison Table",
         side_by_side:"Side-by-side",
-        login_demo:"Login (Demo)",
-        role:"Role",
-        name:"Name",
-        cancel:"Cancel",
+
         portal_title:"Patient Portal (Intake + Join Video Room)",
-        intake_title:"Patient Intake Form",
-        full_name:"Full Name",
-        age:"Age",
-        phone:"Phone",
-        chief_complaint:"Chief Complaint",
-        notes:"Allergies / Notes",
-        autofill:"Auto-fill",
-        submit_intake:"Submit Intake",
-        stt_title:"Voice Symptom Capture (STT)",
-        stt_note:"Speak your symptoms. We’ll transcribe and you can apply the text to Chief Complaint or Notes.",
+        intake_form:"Patient Intake Form",
+        pt_name:"Name",
+        pt_age:"Age",
+        pt_phone:"Phone",
+        pt_country:"Country",
+        pt_complaint:"Chief Complaint",
+        pt_notes:"Allergies / Notes",
+
+        voice_capture:"Voice Symptom Capture",
+        voice_capture_note:"Speak your symptoms. We’ll transcribe and (optionally) translate to the selected UI language.",
         start:"Start",
-        stop:"Stop",
         live_transcript:"Live transcript",
+        translated_ui:"Translated (UI language)",
+        auto_translate:"Auto-translate",
         to_complaint:"→ Chief Complaint",
         to_notes:"→ Notes",
         read_aloud:"Read Aloud",
-        join_room_title:"Join Telehealth Room (Demo)",
-        join_room_note:"Clicking “Join” simulates a patient joining the video room tile on the main page.",
-        join_room:"Join Room",
-        leave_room:"Leave",
-        privacy_title:"Privacy note (demo)",
-        privacy_note:"Audio features run locally in the browser. No audio is uploaded in this demo.",
-        join_btn:"Join",
-        leave_btn:"Leave",
+        submit_intake:"Submit Intake",
+        autofill:"Auto-fill",
 
-        ph_search_heat:"e.g., malaria, maternal, flood",
-        ph_name:"e.g., Dr. Amina",
-        ph_fullname:"e.g., Mary N.",
-        ph_age:"e.g., 34",
-        ph_phone:"+254...",
-        ph_complaint:"e.g., fever and cough",
-        ph_notes:"e.g., Penicillin allergy"
+        portal_help_title:"How this portal works",
+        portal_help_1:"Patients enter symptoms and basic information.",
+        portal_help_2:"Speech-to-Text helps capture symptoms quickly.",
+        portal_help_3:"Starting a call simulates joining a telehealth room.",
+        portal_help_4:"AI recommendations are generated from the intake + risk context (demo).",
+
+        call_controls:"Call controls",
+        demo:"Demo",
+        call_workflow_note:"Start Call opens portal → auto-joins room → starts captions (if supported).",
+
+        privacy_title:"Privacy note",
+        privacy_note:"This is a demo. In production, data is encrypted, access is role-based, and the system complies with local policy and clinical governance."
       },
 
-      fr:{
-        app_name:"AfyaAI",
-        app_tagline:"Tableau de bord OMS / Banque mondiale (Démo)",
+      // A few full packs + functional packs; missing keys fallback to EN
+      fr: {
+        app_tagline:"Tableau de bord (OMS / Banque mondiale) — Démo",
         online:"En ligne",
         export_pdf:"Exporter PDF",
-        login:"Connexion",
+        start_call:"Démarrer l’appel",
+        end_call:"Terminer l’appel",
+        patient_portal:"Portail patient",
         chip_safety:"Sécurité & Qualité",
         chip_indicators:"Suivi des indicateurs",
         chip_telehealth:"Télésanté",
         chip_regulatory:"Préparation réglementaire",
-        hero_title:"Suivi national du programme de santé IA (Démo)",
-        hero_subtitle:"Mise en page institutionnelle : scorecard, tableaux d’indicateurs, sources, définitions, journaux d’audit et workflows — fichier HTML unique.",
-        patient_portal:"Portail patient",
-        run_ai:"Lancer la recommandation IA (Démo)",
-        tip_voice:"Astuce : pour les fonctions vocales, utilisez Chrome/Edge et autorisez le micro. L’hébergement en HTTPS (ex. GitHub Pages) est recommandé.",
-        tts_read_plan:"Lire le plan de soins IA à voix haute",
-        tts_stop:"Arrêter",
-        start_call:"Démarrer l’appel",
-        end_call:"Terminer l’appel",
-        call_controls:"Commandes d’appel",
-        call_controls_note:"Démarrer : portail → rejoindre → sous-titres. Terminer : stop audio et déconnexion.",
+        hero_title:"Suivi du programme national de santé IA (Démo)",
+        hero_subtitle:"Mise en page institutionnelle: scorecard, tableaux d’indicateurs, sources, définitions et journaux — fichier HTML unique.",
         scorecard_title:"Scorecard national",
         aggregated:"Agrégé",
-        scorecard_note:"Indice composite pondéré (démo) sur des indicateurs clés.",
-        composite_score:"Score composite",
-        safety_signal:"Taux de signal de sécurité",
-        overrides_per_ai:"Overrides par exécution IA",
-        data_source_label:"Source de données :",
-        data_source_demo:"Données synthétiques + journaux locaux (localStorage du navigateur).",
-        across_all:"Tous pays confondus",
-        map_title:"Carte du programme Afrique (Démo)",
-        responsive:"Adaptatif",
-        map_note:"Carte illustrative (pas de frontières politiques). Remplacez par GeoJSON + données réelles.",
-        map_footer:"Carte démo : les marqueurs représentent les pays ; valeurs dans « Heat Index Data Sheet ».",
-        map_inspector:"Inspecteur de carte",
-        select_pin:"Sélectionnez un pays",
-        selected_country:"Pays sélectionné",
-        metric_heat:"Indice de chaleur",
-        metric_safety:"Signal de sécurité",
-        metric_adoption:"Adoption cliniciens",
-        metric_dqs:"Qualité des données",
-        heat_title:"Fiche de données — Indice de chaleur",
-        csv_ready:"Prêt pour CSV",
-        download_csv:"Télécharger CSV",
-        heat_note:"Indice de chaleur = charge maladie (proxy) + stress climatique + charge de service. À remplacer par flux MoH/OMS/BM.",
-        filter_country:"Pays",
-        filter_risk:"Niveau de risque",
-        filter_search:"Recherche",
-        all:"Tous",
-        tele_title:"Salle de télésanté (Simulée)",
-        simulated:"Simulé",
-        accessibility_status:"Statut d’accessibilité",
-        accessibility_note:"Remarque : STT/CC nécessitent Chrome/Edge + autorisation micro.",
-        video_room:"Salle vidéo",
-        video_room_note:"Tuiles démo clinicien + patient. Sous-titres possibles sur la tuile clinicien.",
-        clinician_tile:"Tuile vidéo clinicien",
-        patient_tile:"Tuile vidéo patient",
-        waiting_patient:"En attente du patient…",
-        simulate_join:"Simuler l’entrée",
-        cc_start:"Démarrer sous-titres",
-        cc_stop:"Arrêter",
-        cc_label:"Sous-titres (Simulé)",
-        clear:"Effacer",
-        ai_title:"Recommandation IA (Démo)",
-        ai_inputs_note:"Basé sur l’intake + indice de chaleur + signaux de sécurité.",
-        ai_country:"Contexte pays",
-        ai_mode:"Mode",
-        mode_patient:"Langage patient",
-        mode_clinician:"Résumé clinicien",
-        mode_ministry:"Note ministère / bailleur",
-        ai_output:"Sortie IA",
-        ai_hint:"Lancez l’IA pour générer des recommandations.",
-        comparison_title:"Tableau de comparaison des pays",
+        comparison_title:"Tableau comparatif des pays",
         side_by_side:"Côte à côte",
-        login_demo:"Connexion (Démo)",
-        role:"Rôle",
-        name:"Nom",
-        cancel:"Annuler",
-        portal_title:"Portail patient (Intake + rejoindre la salle)",
-        intake_title:"Formulaire d’admission",
-        full_name:"Nom complet",
-        age:"Âge",
-        phone:"Téléphone",
-        chief_complaint:"Motif principal",
-        notes:"Allergies / Notes",
-        autofill:"Auto-remplir",
-        submit_intake:"Soumettre",
-        stt_title:"Capture vocale des symptômes (STT)",
-        stt_note:"Dites vos symptômes. Transcription puis application au motif principal ou aux notes.",
-        start:"Démarrer",
-        stop:"Arrêter",
-        live_transcript:"Transcription en direct",
-        to_complaint:"→ Motif",
-        to_notes:"→ Notes",
-        read_aloud:"Lire à voix haute",
-        join_room_title:"Rejoindre la salle (Démo)",
-        join_room_note:"« Rejoindre » simule l’entrée du patient sur la tuile vidéo.",
-        join_room:"Rejoindre",
-        leave_room:"Quitter",
-        privacy_title:"Note de confidentialité (démo)",
-        privacy_note:"Les fonctions audio s’exécutent localement dans le navigateur. Aucun audio n’est envoyé.",
-        join_btn:"Rejoindre",
-        leave_btn:"Quitter",
-
-        ph_search_heat:"ex. paludisme, maternel, inondation",
-        ph_name:"ex. Dr Amina",
-        ph_fullname:"ex. Mary N.",
-        ph_age:"ex. 34",
-        ph_phone:"+254...",
-        ph_complaint:"ex. fièvre et toux",
-        ph_notes:"ex. Allergie à la pénicilline"
+        run_ai:"Lancer recommandations IA",
+        read_plan:"Lire le plan",
+        stop:"Stop",
+        clear:"Effacer",
+        start_captions:"Sous-titres",
+        waiting_patient:"En attente du patient…",
+        download_csv:"Télécharger CSV",
+        filter_search:"Recherche",
+        filter_country:"Pays",
+        filter_tier:"Niveau de risque"
       },
-
-      sw:{
-        app_name:"AfyaAI",
-        app_tagline:"Dashibodi ya WHO / Benki ya Dunia (Demo)",
-        online:"Mtandaoni",
-        export_pdf:"Hamisha PDF",
-        login:"Ingia",
-        chip_safety:"Usalama & Ubora",
-        chip_indicators:"Ufuatiliaji wa viashiria",
-        chip_telehealth:"Tiba kwa mbali",
-        chip_regulatory:"Utayari wa udhibiti",
-        hero_title:"Ufuatiliaji wa Mpango wa Taifa wa Afya wa AI (Demo)",
-        hero_subtitle:"Muundo wa taasisi: scorecard, jedwali la viashiria, vyanzo, ufafanuzi, audit logs, na workflows — faili moja ya HTML.",
-        patient_portal:"Lango la mgonjwa",
-        run_ai:"Endesha mapendekezo ya AI (Demo)",
-        tip_voice:"Kidokezo: kwa sauti, tumia Chrome/Edge na ruhusu kipaza sauti. HTTPS (k.m. GitHub Pages) inapendekezwa.",
-        tts_read_plan:"Soma mpango wa AI kwa sauti",
-        tts_stop:"Simamisha",
-        start_call:"Anza simu",
-        end_call:"Maliza simu",
-        call_controls:"Vidhibiti vya simu",
-        call_controls_note:"Anza: portal → jiunge → captions. Maliza: zima sauti na ondoka.",
-        scorecard_title:"Kadi ya Muhtasari wa Taifa",
-        aggregated:"Jumla",
-        scorecard_note:"Faharasa ya muhtasari (demo) kwa viashiria vya msingi.",
-        composite_score:"Alama ya muhtasari",
-        safety_signal:"Kiwango cha ishara ya usalama",
-        overrides_per_ai:"Overrides kwa kila AI",
-        data_source_label:"Chanzo cha data:",
-        data_source_demo:"Data ya demo + kumbukumbu za ndani (localStorage).",
-        across_all:"Nchi zote",
-        map_title:"Ramani ya programu Afrika (Demo)",
-        responsive:"Inajirekebisha",
-        map_note:"Ramani ya demo (sio mipaka halisi). Badilisha na GeoJSON + data halisi baadaye.",
-        map_footer:"Ramani: pini ni nchi za programu; thamani ipo kwenye ‘Heat Index Data Sheet’.",
-        map_inspector:"Kikagua ramani",
-        select_pin:"Chagua pini ya nchi",
-        selected_country:"Nchi iliyochaguliwa",
-        metric_heat:"Heat Index",
-        metric_safety:"Ishara ya usalama",
-        metric_adoption:"Matumizi ya wahudumu",
-        metric_dqs:"Ubora wa data",
-        heat_title:"Karatasi ya Data — Heat Index",
-        csv_ready:"Tayari kwa CSV",
-        download_csv:"Pakua CSV",
-        heat_note:"Heat Index = mzigo wa magonjwa (proxy) + msongo wa hali ya hewa + mzigo wa huduma. Badilisha na data halisi.",
-        filter_country:"Nchi",
-        filter_risk:"Kiwango cha hatari",
-        filter_search:"Tafuta",
-        all:"Zote",
-        tele_title:"Chumba cha Telehealth (Demo)",
-        simulated:"Imeigwa",
-        accessibility_status:"Hali ya ufikivu",
-        accessibility_note:"Kumbuka: STT/CC zinahitaji Chrome/Edge + ruhusa ya kipaza sauti.",
-        video_room:"Chumba cha video",
-        video_room_note:"Vigae vya demo: daktari + mgonjwa. Captions zinaweza kuwashwa kwa daktari.",
-        clinician_tile:"Kigae cha Daktari",
-        patient_tile:"Kigae cha Mgonjwa",
-        waiting_patient:"Inasubiri mgonjwa…",
-        simulate_join:"Iga kujiunga",
-        cc_start:"Anza captions",
-        cc_stop:"Simamisha",
-        cc_label:"Captions (Demo)",
-        clear:"Futa",
-        ai_title:"Mapendekezo ya AI (Demo)",
-        ai_inputs_note:"Hutumia intake + heat index + safety signals.",
-        ai_country:"Muktadha wa nchi",
-        ai_mode:"Hali",
-        mode_patient:"Rahisi kwa mgonjwa",
-        mode_clinician:"Muhtasari wa daktari",
-        mode_ministry:"Kumbukumbu ya Wizara/Wafadhili",
-        ai_output:"Matokeo ya AI",
-        ai_hint:"Endesha AI kupata mapendekezo.",
-        comparison_title:"Jedwali la Ulinganisho wa Nchi",
-        side_by_side:"Pembeni kwa pembeni",
-        login_demo:"Ingia (Demo)",
-        role:"Jukumu",
-        name:"Jina",
-        cancel:"Ghairi",
-        portal_title:"Lango la mgonjwa (Intake + Jiunge)",
-        intake_title:"Fomu ya Intake",
-        full_name:"Jina kamili",
-        age:"Umri",
-        phone:"Simu",
-        chief_complaint:"Malalamiko makuu",
-        notes:"Allergies / Maelezo",
-        autofill:"Jaza mfano",
-        submit_intake:"Tuma",
-        stt_title:"Kurekodi dalili kwa sauti (STT)",
-        stt_note:"Sema dalili. Tutazibadilisha kuwa maandishi kisha uhamishe kwenye malalamiko au maelezo.",
-        start:"Anza",
-        stop:"Simamisha",
-        live_transcript:"Maandishi ya moja kwa moja",
-        to_complaint:"→ Malalamiko",
-        to_notes:"→ Maelezo",
-        read_aloud:"Soma kwa sauti",
-        join_room_title:"Jiunge na chumba (Demo)",
-        join_room_note:"‘Join’ itaiga mgonjwa kuingia kwenye kigae cha video.",
-        join_room:"Jiunge",
-        leave_room:"Ondoka",
-        privacy_title:"Faragha (demo)",
-        privacy_note:"Sauti inafanyika ndani ya kivinjari. Hakuna sauti inayotumwa.",
-        join_btn:"Jiunge",
-        leave_btn:"Ondoka",
-
-        ph_search_heat:"mf. malaria, uzazi, mafuriko",
-        ph_name:"mf. Dkt. Amina",
-        ph_fullname:"mf. Mary N.",
-        ph_age:"mf. 34",
-        ph_phone:"+254...",
-        ph_complaint:"mf. homa na kikohozi",
-        ph_notes:"mf. mzio wa penicillin"
-      },
-
-      pt:{
-        app_name:"AfyaAI",
-        app_tagline:"Painel OMS / Banco Mundial (Demo)",
-        online:"Online",
+      pt: {
+        app_tagline:"Painel (OMS / Banco Mundial) — Demo",
         export_pdf:"Exportar PDF",
-        login:"Entrar",
-        chip_safety:"Segurança & Qualidade",
-        chip_indicators:"Monitoramento de indicadores",
-        chip_telehealth:"Telemedicina",
-        chip_regulatory:"Prontidão regulatória",
-        hero_title:"Monitoramento nacional do programa de saúde com IA (Demo)",
-        hero_subtitle:"Layout institucional: scorecard, tabelas de indicadores, fontes, definições, logs e fluxos — arquivo HTML único.",
-        patient_portal:"Portal do paciente",
-        run_ai:"Executar recomendação de IA (Demo)",
-        tip_voice:"Dica: para voz, use Chrome/Edge e permita o microfone. Hospedagem em HTTPS (ex.: GitHub Pages) é recomendada.",
-        tts_read_plan:"Ler plano de cuidados em voz alta",
-        tts_stop:"Parar",
         start_call:"Iniciar chamada",
         end_call:"Encerrar chamada",
-        call_controls:"Controles da chamada",
-        call_controls_note:"Iniciar: portal → entrar → legendas. Encerrar: parar áudio e desconectar.",
-        scorecard_title:"Scorecard nacional",
-        aggregated:"Agregado",
-        scorecard_note:"Índice composto ponderado (demo) em indicadores centrais.",
-        composite_score:"Pontuação composta",
-        safety_signal:"Taxa de sinal de segurança",
-        overrides_per_ai:"Overrides por execução de IA",
-        data_source_label:"Fonte de dados:",
-        data_source_demo:"Dados sintéticos + logs locais (localStorage).",
-        across_all:"Todos os países",
-        map_title:"Mapa do programa África (Demo)",
-        responsive:"Responsivo",
-        map_note:"Mapa ilustrativo (sem fronteiras políticas). Substitua por GeoJSON + dados reais depois.",
-        map_footer:"Mapa demo: pinos = países do programa; valores na planilha ‘Heat Index’.",
-        map_inspector:"Inspeção do mapa",
-        select_pin:"Selecione um país",
-        selected_country:"País selecionado",
-        metric_heat:"Índice de calor",
-        metric_safety:"Sinal de segurança",
-        metric_adoption:"Adoção clínica",
-        metric_dqs:"Qualidade dos dados",
-        heat_title:"Planilha — Índice de calor",
-        csv_ready:"Pronto para CSV",
-        download_csv:"Baixar CSV",
-        heat_note:"Índice de calor = carga (proxy) + estresse climático + carga de serviço. Substituir por dados reais.",
-        filter_country:"País",
-        filter_risk:"Nível de risco",
-        filter_search:"Buscar",
-        all:"Todos",
-        tele_title:"Sala de telemedicina (Simulada)",
-        simulated:"Simulado",
-        accessibility_status:"Status de acessibilidade",
-        accessibility_note:"Obs.: STT/CC exigem Chrome/Edge + permissão de microfone.",
-        video_room:"Sala de vídeo",
-        video_room_note:"Tiles demo: clínico + paciente. Legendas podem ser ativadas no tile do clínico.",
-        clinician_tile:"Tile do clínico",
-        patient_tile:"Tile do paciente",
-        waiting_patient:"Aguardando paciente…",
-        simulate_join:"Simular entrada",
-        cc_start:"Iniciar legendas",
-        cc_stop:"Parar",
-        cc_label:"Legendas (Simulado)",
-        clear:"Limpar",
-        ai_title:"Recomendação de IA (Demo)",
-        ai_inputs_note:"Usa intake + índice de calor + sinais de segurança.",
-        ai_country:"Contexto do país",
-        ai_mode:"Modo",
-        mode_patient:"Linguagem para paciente",
-        mode_clinician:"Resumo clínico",
-        mode_ministry:"Nota para ministério/doadores",
-        ai_output:"Saída da IA",
-        ai_hint:"Execute a IA para gerar recomendações.",
-        comparison_title:"Tabela de comparação de países",
-        side_by_side:"Lado a lado",
-        login_demo:"Entrar (Demo)",
-        role:"Função",
-        name:"Nome",
-        cancel:"Cancelar",
-        portal_title:"Portal do paciente (Intake + Entrar na sala)",
-        intake_title:"Formulário de intake",
-        full_name:"Nome completo",
-        age:"Idade",
-        phone:"Telefone",
-        chief_complaint:"Queixa principal",
-        notes:"Alergias / Notas",
-        autofill:"Preencher exemplo",
-        submit_intake:"Enviar",
-        stt_title:"Captura por voz (STT)",
-        stt_note:"Fale seus sintomas. Vamos transcrever e você pode aplicar na queixa ou nas notas.",
-        start:"Iniciar",
+        patient_portal:"Portal do paciente",
+        chip_safety:"Segurança & Qualidade",
+        chip_indicators:"Monitoramento de Indicadores",
+        chip_telehealth:"Tele-saúde",
+        chip_regulatory:"Prontidão Regulatória",
+        run_ai:"Rodar recomendações IA",
+        read_plan:"Ler plano",
         stop:"Parar",
-        live_transcript:"Transcrição ao vivo",
-        to_complaint:"→ Queixa",
-        to_notes:"→ Notas",
-        read_aloud:"Ler em voz alta",
-        join_room_title:"Entrar na sala (Demo)",
-        join_room_note:"‘Entrar’ simula o paciente conectando no tile principal.",
-        join_room:"Entrar",
-        leave_room:"Sair",
-        privacy_title:"Privacidade (demo)",
-        privacy_note:"Recursos de áudio rodam localmente no navegador. Nenhum áudio é enviado.",
-        join_btn:"Entrar",
-        leave_btn:"Sair",
-
-        ph_search_heat:"ex.: malária, materno, enchente",
-        ph_name:"ex.: Dra. Amina",
-        ph_fullname:"ex.: Mary N.",
-        ph_age:"ex.: 34",
-        ph_phone:"+254...",
-        ph_complaint:"ex.: febre e tosse",
-        ph_notes:"ex.: alergia à penicilina"
+        clear:"Limpar",
+        download_csv:"Baixar CSV"
       },
-
-      ar:{
-        app_name:"AfyaAI",
-        app_tagline:"لوحة متابعة منظمة الصحة/البنك الدولي (تجريبي)",
+      ar: {
+        app_tagline:"لوحة متابعة (منظمة الصحة/البنك الدولي) — تجريبي",
         online:"متصل",
         export_pdf:"تصدير PDF",
-        login:"تسجيل الدخول",
-        chip_safety:"السلامة والجودة",
-        chip_indicators:"متابعة المؤشرات",
-        chip_telehealth:"الصحة عن بُعد",
-        chip_regulatory:"الجاهزية التنظيمية",
-        hero_title:"متابعة البرنامج الوطني للصحة بالذكاء الاصطناعي (تجريبي)",
-        hero_subtitle:"تصميم مؤسسي: بطاقة ملخص، جداول مؤشرات، مصادر بيانات، تعريفات، سجلات تدقيق وتدفقات عمل — ملف HTML واحد.",
-        patient_portal:"بوابة المريض",
-        run_ai:"تشغيل توصية الذكاء الاصطناعي (تجريبي)",
-        tip_voice:"ملاحظة: لميزات الصوت استخدم Chrome/Edge واسمح بالميكروفون. يُفضّل الاستضافة عبر HTTPS.",
-        tts_read_plan:"قراءة خطة الرعاية بصوت عالٍ",
-        tts_stop:"إيقاف",
         start_call:"بدء المكالمة",
         end_call:"إنهاء المكالمة",
-        call_controls:"عناصر التحكم بالمكالمة",
-        call_controls_note:"بدء: بوابة → انضمام → تسميات. إنهاء: إيقاف الصوت وقطع الاتصال.",
-        scorecard_title:"بطاقة ملخص وطنية",
-        aggregated:"مجمّع",
-        scorecard_note:"مؤشر مركّب موزون (تجريبي) عبر مؤشرات أساسية.",
-        composite_score:"النتيجة المركبة",
-        safety_signal:"معدل إشارة السلامة",
-        overrides_per_ai:"التجاوزات لكل تشغيل",
-        data_source_label:"مصدر البيانات:",
-        data_source_demo:"بيانات تجريبية + سجلات محلية (localStorage).",
-        across_all:"عبر جميع الدول",
-        map_title:"خريطة البرنامج في أفريقيا (تجريبي)",
-        responsive:"متجاوب",
-        map_note:"الخريطة توضيحية (ليست حدودًا سياسية). استبدلها بـ GeoJSON + بيانات حقيقية لاحقًا.",
-        map_footer:"خريطة تجريبية: العلامات تمثل الدول؛ القيم في ورقة مؤشر الحرارة.",
-        map_inspector:"فاحص الخريطة",
-        select_pin:"اختر دولة",
-        selected_country:"الدولة المختارة",
-        metric_heat:"مؤشر الحرارة",
-        metric_safety:"إشارة السلامة",
-        metric_adoption:"تبني الأطباء",
-        metric_dqs:"جودة البيانات",
-        heat_title:"ورقة بيانات مؤشر الحرارة",
-        csv_ready:"جاهز لـ CSV",
-        download_csv:"تنزيل CSV",
-        heat_note:"مؤشر الحرارة = عبء المرض (تقريبي) + ضغط المناخ + عبء الخدمة. استبدله ببيانات حقيقية.",
-        filter_country:"الدولة",
-        filter_risk:"مستوى الخطر",
-        filter_search:"بحث",
-        all:"الكل",
-        tele_title:"غرفة الصحة عن بُعد (محاكاة)",
-        simulated:"محاكاة",
-        accessibility_status:"حالة إمكانية الوصول",
-        accessibility_note:"ملاحظة: STT/CC تتطلب Chrome/Edge + إذن الميكروفون.",
-        video_room:"غرفة الفيديو",
-        video_room_note:"مربعات محاكاة للطبيب والمريض. يمكن تفعيل التسميات على مربع الطبيب.",
-        clinician_tile:"مربع الطبيب",
-        patient_tile:"مربع المريض",
-        waiting_patient:"بانتظار المريض…",
-        simulate_join:"محاكاة الانضمام",
-        cc_start:"بدء التسميات",
-        cc_stop:"إيقاف",
-        cc_label:"تسميات (محاكاة)",
-        clear:"مسح",
-        ai_title:"توصية الذكاء الاصطناعي (تجريبي)",
-        ai_inputs_note:"يعتمد على الاستقبال + مؤشر الحرارة + إشارات السلامة.",
-        ai_country:"سياق الدولة",
-        ai_mode:"الوضع",
-        mode_patient:"مناسب للمريض",
-        mode_clinician:"ملخص للطبيب",
-        mode_ministry:"ملاحظة للوزارة/المانحين",
-        ai_output:"مخرجات الذكاء الاصطناعي",
-        ai_hint:"شغّل الذكاء الاصطناعي لإنتاج توصيات.",
-        comparison_title:"جدول مقارنة الدول",
-        side_by_side:"جنبًا إلى جنب",
-        login_demo:"تسجيل الدخول (تجريبي)",
-        role:"الدور",
-        name:"الاسم",
-        cancel:"إلغاء",
-        portal_title:"بوابة المريض (استقبال + انضمام للغرفة)",
-        intake_title:"نموذج استقبال المريض",
-        full_name:"الاسم الكامل",
-        age:"العمر",
-        phone:"الهاتف",
-        chief_complaint:"الشكوى الرئيسية",
-        notes:"الحساسية / ملاحظات",
-        autofill:"تعبئة تلقائية",
-        submit_intake:"إرسال",
-        stt_title:"التقاط الأعراض بالصوت (STT)",
-        stt_note:"تحدث بالأعراض. سيتم تحويلها لنص ويمكن تطبيقها على الشكوى أو الملاحظات.",
-        start:"بدء",
+        patient_portal:"بوابة المريض",
+        chip_safety:"السلامة والجودة",
+        chip_indicators:"متابعة المؤشرات",
+        chip_telehealth:"الصحة عن بعد",
+        chip_regulatory:"الجاهزية التنظيمية",
+        run_ai:"تشغيل توصيات الذكاء الاصطناعي",
+        read_plan:"قراءة الخطة",
         stop:"إيقاف",
-        live_transcript:"نص مباشر",
-        to_complaint:"→ الشكوى",
-        to_notes:"→ الملاحظات",
-        read_aloud:"قراءة بصوت",
-        join_room_title:"الانضمام للغرفة (تجريبي)",
-        join_room_note:"زر «انضمام» يحاكي اتصال المريض بالمربع الرئيسي.",
-        join_room:"انضمام",
-        leave_room:"مغادرة",
-        privacy_title:"الخصوصية (تجريبي)",
-        privacy_note:"ميزات الصوت تعمل محليًا في المتصفح. لا يتم رفع أي صوت.",
-        join_btn:"انضمام",
-        leave_btn:"مغادرة",
-
-        ph_search_heat:"مثال: ملاريا، أمومة، فيضانات",
-        ph_name:"مثال: د. أمينة",
-        ph_fullname:"مثال: ماري",
-        ph_age:"مثال: 34",
-        ph_phone:"+254...",
-        ph_complaint:"مثال: حمى وسعال",
-        ph_notes:"مثال: حساسية من البنسلين"
-      }
+        clear:"مسح",
+        download_csv:"تنزيل CSV"
+      },
+      sw: {
+        app_tagline:"Dashibodi ya ufuatiliaji (WHO / Benki ya Dunia) — Demo",
+        online:"Mtandaoni",
+        export_pdf:"Hamisha PDF",
+        start_call:"Anza simu",
+        end_call:"Maliza simu",
+        patient_portal:"Tovuti ya mgonjwa",
+        chip_safety:"Usalama & Ubora",
+        chip_indicators:"Ufuatiliaji wa Viashiria",
+        chip_telehealth:"Telehealth",
+        chip_regulatory:"Utayari wa Udhibiti",
+        run_ai:"Endesha mapendekezo ya AI",
+        read_plan:"Soma mpango",
+        stop:"Simamisha",
+        clear:"Futa",
+        download_csv:"Pakua CSV"
+      },
+      am: { app_tagline:"የWHO/የዓለም ባንክ ዳሽቦርድ — ሙከራ", online:"በመስመር ላይ", export_pdf:"PDF ላክ", start_call:"ጥሪ ጀምር", end_call:"ጥሪ ጨርስ", patient_portal:"የታካሚ ፖርታል" },
+      ha: { app_tagline:"Dashboard (WHO / Bankin Duniya) — Demo", online:"Kan layi", export_pdf:"Fitar da PDF", start_call:"Fara kira", end_call:"Kare kira", patient_portal:"Tashar mara lafiya" },
+      yo: { app_tagline:"Dásíbọ́ọ̀dù (WHO / World Bank) — Demo", online:"Lórí ayélujára", export_pdf:"Gbé PDF jáde", start_call:"Bẹrẹ ipe", end_call:"Parí ipe", patient_portal:"Ilẹ̀kùn aláìsàn" },
+      ig: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"N'ịntanetị", export_pdf:"Wepụ PDF", start_call:"Malite oku", end_call:"Kwụsị oku", patient_portal:"Ọnụ ụzọ ọrịa" },
+      so: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Onleen", export_pdf:"Dhoofinta PDF", start_call:"Bilow wicitaan", end_call:"Jooji wicitaan", patient_portal:"Bogga bukaanka" },
+      rw: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Kuri interineti", export_pdf:"Ohereza PDF", start_call:"Tangiza umuhamagaro", end_call:"Hagarika", patient_portal:"Irembo ry’umurwayi" },
+      rn: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Ku rubuga", export_pdf:"Ohereza PDF", start_call:"Tangira guhamagara", end_call:"Hagarika", patient_portal:"Urubuga rw’umurwayi" },
+      ln: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Na internet", export_pdf:"Bimisa PDF", start_call:"Bandá kosala appel", end_call:"Suka", patient_portal:"Portal ya mobɛli" },
+      lu: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Ku mutimbagano", export_pdf:"Tuma PDF", start_call:"Tandika call", end_call:"Komya", patient_portal:"Portal y'omulwadde" },
+      sn: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Pamhepo", export_pdf:"Buritsa PDF", start_call:"Tanga kufona", end_call:"Pedza", patient_portal:"Portal yemurwere" },
+      zu: { app_tagline:"I-Dashboard (WHO / World Bank) — Demo", online:"Ku-inthanethi", export_pdf:"Thumela i-PDF", start_call:"Qala ucingo", end_call:"Phetha ucingo", patient_portal:"Iphothali yesiguli" },
+      xh: { app_tagline:"Ibhodi (WHO / World Bank) — Demo", online:"Kwi-intanethi", export_pdf:"Khupha i-PDF", start_call:"Qalisa umnxeba", end_call:"Phelisa", patient_portal:"Iphothali yesigulana" },
+      om: { app_tagline:"Daashboordii (WHO / World Bank) — Demo", online:"Marsariitii irratti", export_pdf:"PDF baasi", start_call:"Bilbila jalqabi", end_call:"Dhaabi", patient_portal:"Portalii dhukkubsataa" },
+      ti: { app_tagline:"ዳሽቦርድ (WHO / World Bank) — ሙከራ", online:"ኣብ መስመር ላይ", export_pdf:"PDF ላክ", start_call:"ጥሪ ጀምር", end_call:"ጥሪ ውዳእ", patient_portal:"ፖርታል ሕሙም" }
     };
 
     function getLang(){ return localStorage.getItem(AFYA_LANG_KEY) || "en"; }
-    function t(key, langOverride){
-      const lang = langOverride || getLang();
+    function t(key){
+      const lang = getLang();
       return (I18N[lang] && I18N[lang][key]) || (I18N.en[key] || key);
-    }
-
-    function populateLangDropdown(){
-      const sel = document.getElementById("langSelect");
-      sel.innerHTML = "";
-      for(const l of LANGS){
-        const opt = document.createElement("option");
-        opt.value = l.code;
-        opt.textContent = (l.native && l.native !== l.label) ? `${l.native} — ${l.label}` : l.label;
-        sel.appendChild(opt);
-      }
-      sel.value = getLang();
-      sel.addEventListener("change", (e)=> setLang(e.target.value));
-    }
-
-    function getLocaleFromLang(langCode){
-      const map = { en:"en-US", fr:"fr-FR", sw:"sw-KE", pt:"pt-PT", ar:"ar-SA" };
-      return map[langCode] || "en-US";
     }
 
     function applyLang(code){
@@ -1385,77 +949,88 @@
       document.documentElement.lang = lang.code;
       document.body.setAttribute("dir", lang.dir || "ltr");
 
-      // normal text nodes
+      // Translate text nodes
       document.querySelectorAll("[data-i18n]").forEach(el=>{
         const key = el.getAttribute("data-i18n");
-        el.textContent = t(key, code);
+        // if element is option, set its text too
+        el.textContent = t(key);
+        if(code==="am") el.classList.add("amharic-text"); else el.classList.remove("amharic-text");
       });
 
-      // option text nodes
-      document.querySelectorAll("[data-i18n-opt]").forEach(el=>{
-        const key = el.getAttribute("data-i18n-opt");
-        el.textContent = t(key, code);
-      });
+      // Update dynamic placeholders (optional)
+      const hs = document.getElementById("heatSearch");
+      if(hs) hs.placeholder = (code==="fr") ? "ex: paludisme, inondation" : (code==="pt") ? "ex: malária, enchente" : "e.g., malaria, flood, maternal";
 
-      // placeholders
-      document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
-        const key = el.getAttribute("data-i18n-ph");
-        el.setAttribute("placeholder", t(key, code));
-      });
-
-      // keep dropdown synced
+      // Ensure dropdown reflects value
       const sel = document.getElementById("langSelect");
       if(sel && sel.value !== code) sel.value = code;
 
-      // update STT/CC locales (best effort)
-      try {
-        const locale = getLocaleFromLang(code);
-        if(window.sttRecognition) sttRecognition.lang = locale;
-        if(window.ccRecognition) ccRecognition.lang = locale;
-      } catch {}
+      // ✅ IMPORTANT: update speech language for STT/CC if already initialized
+      sttRefreshLang();
+      ccRefreshLang();
     }
 
     function setLang(code){
       if(!LANGS.some(l=>l.code===code)) code="en";
       localStorage.setItem(AFYA_LANG_KEY, code);
       applyLang(code);
-
-      // rerender content that contains embedded labels
-      renderHeatTable();
-      renderComparison();
-      updateOnlineStatus();
     }
 
-    /***************************************************************
-     * Demo Data
-     ***************************************************************/
+    function populateLangDropdown(){
+      const sel = document.getElementById("langSelect");
+      sel.innerHTML = LANGS.map(l=>{
+        const label = `${l.native}${l.native!==l.label ? " • "+l.label : ""}`;
+        return `<option value="${l.code}">${label}</option>`;
+      }).join("");
+      sel.value = getLang();
+      sel.addEventListener("change", (e)=>setLang(e.target.value));
+    }
+
+    /********************
+     * DEMO DATA
+     ********************/
     const COUNTRIES = ["Kenya","Nigeria","Rwanda","South Africa","Ethiopia","Ghana"];
+
     const BASE = {
       "Kenya":       { status:"Active", facilities:12, patients:39849, outcome:16, adoption:74, safety:12.4, dqs:94.7 },
       "Nigeria":     { status:"Active", facilities:15, patients:24500, outcome:12, adoption:61, safety:14.8, dqs:92.1 },
       "Rwanda":      { status:"Active", facilities:8,  patients:15600, outcome:14, adoption:68, safety:10.2, dqs:95.4 },
       "South Africa":{ status:"Active", facilities:12, patients:48501, outcome:11, adoption:59, safety:9.6,  dqs:96.2 },
-      "Ethiopia":    { status:"Pilot",  facilities:6,  patients:9400,  outcome:8,  adoption:41, safety:15.9, dqs:90.8 },
+      "Ethiopia":    { status:"Pilot",  facilities:6,  patients:0,     outcome:8,  adoption:41, safety:15.9, dqs:90.8 },
       "Ghana":       { status:"Planned",facilities:4,  patients:0,     outcome:6,  adoption:33, safety:null, dqs:null }
     };
+
+    // Heat dataset used by map metric "heatIndex" + the sheet
     const HEAT_ROWS = [
-      { country:"Kenya", risk:"MEDIUM", heatIndex:62, climate:"Drought", burden:"Respiratory, maternal", serviceLoad:"Moderate", note:"Seasonal respiratory spikes", tags:"respiratory drought" },
-      { country:"Nigeria", risk:"HIGH", heatIndex:78, climate:"Flood", burden:"Malaria, maternal", serviceLoad:"High", note:"Flood + malaria burden proxy", tags:"malaria flood maternal" },
-      { country:"Rwanda", risk:"MEDIUM", heatIndex:55, climate:"Rain", burden:"Maternal, NCD", serviceLoad:"Moderate", note:"Stable services, watch NCD", tags:"maternal ncd" },
-      { country:"South Africa", risk:"LOW", heatIndex:38, climate:"Heatwave", burden:"NCD, mental health", serviceLoad:"Moderate", note:"Urban NCD & heat events", tags:"ncd heatwave" },
-      { country:"Ethiopia", risk:"HIGH", heatIndex:81, climate:"Drought", burden:"Nutrition, respiratory", serviceLoad:"High", note:"Drought + nutrition proxy", tags:"nutrition drought" },
-      { country:"Ghana", risk:"MEDIUM", heatIndex:49, climate:"Rain", burden:"Malaria", serviceLoad:"Low", note:"Planned rollout", tags:"malaria" }
+      { country:"Kenya",        heatIndex:62, tier:"Moderate", hazard:"Heat stress", tags:"maternal, outpatient", note:"Higher heat days; monitor clinic staffing." },
+      { country:"Nigeria",      heatIndex:71, tier:"High",     hazard:"Heat + malaria", tags:"malaria, pediatrics", note:"Seasonal spikes; consider outreach." },
+      { country:"Rwanda",       heatIndex:44, tier:"Moderate", hazard:"Flood risk", tags:"flood, rural access", note:"Potential access disruption during rains." },
+      { country:"South Africa", heatIndex:38, tier:"Low",      hazard:"Heat pockets", tags:"urban, chronic care", note:"Targeted heat advisories in hotspots." },
+      { country:"Ethiopia",     heatIndex:79, tier:"High",     hazard:"Drought + heat", tags:"nutrition, maternal", note:"High climate stress; prioritize community services." },
+      { country:"Ghana",        heatIndex:55, tier:"Moderate", hazard:"Humidity + heat", tags:"respiratory", note:"Monitor asthma/respiratory triggers." }
     ];
 
-    function riskFromHeat(n){
-      if(n >= 70) return "HIGH";
-      if(n >= 40) return "MEDIUM";
-      return "LOW";
+    /********************
+     * CONNECTIVITY
+     ********************/
+    function updateOnlineStatus(){
+      const online = navigator.onLine;
+      const dot = document.getElementById("netDot");
+      const txt = document.getElementById("netText");
+      if(online){
+        dot.className = "status-dot status-live";
+        txt.textContent = t("online");
+      } else {
+        dot.className = "status-dot status-offline";
+        txt.textContent = "Offline (local demo)";
+      }
     }
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
 
-    /***************************************************************
-     * Rendering
-     ***************************************************************/
+    /********************
+     * COUNTRY COMPARISON TABLE
+     ********************/
     function renderComparison(){
       const tbl = document.getElementById("comparisonTable");
       const rows = [
@@ -1467,10 +1042,11 @@
         { label:"Safety Signal Rate (% overrides/AI)", key:"safety" },
         { label:"Data Quality Score (%)", key:"dqs" }
       ];
+
       tbl.innerHTML = `
         <thead>
           <tr>
-            <th style="width:260px">Metric</th>
+            <th style="width:280px">Metric</th>
             ${COUNTRIES.map(c=>`<th>${c}</th>`).join("")}
           </tr>
         </thead>
@@ -1494,46 +1070,61 @@
       `;
     }
 
-    function renderHeatTable(){
-      const tbl = document.getElementById("heatTable");
-      const country = document.getElementById("heatCountryFilter")?.value || "ALL";
-      const risk = document.getElementById("heatRiskFilter")?.value || "ALL";
+    /********************
+     * HEAT TABLE + CSV
+     ********************/
+    function populateHeatCountry(){
+      const sel = document.getElementById("heatCountry");
+      const opts = ["ALL", ...COUNTRIES];
+      sel.innerHTML = opts.map(o=>`<option value="${o}">${o === "ALL" ? "All" : o}</option>`).join("");
+      sel.value = "ALL";
+    }
+
+    function heatFilterRows(){
+      const c = document.getElementById("heatCountry")?.value || "ALL";
+      const tier = document.getElementById("heatTier")?.value || "ALL";
       const q = (document.getElementById("heatSearch")?.value || "").trim().toLowerCase();
 
-      const filtered = HEAT_ROWS.filter(r=>{
-        if(country !== "ALL" && r.country !== country) return false;
-        if(risk !== "ALL" && r.risk !== risk) return false;
+      return HEAT_ROWS.filter(r=>{
+        if(c !== "ALL" && r.country !== c) return false;
+        if(tier !== "ALL" && r.tier !== tier) return false;
         if(q){
-          const hay = `${r.country} ${r.risk} ${r.climate} ${r.burden} ${r.serviceLoad} ${r.note} ${r.tags}`.toLowerCase();
-          if(!hay.includes(q)) return false;
+          const blob = `${r.country} ${r.tier} ${r.hazard} ${r.tags} ${r.note}`.toLowerCase();
+          if(!blob.includes(q)) return false;
         }
         return true;
       });
+    }
+
+    function renderHeatTable(){
+      const rows = heatFilterRows();
+      const tbl = document.getElementById("heatTable");
+      const count = document.getElementById("heatCount");
+      if(count) count.textContent = `${rows.length} row(s)`;
 
       tbl.innerHTML = `
         <thead>
           <tr>
             <th style="width:160px">Country</th>
-            <th>Risk</th>
-            <th>Heat Index</th>
-            <th>Climate Stress</th>
-            <th>Burden Proxy</th>
-            <th>Service Load</th>
-            <th>Notes</th>
+            <th style="width:120px">Heat Index</th>
+            <th style="width:120px">Tier</th>
+            <th style="width:180px">Hazard</th>
+            <th>Tags / Notes</th>
           </tr>
         </thead>
         <tbody>
-          ${filtered.map(r=>{
-            const b = r.risk==="HIGH" ? "b-bad" : (r.risk==="MEDIUM" ? "b-warn" : "b-good");
+          ${rows.map(r=>{
+            const badgeClass = r.tier==="High" ? "b-bad" : (r.tier==="Moderate" ? "b-warn" : "b-good");
             return `
               <tr>
                 <td class="font-extrabold">${r.country}</td>
-                <td><span class="badge ${b}">${r.risk}</span></td>
-                <td class="font-extrabold">${r.heatIndex}</td>
-                <td>${r.climate}</td>
-                <td>${r.burden}</td>
-                <td>${r.serviceLoad}</td>
-                <td class="muted">${r.note}</td>
+                <td>${r.heatIndex}</td>
+                <td><span class="badge ${badgeClass}">${r.tier}</span></td>
+                <td>${r.hazard}</td>
+                <td>
+                  <div class="tiny muted"><span class="font-extrabold">Tags:</span> ${r.tags}</div>
+                  <div class="tiny muted">${r.note}</div>
+                </td>
               </tr>
             `;
           }).join("")}
@@ -1541,129 +1132,357 @@
       `;
     }
 
-    function populateHeatFilters(){
-      const csel = document.getElementById("heatCountryFilter");
-      csel.innerHTML = `<option value="ALL">${t("all")}</option>` + COUNTRIES.map(c=>`<option value="${c}">${c}</option>`).join("");
-      csel.value = "ALL";
-    }
-
-    function computeScorecard(){
-      let comps = [];
-      let safetyVals = [];
-      for(const c of COUNTRIES){
-        const d = BASE[c];
-        const adoption = (typeof d.adoption==="number") ? d.adoption : 0;
-        const dqs = (typeof d.dqs==="number") ? d.dqs : 0;
-        const safety = (typeof d.safety==="number") ? d.safety : 0;
-        const score = Math.max(0, Math.min(100, (0.45*adoption + 0.45*dqs - 0.8*safety)));
-        comps.push(score);
-        if(typeof d.safety==="number") safetyVals.push(d.safety);
-      }
-      const avg = comps.reduce((a,b)=>a+b,0)/comps.length;
-      const safetyAvg = safetyVals.length ? (safetyVals.reduce((a,b)=>a+b,0)/safetyVals.length) : 0;
-
-      document.getElementById("nationalComposite").textContent = avg.toFixed(0);
-      document.getElementById("nationalSafetyRate").textContent = safetyAvg.toFixed(1) + "%";
-    }
-
-    /***************************************************************
-     * Connectivity
-     ***************************************************************/
-    function updateOnlineStatus(){
-      const online = navigator.onLine;
-      const dot = document.getElementById("netDot");
-      const txt = document.getElementById("netText");
-      if(online){
-        dot.className = "status-dot status-live";
-        txt.textContent = t("online");
-      } else {
-        dot.className = "status-dot status-offline";
-        txt.textContent = "Offline (local demo)";
-      }
-    }
-    window.addEventListener("online", updateOnlineStatus);
-    window.addEventListener("offline", updateOnlineStatus);
-
-    /***************************************************************
-     * Modals
-     ***************************************************************/
-    function openModal(id){
-      const el = document.getElementById(id);
-      if(!el) return;
-      el.classList.remove("hidden");
-      el.setAttribute("aria-hidden","false");
-    }
-    function closeModal(id){
-      const el = document.getElementById(id);
-      if(!el) return;
-      el.classList.add("hidden");
-      el.setAttribute("aria-hidden","true");
-      try { sttStop(); } catch {}
-      try { ccStop(); } catch {}
-    }
-
-    function focusSection(id){
-      const el = document.getElementById(id);
-      if(!el) return;
-      el.scrollIntoView({behavior:"smooth", block:"start"});
-      el.classList.add("section-focus");
-      setTimeout(()=>el.classList.remove("section-focus"), 1500);
-      el.setAttribute("tabindex","-1");
-      el.focus({preventScroll:true});
-      setTimeout(()=>el.removeAttribute("tabindex"), 1200);
-    }
-
-    /***************************************************************
-     * CSV download
-     ***************************************************************/
     function downloadHeatCsv(){
-      const headers = ["country","risk","heatIndex","climate","burden","serviceLoad","note","tags"];
-      const lines = [headers.join(",")];
-      for(const r of HEAT_ROWS){
-        const row = headers.map(k => `"${String(r[k] ?? "").replace(/"/g,'""')}"`).join(",");
-        lines.push(row);
-      }
-      const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+      const rows = heatFilterRows();
+      const header = ["country","heatIndex","tier","hazard","tags","note"];
+      const lines = [
+        header.join(","),
+        ...rows.map(r=>header.map(k=>{
+          const v = (r[k] ?? "").toString().replace(/"/g,'""');
+          return `"${v}"`;
+        }).join(","))
+      ];
+      const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8;"});
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "afyaai_heat_index_datasheet.csv";
+      a.download = `AfyaAI_HeatIndex_${new Date().toISOString().slice(0,10)}.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
     }
 
-    /***************************************************************
-     * Patient portal helpers
-     ***************************************************************/
+    /********************
+     * MAP INSPECTOR (FIXED)
+     ********************/
+    function fmtPercent(v){
+      if(v === null || v === undefined || Number.isNaN(v)) return "—";
+      return `${Number(v).toFixed(1)}%`;
+    }
+    function fmtNumber(v){
+      if(v === null || v === undefined || Number.isNaN(v)) return "—";
+      return `${Number(v)}`;
+    }
+    function metricConfig(metric){
+      switch(metric){
+        case "heatIndex":
+          return {
+            label: "Heat Index",
+            get: (c)=> (HEAT_ROWS.find(r=>r.country===c)?.heatIndex ?? null),
+            fmt: (v)=> fmtNumber(v),
+            meaning: (v)=> {
+              if(v === null) return "—";
+              if(v >= 70) return "High climate/service stress (demo).";
+              if(v >= 40) return "Moderate stress (demo).";
+              return "Lower stress (demo).";
+            },
+            color: (v)=> (v === null) ? "#94a3b8" : (v >= 70 ? "#c53030" : (v >= 40 ? "#b7791f" : "#118a4e"))
+          };
+        case "safetySignal":
+          return {
+            label: "Safety Signal Rate",
+            get: (c)=> (BASE[c]?.safety ?? null),
+            fmt: (v)=> fmtPercent(v),
+            meaning: (v)=> {
+              if(v === null) return "No safety data (demo).";
+              if(v >= 14) return "Higher override rate – monitor safety.";
+              if(v >= 10) return "Moderate overrides – review periodically.";
+              return "Lower overrides – stable.";
+            },
+            color: (v)=> (v === null) ? "#94a3b8" : (v >= 14 ? "#c53030" : (v >= 10 ? "#b7791f" : "#118a4e"))
+          };
+        case "adoption":
+          return {
+            label: "Clinician Adoption",
+            get: (c)=> (BASE[c]?.adoption ?? null),
+            fmt: (v)=> (v === null ? "—" : `${Number(v).toFixed(0)}%`),
+            meaning: (v)=> {
+              if(v === null) return "No adoption data (demo).";
+              if(v >= 70) return "Strong adoption.";
+              if(v >= 50) return "Moderate adoption – training can help.";
+              return "Early adoption – enablement needed.";
+            },
+            color: (v)=> (v === null) ? "#94a3b8" : (v >= 70 ? "#118a4e" : (v >= 50 ? "#b7791f" : "#c53030"))
+          };
+        case "dqs":
+          return {
+            label: "Data Quality Score",
+            get: (c)=> (BASE[c]?.dqs ?? null),
+            fmt: (v)=> (v === null ? "—" : `${Number(v).toFixed(1)}%`),
+            meaning: (v)=> {
+              if(v === null) return "No DQS (demo).";
+              if(v >= 95) return "Excellent data quality.";
+              if(v >= 90) return "Good – minor gaps.";
+              return "Needs improvement – data completeness issues.";
+            },
+            color: (v)=> (v === null) ? "#94a3b8" : (v >= 95 ? "#118a4e" : (v >= 90 ? "#b7791f" : "#c53030"))
+          };
+        default:
+          return metricConfig("heatIndex");
+      }
+    }
+
+    function updateMapInspector(country){
+      const metric = document.getElementById("mapMetric")?.value || "heatIndex";
+      const cfg = metricConfig(metric);
+
+      const cEl = document.getElementById("selectedCountry");
+      const sEl = document.getElementById("selectedStatus");
+      if(cEl) cEl.textContent = country || "—";
+      if(sEl){
+        const status = BASE[country]?.status ?? "—";
+        sEl.textContent = `Status: ${status}`;
+      }
+
+      const ml = document.getElementById("metricLabel");
+      const mv = document.getElementById("metricValue");
+      const mm = document.getElementById("metricMeaning");
+      const val = country ? cfg.get(country) : null;
+
+      if(ml) ml.textContent = cfg.label;
+      if(mv) mv.textContent = cfg.fmt(val);
+      if(mm) mm.textContent = cfg.meaning(val);
+
+      const badge = document.getElementById("mapInspectorBadge");
+      if(badge){
+        badge.className = "badge b-info";
+        badge.innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${country || "—"}`;
+      }
+    }
+
+    function recolorPins(){
+      const metric = document.getElementById("mapMetric")?.value || "heatIndex";
+      const cfg = metricConfig(metric);
+
+      document.querySelectorAll("circle.pin").forEach(pin=>{
+        const country = pin.getAttribute("data-country");
+        const val = cfg.get(country);
+        pin.setAttribute("fill", cfg.color(val));
+        pin.setAttribute("opacity", "0.92");
+        pin.style.cursor = "pointer";
+      });
+    }
+
+    function bindMapPins(){
+      const pins = document.querySelectorAll("circle.pin");
+      if(!pins.length){
+        console.warn("No map pins found. Ensure pins have class='pin' and data-country.");
+        return;
+      }
+
+      pins.forEach(pin=>{
+        pin.addEventListener("click", ()=>{
+          const country = pin.getAttribute("data-country");
+          updateMapInspector(country);
+
+          pins.forEach(p=>p.setAttribute("stroke","none"));
+          pin.setAttribute("stroke", "#0b1220");
+          pin.setAttribute("stroke-width", "3");
+
+          // sync AI/Portal country selects if empty
+          const aiC = document.getElementById("aiCountry");
+          if(aiC) aiC.value = country;
+          const ptC = document.getElementById("ptCountry");
+          if(ptC) ptC.value = country;
+        });
+
+        pin.setAttribute("tabindex", "0");
+        pin.setAttribute("role", "button");
+        pin.setAttribute("aria-label", `Select ${pin.getAttribute("data-country")}`);
+        pin.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            pin.click();
+          }
+        });
+      });
+
+      document.getElementById("mapMetric")?.addEventListener("change", ()=>{
+        recolorPins();
+        const current = document.getElementById("selectedCountry")?.textContent;
+        if(current && current !== "—") updateMapInspector(current);
+      });
+
+      recolorPins();
+    }
+
+    /********************
+     * PORTAL + CALL WORKFLOW
+     ********************/
+    let callActive = false;
+
+    function openPortal(){
+      const m = document.getElementById("patientPortalModal");
+      m.classList.remove("hidden");
+      m.setAttribute("aria-hidden","false");
+    }
+    function closePortal(){
+      const m = document.getElementById("patientPortalModal");
+      m.classList.add("hidden");
+      m.setAttribute("aria-hidden","true");
+      // privacy: stop listening when portal closes
+      try{ sttStop(); }catch{}
+      try{ ccStop(); }catch{}
+    }
+
     function fillSampleIntake(){
-      document.getElementById("ptName").value = "Mary N.";
+      document.getElementById("ptName").value = "Amina K.";
       document.getElementById("ptAge").value = "34";
-      document.getElementById("ptPhone").value = "+254700000000";
-      document.getElementById("ptComplaint").value = "fever and cough for 2 days";
-      document.getElementById("ptNotes").value = "No known allergies.";
-      document.getElementById("intakeStatus").textContent = "Auto-filled sample intake.";
+      document.getElementById("ptPhone").value = "+254 700 000 000";
+      document.getElementById("ptCountry").value = "Kenya";
+      document.getElementById("ptComplaint").value = "Fever and cough for 3 days, mild shortness of breath.";
+      document.getElementById("ptNotes").value = "No known drug allergies. Took paracetamol once.";
+      document.getElementById("intakeStatus").textContent = "Sample intake loaded.";
     }
+
     function submitIntake(){
-      const name = (document.getElementById("ptName")?.value || "").trim();
-      const cc = (document.getElementById("ptComplaint")?.value || "").trim();
-      document.getElementById("intakeStatus").textContent =
-        (name && cc) ? `Submitted. Thank you, ${name}.` : "Please complete Name and Chief Complaint.";
+      const name = (document.getElementById("ptName").value || "").trim();
+      const complaint = (document.getElementById("ptComplaint").value || "").trim();
+      if(!name || !complaint){
+        document.getElementById("intakeStatus").textContent = "Please enter name + chief complaint.";
+        return;
+      }
+      document.getElementById("intakeStatus").textContent = "Intake submitted (demo). You can run AI recommendations now.";
     }
 
-    /***************************************************************
-     * Telehealth simulation
-     ***************************************************************/
-    function setPatientJoinStatus(joined){
-      const el = document.getElementById("patientJoinStatus");
-      if(!el) return;
-      el.textContent = joined ? "Patient connected (simulated)" : t("waiting_patient");
+    function setCallUi(active){
+      callActive = active;
+      const startBtn = document.getElementById("startCallBtn");
+      const endBtn = document.getElementById("endCallBtn");
+      const portalStart = document.getElementById("portalStartCallBtn");
+      const portalEnd = document.getElementById("portalEndCallBtn");
+
+      const callStateText = document.getElementById("callStateText");
+      const patientJoinStatus = document.getElementById("patientJoinStatus");
+
+      if(active){
+        endBtn.classList.remove("hidden");
+        startBtn.classList.add("hidden");
+        portalEnd.classList.remove("hidden");
+        portalStart.classList.add("hidden");
+        if(callStateText) callStateText.textContent = "Live";
+        if(patientJoinStatus) patientJoinStatus.textContent = "Patient joined (demo).";
+      } else {
+        endBtn.classList.add("hidden");
+        startBtn.classList.remove("hidden");
+        portalEnd.classList.add("hidden");
+        portalStart.classList.remove("hidden");
+        if(callStateText) callStateText.textContent = t("call_idle");
+        if(patientJoinStatus) patientJoinStatus.textContent = t("waiting_patient");
+      }
     }
 
-    /***************************************************************
-     * PDF Export
-     ***************************************************************/
+    async function startCallWorkflow(){
+      openPortal();
+
+      // If intake empty, auto-fill
+      const name = (document.getElementById("ptName").value || "").trim();
+      const complaint = (document.getElementById("ptComplaint").value || "").trim();
+      if(!name && !complaint) fillSampleIntake();
+
+      // Simulate “join room”
+      setCallUi(true);
+
+      // Start captions if supported
+      if(speechSupported()){
+        try{ ccStart(); }catch{}
+      }
+
+      // scroll to telehealth section
+      document.getElementById("sectionTelehealth")?.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function endCallWorkflow(){
+      setCallUi(false);
+      try{ ccStop(); }catch{}
+      try{ sttStop(); }catch{}
+      closePortal();
+    }
+
+    /********************
+     * AI RECOMMENDATION (MOCK)
+     ********************/
+    function getHeatByCountry(country){
+      return HEAT_ROWS.find(r=>r.country===country) || null;
+    }
+
+    function runAiRecommendation(){
+      const t0 = performance.now();
+      const country = document.getElementById("aiCountry").value;
+      const mode = document.getElementById("aiMode").value;
+
+      const complaint = (document.getElementById("ptComplaint")?.value || "").trim();
+      const notes = (document.getElementById("ptNotes")?.value || "").trim();
+
+      const heat = getHeatByCountry(country);
+      const base = BASE[country] || {};
+
+      const symptoms = (complaint + " " + notes).toLowerCase();
+      const redFlags = [];
+      if(symptoms.includes("shortness of breath") || symptoms.includes("difficulty breathing")) redFlags.push("Breathing symptoms");
+      if(symptoms.includes("chest pain")) redFlags.push("Chest pain");
+      if(symptoms.includes("confusion")) redFlags.push("Confusion");
+
+      const riskTier = heat?.tier || "—";
+      const heatIndex = heat?.heatIndex ?? null;
+
+      // Produce a structured “care plan” style output (demo)
+      const plan = [];
+      plan.push(`Country context: ${country} • Program status: ${base.status || "—"} • Adoption: ${base.adoption ?? "—"}% • Safety signal: ${base.safety ?? "—"}% • DQS: ${base.dqs ?? "—"}%`);
+      plan.push(`Environmental risk: Heat Index ${heatIndex ?? "—"} (${riskTier}) • Hazard: ${heat?.hazard || "—"} • Tags: ${heat?.tags || "—"}`);
+      plan.push(`Patient input: ${complaint ? complaint : "—"} ${notes ? " / Notes: " + notes : ""}`);
+
+      if(mode === "triage"){
+        plan.push("Triage summary (demo):");
+        if(redFlags.length){
+          plan.push(`• Safety flags: ${redFlags.join(", ")} → Consider urgent evaluation and vitals check.`);
+        } else {
+          plan.push("• No major red-flag keywords detected (demo). Proceed with standard triage questions.");
+        }
+        plan.push("Recommended next steps (demo):");
+        plan.push("• Collect vitals: temperature, pulse oximetry if available, respiratory rate.");
+        plan.push("• Ask about duration, exposure, travel, and high-risk conditions.");
+        plan.push("• Provide hydration guidance; consider heat advisory if Heat Index is elevated.");
+      } else if(mode === "followup"){
+        plan.push("Follow-up plan (demo):");
+        plan.push("• Reassess symptoms; confirm medication adherence and response.");
+        plan.push("• If symptoms worsen or red flags appear, escalate to in-person care.");
+      } else {
+        plan.push("Patient education (demo):");
+        plan.push("• Explain warning signs (breathing difficulty, persistent high fever, chest pain).");
+        plan.push("• Home care: fluids, rest, safe fever management guidance.");
+        plan.push("• If Heat Index is high: avoid midday heat, seek shade, increase hydration.");
+      }
+
+      plan.push("Disclaimer: This is a simulated recommendation for demonstration. Not clinical advice.");
+
+      const aiView = document.getElementById("aiView");
+      aiView.innerHTML = `
+        <div class="font-extrabold">AI Care Plan (Demo Output)</div>
+        <ul class="mt-2 list-disc pl-5 space-y-1">
+          ${plan.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}
+        </ul>
+      `;
+
+      const ms = Math.max(120, Math.round(performance.now() - t0));
+      document.getElementById("aiLatency").textContent = `${ms} ms`;
+    }
+
+    function clearAi(){
+      document.getElementById("aiView").innerHTML = `<div class="text-slate-400" data-i18n="ai_hint">${t("ai_hint")}</div>`;
+      document.getElementById("aiLatency").textContent = "—";
+    }
+
+    function escapeHtml(s){
+      return (s || "").replace(/[&<>"']/g, (m)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    /********************
+     * PDF EXPORT
+     ********************/
     async function exportPDF(){
       const { jsPDF } = window.jspdf;
       const el = document.getElementById("pdfCapture");
@@ -1686,65 +1505,153 @@
       pdf.save(`AfyaAI_Dashboard_${new Date().toISOString().slice(0,10)}.pdf`);
     }
 
-    /***************************************************************
-     * Accessibility (STT/CC/TTS) + Call workflow
-     * (kept lightweight; your existing working logic can remain)
-     ***************************************************************/
-    let sttRecognition = null, sttIsRunning = false, sttFinalText = "", sttInterimText = "";
-    let ccRecognition = null, ccIsRunning = false, ccFinalText = "", ccInterimText = "";
+    /********************
+     * ACCESSIBILITY SUITE (STT / CC / TTS)
+     ********************/
+    let sttRecognition = null;
+    let sttIsRunning = false;
+    let sttFinalText = "";
+    let sttInterimText = "";
 
+    let ccRecognition = null;
+    let ccIsRunning = false;
+    let ccFinalText = "";
+    let ccInterimText = "";
+
+    function getLocaleFromLang(langCode){
+      const map = { en:"en-US", fr:"fr-FR", sw:"sw-KE", ha:"ha-NG", yo:"yo-NG", ig:"ig-NG", am:"am-ET", om:"om-ET", ti:"ti-ER", so:"so-SO", rw:"rw-RW", rn:"rn-BI", ln:"ln-CD", lu:"lg-UG", sn:"sn-ZW", zu:"zu-ZA", xh:"xh-ZA", pt:"pt-PT", ar:"ar-SA" };
+      return map[langCode] || "en-US";
+    }
     function speechSupported(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
-    function ttsSupported(){ return !!window.speechSynthesis; }
-
     function setBadge(id, ok, okText, badText){
       const el = document.getElementById(id);
       if(!el) return;
       if(ok){
         el.className = "badge b-good";
-        el.innerHTML = `<i class="fa-solid fa-check" aria-hidden="true"></i> ${okText}`;
+        el.innerHTML = `<i class="fa-solid fa-check"></i> ${okText}`;
       } else {
         el.className = "badge b-bad";
-        el.innerHTML = `<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> ${badText}`;
+        el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${badText}`;
       }
     }
 
-    function sttCombined(){ return (sttFinalText + (sttInterimText ? (" " + sttInterimText) : "")).trim(); }
-    function sttSetStatus(msg){ const el=document.getElementById("sttStatus"); if(el) el.textContent=msg; }
-    function sttUpdateUi(){ const box=document.getElementById("sttTranscript"); if(box) box.textContent = sttCombined() || "—"; }
+    // Lightweight demo “translation” for STT transcript (optional)
+    const DEMO_TRANSLATE = {
+      sw:{ "fever":"homa","cough":"kikohozi","headache":"maumivu ya kichwa","pain":"maumivu","chest":"kifua","breathing":"kupumua","shortness of breath":"upungufu wa pumzi","sore throat":"koo kuuma","vomiting":"kutapika","diarrhea":"kuhara","dizzy":"kizunguzungu","nausea":"kichefuchefu","weakness":"udhaifu","days":"siku","hours":"saa","since":"tangu","for":"kwa" },
+      ha:{ "fever":"zazzabi","cough":"tari","headache":"ciwon kai","pain":"ciwo","chest":"kirji","breathing":"numfashi","shortness of breath":"karancin numfashi","vomiting":"amai","diarrhea":"gudawa","nausea":"tashin zuciya","weakness":"rauni","days":"kwanaki","hours":"awanni","since":"tun","for":"na" },
+      yo:{ "fever":"ìbà","cough":"ikọ́-fèé","headache":"orififo","pain":"irora","chest":"àyà","breathing":"mímì","shortness of breath":"kíkúrú ẹ̀mí","vomiting":"ìgbẹ́gbọ̀n","diarrhea":"ìgbéyà","nausea":"ìforígbárí","weakness":"àìlera","days":"ọjọ́","hours":"wákàtí","since":"láti","for":"fún" },
+      am:{ "fever":"ትኩሳት","cough":"ሳል","headache":"ራስ ምታት","pain":"ህመም","chest":"ደረት","breathing":"መተንፈስ","shortness of breath":"እስትንፋስ እጥረት","vomiting":"ማስመለስ","diarrhea":"ተቅማጥ","nausea":"ማቅለሽለሽ","weakness":"ድካም","days":"ቀናት","hours":"ሰዓታት","since":"ከ","for":"ለ" },
+      zu:{ "fever":"umkhuhlane","cough":"ukukhwehlela","headache":"ikhanda elibuhlungu","pain":"ubuhlungu","chest":"isifuba","breathing":"ukuphefumula","shortness of breath":"ukushoda umoya","vomiting":"ukuhlanza","diarrhea":"isifo sohudo","nausea":"isicanucanu","weakness":"ubuthakathaka","days":"izinsuku","hours":"amahora","since":"kusukela","for":"ngoba" },
+      fr:{ "fever":"fièvre","cough":"toux","headache":"mal de tête","pain":"douleur","chest":"poitrine","breathing":"respiration","shortness of breath":"essoufflement","vomiting":"vomissements","diarrhea":"diarrhée","nausea":"nausée","weakness":"faiblesse","days":"jours","hours":"heures","since":"depuis","for":"pour" }
+    };
 
+    function demoTranslate(text, lang){
+      if(!text) return "";
+      if(!lang || lang==="en") return text;
+      const dict = DEMO_TRANSLATE[lang];
+      if(!dict) return text;
+      const lower = text.toLowerCase();
+      let out = lower.replaceAll("shortness of breath", dict["shortness of breath"] || "shortness of breath");
+      Object.keys(dict).forEach(k=>{
+        if(k==="shortness of breath") return;
+        const re = new RegExp(`\\b${k.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')}\\b`, "g");
+        out = out.replace(re, dict[k]);
+      });
+      return out;
+    }
+
+    /* STT */
     function sttInit(){
       setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
-      setBadge("sttSupportBadge2", speechSupported(), "STT: Supported", "STT: Not supported");
       if(!speechSupported()) return;
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       sttRecognition = new SR();
       sttRecognition.continuous = true;
       sttRecognition.interimResults = true;
-      sttRecognition.lang = getLocaleFromLang(getLang());
-      sttRecognition.onstart = ()=>{ sttIsRunning=true; document.getElementById("sttStartBtn")?.setAttribute("disabled","true"); document.getElementById("sttStopBtn")?.removeAttribute("disabled"); sttSetStatus("Listening…"); };
-      sttRecognition.onend = ()=>{ sttIsRunning=false; document.getElementById("sttStartBtn")?.removeAttribute("disabled"); document.getElementById("sttStopBtn")?.setAttribute("disabled","true"); sttInterimText=""; sttUpdateUi(); sttSetStatus("Stopped."); };
+      sttRecognition.maxAlternatives = 1;
+      sttRefreshLang();
+
+      sttRecognition.onstart = ()=>{
+        sttIsRunning = true;
+        document.getElementById("sttStartBtn")?.setAttribute("disabled","true");
+        document.getElementById("sttStopBtn")?.removeAttribute("disabled");
+        sttSetStatus("Listening… Speak now.");
+      };
+      sttRecognition.onend = ()=>{
+        sttIsRunning = false;
+        document.getElementById("sttStartBtn")?.removeAttribute("disabled");
+        document.getElementById("sttStopBtn")?.setAttribute("disabled","true");
+        sttInterimText = "";
+        sttUpdateUi();
+        sttSetStatus("Stopped.");
+      };
+      sttRecognition.onerror = (e)=> sttSetStatus("Speech error: " + (e.error || "unknown"));
       sttRecognition.onresult = (event)=>{
-        let interim="";
+        let interim = "";
         for(let i=event.resultIndex;i<event.results.length;i++){
-          const res=event.results[i];
-          const txt=res[0]?.transcript||"";
+          const res = event.results[i];
+          const txt = res[0]?.transcript || "";
           if(res.isFinal) sttFinalText += " " + txt;
           else interim += " " + txt;
         }
-        sttInterimText = interim.trim(); sttFinalText = sttFinalText.trim(); sttUpdateUi();
+        sttInterimText = interim.trim();
+        sttFinalText = sttFinalText.trim();
+        sttUpdateUi();
       };
     }
-    function sttStart(){ if(!sttRecognition) sttInit(); try{ sttRecognition.lang=getLocaleFromLang(getLang()); }catch{} if(!sttIsRunning){ try{ sttRecognition.start(); }catch(e){ sttSetStatus("Could not start."); } } }
-    function sttStop(){ if(sttRecognition && sttIsRunning){ try{ sttRecognition.stop(); }catch{} } }
+    function sttRefreshLang(){
+      const lang = getLang();
+      try{ if(sttRecognition) sttRecognition.lang = getLocaleFromLang(lang); }catch{}
+    }
+    function sttSetStatus(msg){ const el=document.getElementById("sttStatus"); if(el) el.textContent=msg; }
+    function sttCombined(){ return (sttFinalText + (sttInterimText ? (" " + sttInterimText) : "")).trim(); }
+    function sttUpdateUi(){
+      const box = document.getElementById("sttTranscript");
+      if(box) box.textContent = sttCombined() || "—";
+      const translateBox = document.getElementById("sttTranslated");
+      const auto = document.getElementById("sttAutoTranslate");
+      const lang = getLang();
+      if(translateBox){
+        if(auto && auto.checked){
+          const translated = demoTranslate(sttCombined(), lang);
+          translateBox.textContent = translated || "—";
+        } else translateBox.textContent = "—";
+      }
+    }
+    function sttStart(){
+      if(!speechSupported()){ alert("Speech-to-text not supported in this browser."); return; }
+      if(!sttRecognition) sttInit();
+      sttRefreshLang();
+      if(!sttIsRunning){
+        sttSetStatus("Starting…");
+        try { sttRecognition.start(); } catch(e){ sttSetStatus("Could not start: " + e.message); }
+      }
+    }
+    function sttStop(){ if(sttRecognition && sttIsRunning){ try { sttRecognition.stop(); } catch {} } }
     function sttClear(){ sttFinalText=""; sttInterimText=""; sttUpdateUi(); sttSetStatus("Cleared."); }
-    function sttApplyToComplaint(){ const el=document.getElementById("ptComplaint"); const txt=sttCombined(); if(!txt){ sttSetStatus("No transcript."); return; } el.value=txt; sttSetStatus("Applied."); }
-    function sttApplyToNotes(){ const el=document.getElementById("ptNotes"); const txt=sttCombined(); if(!txt){ sttSetStatus("No transcript."); return; } el.value = (el.value? el.value+"\n":"")+txt; sttSetStatus("Applied."); }
+    function sttApplyToComplaint(){
+      const el = document.getElementById("ptComplaint");
+      if(!el) return;
+      const lang = getLang();
+      const auto = document.getElementById("sttAutoTranslate");
+      const txt = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
+      if(!txt){ sttSetStatus("No transcript to apply."); return; }
+      el.value = txt;
+      sttSetStatus("Applied to Chief Complaint.");
+    }
+    function sttApplyToNotes(){
+      const el = document.getElementById("ptNotes");
+      if(!el) return;
+      const lang = getLang();
+      const auto = document.getElementById("sttAutoTranslate");
+      const txt = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
+      if(!txt){ sttSetStatus("No transcript to apply."); return; }
+      const prev = (el.value || "").trim();
+      el.value = prev ? (prev + "\n" + txt) : txt;
+      sttSetStatus("Applied to Notes.");
+    }
 
-    function ccCombined(){ return (ccFinalText + (ccInterimText ? (" " + ccInterimText) : "")).trim(); }
-    function ccShowOverlay(show){ const o=document.getElementById("ccOverlay"); if(o) o.style.display=show?"block":"none"; }
-    function ccSetOverlayText(txt){ const t=document.getElementById("ccText"); if(t) t.textContent=txt||"—"; }
-    function ccRender(){ ccSetOverlayText(ccCombined() || "…"); }
-
+    /* Captions */
     function ccInit(){
       setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
       if(!speechSupported()) return;
@@ -1752,190 +1659,190 @@
       ccRecognition = new SR();
       ccRecognition.continuous = true;
       ccRecognition.interimResults = true;
-      ccRecognition.lang = getLocaleFromLang(getLang());
-      ccRecognition.onstart = ()=>{ ccIsRunning=true; document.getElementById("ccStartBtn")?.setAttribute("disabled","true"); document.getElementById("ccStopBtn")?.removeAttribute("disabled"); ccShowOverlay(true); ccRender(); };
-      ccRecognition.onend = ()=>{ ccIsRunning=false; document.getElementById("ccStartBtn")?.removeAttribute("disabled"); document.getElementById("ccStopBtn")?.setAttribute("disabled","true"); ccInterimText=""; ccRender(); };
+      ccRecognition.maxAlternatives = 1;
+      ccRefreshLang();
+
+      ccRecognition.onstart = ()=>{
+        ccIsRunning = true;
+        document.getElementById("ccStartBtn")?.setAttribute("disabled","true");
+        document.getElementById("ccStopBtn")?.removeAttribute("disabled");
+        ccShowOverlay(true);
+        ccRender();
+      };
+      ccRecognition.onend = ()=>{
+        ccIsRunning = false;
+        document.getElementById("ccStartBtn")?.removeAttribute("disabled");
+        document.getElementById("ccStopBtn")?.setAttribute("disabled","true");
+        ccInterimText = "";
+        ccRender();
+      };
+      ccRecognition.onerror = (e)=> ccSetOverlayText("Caption error: " + (e.error || "unknown"));
       ccRecognition.onresult = (event)=>{
-        let interim="";
+        let interim = "";
         for(let i=event.resultIndex;i<event.results.length;i++){
-          const res=event.results[i];
-          const txt=res[0]?.transcript||"";
+          const res = event.results[i];
+          const txt = res[0]?.transcript || "";
           if(res.isFinal) ccFinalText += " " + txt;
           else interim += " " + txt;
         }
-        ccInterimText = interim.trim(); ccFinalText = ccFinalText.trim(); ccRender();
+        ccInterimText = interim.trim();
+        ccFinalText = ccFinalText.trim();
+        ccRender();
       };
     }
-    function ccStart(){ if(!ccRecognition) ccInit(); try{ ccRecognition.lang=getLocaleFromLang(getLang()); }catch{} if(!ccIsRunning){ try{ ccRecognition.start(); }catch{} } }
-    function ccStop(){ if(ccRecognition && ccIsRunning){ try{ ccRecognition.stop(); }catch{} } }
+    function ccRefreshLang(){
+      const lang = getLang();
+      try{ if(ccRecognition) ccRecognition.lang = getLocaleFromLang(lang); }catch{}
+    }
+    function ccCombined(){ return (ccFinalText + (ccInterimText ? (" " + ccInterimText) : "")).trim(); }
+    function ccShowOverlay(show){ const o=document.getElementById("ccOverlay"); if(o) o.style.display=show?"block":"none"; }
+    function ccSetOverlayText(txt){ const t=document.getElementById("ccText"); if(t) t.textContent=txt||"—"; }
+    function ccRender(){ const txt=ccCombined(); ccSetOverlayText(txt || "…"); }
+    function ccStart(){
+      if(!speechSupported()){ alert("Captions not supported in this browser."); return; }
+      if(!ccRecognition) ccInit();
+      ccRefreshLang();
+      if(!ccIsRunning){ try { ccRecognition.start(); } catch(e){ ccSetOverlayText("Could not start captions: " + e.message); } }
+    }
+    function ccStop(){ if(ccRecognition && ccIsRunning){ try { ccRecognition.stop(); } catch {} } }
     function ccClear(){ ccFinalText=""; ccInterimText=""; ccRender(); }
 
-    function ttsStopAll(){ try{ window.speechSynthesis?.cancel(); }catch{} const s=document.getElementById("ttsStatus"); if(s) s.textContent="Stopped."; }
-    function ttsSpeak(text){
-      if(!ttsSupported()) return;
+    /* TTS */
+    function ttsSupported(){ return !!window.speechSynthesis; }
+    function ttsStopAll(){
+      try { window.speechSynthesis?.cancel(); } catch {}
+      const s = document.getElementById("ttsStatus");
+      if(s) s.textContent = "Stopped.";
+    }
+    function ttsSpeak(text, langCode){
+      if(!ttsSupported()){ alert("Text-to-speech not supported in this browser."); return; }
       if(!text) return;
       ttsStopAll();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = getLocaleFromLang(getLang());
-      const s=document.getElementById("ttsStatus"); if(s) s.textContent="Reading aloud…";
-      u.onend=()=>{ if(s) s.textContent="Done."; };
-      window.speechSynthesis.speak(u);
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.0; utter.pitch = 1.0; utter.volume = 1.0;
+      utter.lang = getLocaleFromLang(langCode || "en");
+      const status = document.getElementById("ttsStatus");
+      if(status) status.textContent = "Reading aloud…";
+      utter.onend = ()=>{ if(status) status.textContent = "Done."; };
+      utter.onerror = ()=>{ if(status) status.textContent = "TTS error."; };
+      window.speechSynthesis.speak(utter);
     }
     function extractAiPlanPlainText(){
       const el = document.getElementById("aiView");
-      return (el?.innerText || "").trim();
+      if(!el) return "";
+      const txt = (el.innerText || "").trim();
+      if(!txt) return "";
+      return "Here is your care plan. " + txt.replace(/\s+/g," ").trim();
     }
 
-    function initAccessibilitySuite(){
-      setBadge("ttsSupportBadge", ttsSupported(), "TTS: Supported", "TTS: Not supported");
-      sttInit(); ccInit(); sttUpdateUi(); ccRender();
-
+    function bindAccessibilityButtons(){
       document.getElementById("sttStartBtn")?.addEventListener("click", sttStart);
       document.getElementById("sttStopBtn")?.addEventListener("click", sttStop);
       document.getElementById("sttClearBtn")?.addEventListener("click", sttClear);
       document.getElementById("sttApplyToComplaintBtn")?.addEventListener("click", sttApplyToComplaint);
       document.getElementById("sttApplyToNotesBtn")?.addEventListener("click", sttApplyToNotes);
-      document.getElementById("sttSpeakBtn")?.addEventListener("click", ()=>ttsSpeak(sttCombined() || "No text available."));
+      document.getElementById("sttAutoTranslate")?.addEventListener("change", sttUpdateUi);
+      document.getElementById("sttSpeakTranslatedBtn")?.addEventListener("click", ()=>{
+        const lang = getLang();
+        const auto = document.getElementById("sttAutoTranslate");
+        const spoken = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
+        ttsSpeak(spoken || "No text available.", lang);
+      });
 
       document.getElementById("ccStartBtn")?.addEventListener("click", ccStart);
       document.getElementById("ccStopBtn")?.addEventListener("click", ccStop);
       document.getElementById("ccClearBtn")?.addEventListener("click", ccClear);
 
       document.getElementById("ttsReadPlanBtn")?.addEventListener("click", ()=>{
+        const lang = getLang();
         const text = extractAiPlanPlainText();
-        ttsSpeak(text || "No plan to read yet. Please run the AI recommendation first.");
+        ttsSpeak(text || "No plan to read yet. Please run the AI recommendation first.", lang);
       });
       document.getElementById("ttsStopBtn")?.addEventListener("click", ttsStopAll);
+
+      setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
+      setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
     }
 
-    let callActive=false;
-    function setCallUi(active){
-      callActive=active;
-      const startBtns=[document.getElementById("startCallBtn"), document.getElementById("startCallBtn2")].filter(Boolean);
-      const endBtns=[document.getElementById("endCallBtn"), document.getElementById("endCallBtn2")].filter(Boolean);
-      startBtns.forEach(b=> active ? b.setAttribute("disabled","true") : b.removeAttribute("disabled"));
-      endBtns.forEach(b=> active ? b.removeAttribute("disabled") : b.setAttribute("disabled","true"));
-      const status=document.getElementById("callStatus");
-      if(status) status.textContent = active ? "Call active (demo)." : "Call ended.";
-    }
-    async function startCallWorkflow(){
-      openModal("patientPortalModal");
-      const name=(document.getElementById("ptName")?.value||"").trim();
-      const complaint=(document.getElementById("ptComplaint")?.value||"").trim();
-      if(!name && !complaint) fillSampleIntake();
-      setPatientJoinStatus(true);
-      try{ ccStart(); }catch{}
-      setCallUi(true);
-      focusSection("section-telehealth");
-    }
-    function endCallWorkflow(){
-      try{ ccStop(); }catch{}
-      try{ sttStop(); }catch{}
-      try{ ttsStopAll(); }catch{}
-      setPatientJoinStatus(false);
-      closeModal("patientPortalModal");
-      setCallUi(false);
+    function initAccessibilitySuite(){
+      bindAccessibilityButtons();
+      sttInit();
+      ccInit();
+      sttUpdateUi();
     }
 
-    /***************************************************************
-     * Minimal AI mock (kept)
-     ***************************************************************/
-    function aiMockEngine(){
-      const t0 = performance.now();
-      const country = document.getElementById("aiCountry").value;
-      const mode = document.getElementById("aiMode").value;
+    /********************
+     * HELPERS
+     ********************/
+    function populateCountrySelects(){
+      const options = COUNTRIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+      document.getElementById("aiCountry").innerHTML = options;
+      document.getElementById("ptCountry").innerHTML = options;
 
-      const complaint = (document.getElementById("ptComplaint")?.value || "").trim();
-      const notes = (document.getElementById("ptNotes")?.value || "").trim();
-
-      const heat = HEAT_ROWS.find(r=>r.country===country)?.heatIndex ?? null;
-      const risk = (heat!==null) ? riskFromHeat(heat) : "—";
-      const safety = (typeof BASE[country]?.safety==="number") ? BASE[country].safety : null;
-
-      const output =
-`Country: ${country}
-Heat Index: ${heat ?? "—"} (${risk})
-Safety Overrides: ${safety!==null ? safety.toFixed(1)+"%" : "—"}
-
-Symptoms: ${complaint || "—"}
-Notes: ${notes || "—"}
-
-Mode: ${mode}
-DEMO plan:
-- Triage based on symptoms text
-- Recommend vitals/SpO₂ if respiratory
-- Provide patient-friendly guidance + escalation triggers
-`;
-      document.getElementById("aiView").innerText = output;
-
-      const t1 = performance.now();
-      document.getElementById("aiLatency").textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (local mock)`;
-      document.getElementById("aiStamp").textContent = new Date().toLocaleString();
+      // sensible defaults
+      document.getElementById("aiCountry").value = "Kenya";
+      document.getElementById("ptCountry").value = "Kenya";
     }
 
-    function populateAiCountry(){
-      const sel = document.getElementById("aiCountry");
-      sel.innerHTML = COUNTRIES.map(c=>`<option value="${c}">${c}</option>`).join("");
-      sel.value = "Kenya";
+    function wireChips(){
+      document.getElementById("chipSafety")?.addEventListener("click", ()=>document.getElementById("sectionSafety")?.scrollIntoView({behavior:"smooth"}));
+      document.getElementById("chipIndicators")?.addEventListener("click", ()=>document.getElementById("sectionIndicators")?.scrollIntoView({behavior:"smooth"}));
+      document.getElementById("chipTelehealth")?.addEventListener("click", ()=>document.getElementById("sectionTelehealth")?.scrollIntoView({behavior:"smooth"}));
+      document.getElementById("chipRegulatory")?.addEventListener("click", ()=>document.getElementById("sectionRegulatory")?.scrollIntoView({behavior:"smooth"}));
     }
 
+    /********************
+     * DOM READY
+     ********************/
     document.addEventListener("DOMContentLoaded", ()=>{
+      // Language
       populateLangDropdown();
       applyLang(getLang());
 
-      populateHeatFilters();
-      renderHeatTable();
+      // Content
+      populateCountrySelects();
       renderComparison();
-      computeScorecard();
-      updateOnlineStatus();
-      populateAiCountry();
 
+      // Heat table
+      populateHeatCountry();
+      renderHeatTable();
+      document.getElementById("heatCountry")?.addEventListener("change", renderHeatTable);
+      document.getElementById("heatTier")?.addEventListener("change", renderHeatTable);
+      document.getElementById("heatSearch")?.addEventListener("input", renderHeatTable);
+      document.getElementById("heatCsvBtn")?.addEventListener("click", downloadHeatCsv);
+
+      // Map
+      bindMapPins();
+
+      // Connectivity
+      updateOnlineStatus();
+
+      // Accessibility
       initAccessibilitySuite();
 
-      document.getElementById("heatCountryFilter").addEventListener("change", renderHeatTable);
-      document.getElementById("heatRiskFilter").addEventListener("change", renderHeatTable);
-      document.getElementById("heatSearch").addEventListener("input", renderHeatTable);
+      // Portal
+      document.getElementById("portalBtn")?.addEventListener("click", openPortal);
+      document.getElementById("closePortalBtn")?.addEventListener("click", closePortal);
+      document.getElementById("patientPortalModal")?.addEventListener("click", function(e){
+        if(e.target === this) closePortal();
+      });
 
-      document.getElementById("downloadHeatCsv").addEventListener("click", downloadHeatCsv);
-      document.getElementById("pdfBtn").addEventListener("click", exportPDF);
+      document.getElementById("fillSampleBtn")?.addEventListener("click", fillSampleIntake);
+      document.getElementById("submitIntakeBtn")?.addEventListener("click", submitIntake);
 
-      document.getElementById("loginBtn").addEventListener("click", ()=>openModal("loginModal"));
-      document.getElementById("closeLogin").addEventListener("click", ()=>closeModal("loginModal"));
-      document.getElementById("cancelLogin").addEventListener("click", ()=>closeModal("loginModal"));
-
-      document.getElementById("openPortalBtn").addEventListener("click", ()=>openModal("patientPortalModal"));
-      document.getElementById("openPortalBtn2").addEventListener("click", ()=>openModal("patientPortalModal"));
-      document.getElementById("closePortalBtn").addEventListener("click", ()=>closeModal("patientPortalModal"));
-
-      document.getElementById("autoFillBtn").addEventListener("click", fillSampleIntake);
-      document.getElementById("submitIntakeBtn").addEventListener("click", submitIntake);
-
-      document.getElementById("runAiBtn").addEventListener("click", aiMockEngine);
-      document.getElementById("runAiBtn2").addEventListener("click", aiMockEngine);
-
-      document.getElementById("joinRoomBtn")?.addEventListener("click", ()=> setPatientJoinStatus(true));
-      document.getElementById("leaveRoomBtn")?.addEventListener("click", ()=> setPatientJoinStatus(false));
-      document.getElementById("simulateJoinBtn")?.addEventListener("click", ()=> setPatientJoinStatus(true));
-      document.getElementById("joinRoomBtn2")?.addEventListener("click", ()=> setPatientJoinStatus(true));
-      document.getElementById("leaveRoomBtn2")?.addEventListener("click", ()=> setPatientJoinStatus(false));
-
-      document.getElementById("btnSafety").addEventListener("click", ()=>focusSection("section-safety"));
-      document.getElementById("btnIndicators").addEventListener("click", ()=>focusSection("section-indicators"));
-      document.getElementById("btnTelehealth").addEventListener("click", ()=>focusSection("section-telehealth"));
-      document.getElementById("btnRegulatory").addEventListener("click", ()=>focusSection("section-regulatory"));
-
+      // Call workflow
       document.getElementById("startCallBtn")?.addEventListener("click", startCallWorkflow);
       document.getElementById("endCallBtn")?.addEventListener("click", endCallWorkflow);
-      document.getElementById("startCallBtn2")?.addEventListener("click", startCallWorkflow);
-      document.getElementById("endCallBtn2")?.addEventListener("click", endCallWorkflow);
-
+      document.getElementById("portalStartCallBtn")?.addEventListener("click", startCallWorkflow);
+      document.getElementById("portalEndCallBtn")?.addEventListener("click", endCallWorkflow);
       setCallUi(false);
 
-      ["loginModal","patientPortalModal"].forEach(id=>{
-        document.getElementById(id)?.addEventListener("click", function(e){
-          if(e.target === this) closeModal(id);
-        });
-      });
+      // AI
+      document.getElementById("runAiBtn")?.addEventListener("click", runAiRecommendation);
+      document.getElementById("clearAiBtn")?.addEventListener("click", clearAi);
+
+      // PDF
+      document.getElementById("pdfBtn")?.addEventListener("click", exportPDF);
     });
   </script>
 </body>

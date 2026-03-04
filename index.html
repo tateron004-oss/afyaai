@@ -3,181 +3,187 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>AfyaAI — WHO/WB Dashboard (Single-File Demo)</title>
+  <title>AfyaAI — WHO / World Bank Dashboard (Single-File)</title>
 
-  <!-- Tailwind + FontAwesome -->
+  <!-- Tailwind + FontAwesome + Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@400;700&family=Noto+Sans+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- PDF Export (Single-file friendly via CDN) -->
+  <!-- PDF Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     :root{
-      --primary:#0b5fa5;
-      --primary-dark:#094c84;
-      --accent:#0e7490;
-      --success:#0f766e;
-      --danger:#b91c1c;
-      --warning:#c2410c;
-
-      --text:#0f172a;
-      --muted:#64748b;
-      --bg:#f4f7fb;
-      --card:#ffffff;
-      --border:#d9e2ef;
-      --shadow:0 6px 18px rgba(2,6,23,.06);
+      --wb-blue:#1f4e79;
+      --wb-blue-2:#2b6cb0;
+      --who-blue:#0072bc;
+      --ink:#0b1220;
+      --muted:#5b677a;
+      --surface:#ffffff;
+      --surface-2:#f5f7fb;
+      --border:#d8e0ee;
+      --good:#118a4e;
+      --warn:#b7791f;
+      --bad:#c53030;
+      --shadow:0 10px 30px rgba(11,18,32,.08);
     }
-
-    *{margin:0;padding:0;box-sizing:border-box;}
-
+    *{box-sizing:border-box}
     body{
       font-family:'Inter','Noto Sans',sans-serif;
-      background:var(--bg);
-      color:var(--text);
+      background:linear-gradient(180deg,#f5f7fb 0%, #eef3fb 40%, #f7fafc 100%);
+      color:var(--ink);
       min-height:100vh;
     }
+    body[dir="rtl"]{direction:rtl}
+    .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
 
-    .amharic-text{font-family:'Noto Sans Ethiopic','Noto Sans',sans-serif;direction:ltr;}
-
-    /* Institutional cards */
-    .glass, .glass-dark{
-      background:var(--card);
+    .topbar{
+      background:linear-gradient(90deg, var(--wb-blue) 0%, var(--who-blue) 55%, var(--wb-blue-2) 100%);
+      border-bottom:1px solid rgba(255,255,255,.18);
+    }
+    .shell{max-width:1280px;margin:0 auto;padding:0 16px;}
+    .card{
+      background:var(--surface);
       border:1px solid var(--border);
+      border-radius:18px;
       box-shadow:var(--shadow);
-      backdrop-filter:none!important;
-      -webkit-backdrop-filter:none!important;
     }
-
-    /* Nav */
-    nav{
-      background:#fff;
-      border-bottom:1px solid var(--border);
-      box-shadow:0 2px 6px rgba(0,0,0,.03);
+    .card-flat{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:14px;
     }
-
-    /* Buttons */
+    .chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.28rem .55rem;border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--surface-2);
+      font-size:12px;font-weight:700;color:var(--muted);
+    }
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-      padding:.6rem .9rem;border-radius:.6rem;font-weight:600;font-size:14px;
-      transition:all .2s ease;
-      border:1px solid transparent;
+      padding:.62rem .95rem;border-radius:12px;font-weight:700;
+      border:1px solid transparent; transition:all .15s ease;
+      user-select:none;
     }
-    .btn-primary{background:var(--primary);color:#fff;}
-    .btn-primary:hover{background:var(--primary-dark);}
-    .btn-soft{background:#eef4fb;border:1px solid var(--border);color:var(--text);}
-    .btn-soft:hover{background:#e6effa;}
-    .btn-slate{background:#0f172a;color:white;}
-    .btn-slate:hover{background:#0b1220;}
-    .btn-danger{background:var(--danger);color:white;}
-    .btn-danger:hover{background:#991b1b;}
-
-    /* Inputs */
+    .btn-primary{background:var(--who-blue);color:#fff}
+    .btn-primary:hover{filter:brightness(.95)}
+    .btn-soft{background:var(--surface-2); border-color:var(--border); color:var(--ink); border:1px solid var(--border)}
+    .btn-soft:hover{background:#eef3fb}
+    .btn-slate{background:#0f172a;color:#fff}
+    .btn-slate:hover{filter:brightness(.95)}
+    .btn-danger{background:var(--bad);color:#fff}
+    .btn-danger:hover{filter:brightness(.95)}
     .input{
-      width:100%;padding:.6rem .75rem;border:1px solid var(--border);
-      border-radius:.6rem;outline:none;transition:box-shadow .2s,border-color .2s;background:white;
+      width:100%; padding:.62rem .78rem;
+      border:1px solid var(--border);
+      border-radius:12px;
+      outline:none; background:#fff;
+      transition:box-shadow .15s ease, border-color .15s ease;
     }
-    .input:focus{border-color:rgba(11,95,165,.55);box-shadow:0 0 0 4px rgba(11,95,165,.12);}
-
-    /* Badges */
-    .pill{font-size:12px;padding:.25rem .5rem;border-radius:999px;font-weight:600;}
-    .role-badge{font-size:12px;padding:.25rem .5rem;border-radius:999px;background:#eef4fb;border:1px solid var(--border);color:#0f172a;font-weight:700;}
-
-    /* Status dots */
-    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
-    .status-live{background:var(--success);box-shadow:0 0 8px rgba(15,118,110,.35);}
-    .status-pending{background:var(--warning);}
-    .status-offline{background:var(--danger);}
-
-    /* KPI cards */
-    .kpi-card{
-      background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;
-      box-shadow:var(--shadow);
+    .input:focus{border-color:rgba(0,114,188,.55); box-shadow:0 0 0 4px rgba(0,114,188,.12);}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px}
+    .gridline{
+      background:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 28px 28px;
+      background-position: -1px -1px;
+      border-radius:16px;
     }
-    .kpi-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-    .kpi-label{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.2px;}
-    .kpi-value{font-size:28px;font-weight:800;margin-top:6px;color:#0f172a;}
-    .kpi-note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.35;}
-
-    /* Table */
-    .table-clean{width:100%;border-collapse:collapse;}
-    .table-clean th,.table-clean td{padding:10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top;}
-    .table-clean th{color:var(--muted);font-weight:700;text-align:left;}
-    .table-clean tr:hover td{background:#f8fbff;}
-
-    /* Institutional heat grid */
-    .heat-grid{display:grid;grid-template-columns:120px repeat(7, 1fr);gap:6px;}
-    .heat-head{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
-    .heat-week{font-size:11px;color:var(--muted);padding-top:6px;}
-    .heat-cell{
-      height:22px;border-radius:6px;border:1px solid var(--border);
-      background:#f1f5fb;cursor:pointer;position:relative;
-      transition:transform .05s ease, box-shadow .15s ease;
+    .status-dot{width:9px;height:9px;border-radius:999px;display:inline-block}
+    .status-live{background:var(--good); box-shadow:0 0 0 4px rgba(17,138,78,.12)}
+    .status-offline{background:var(--bad); box-shadow:0 0 0 4px rgba(197,48,48,.12)}
+    table{border-collapse:separate;border-spacing:0;width:100%}
+    th,td{padding:10px 10px; border-bottom:1px solid var(--border); vertical-align:top}
+    th{
+      text-align:left;font-size:12px;color:var(--muted);font-weight:800;
+      background:linear-gradient(180deg,#fbfdff 0%, #f5f7fb 100%);
+      position:sticky; top:0; z-index:1;
     }
-    .heat-cell:hover{box-shadow:0 8px 16px rgba(2,6,23,.08);transform:translateY(-1px);}
-    .heat-legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
-    .legend-swatch{width:18px;height:12px;border-radius:4px;border:1px solid var(--border);}
-
-    /* Map */
-    .country-path{
-      fill:#e8eff9;stroke:#98b4d6;stroke-width:1;transition:all .2s ease;cursor:pointer;
+    tr:hover td{background:#fbfdff}
+    .badge{
+      font-size:12px;font-weight:800;
+      padding:.2rem .5rem;border-radius:999px;
+      border:1px solid var(--border);
+      background:var(--surface-2);
+      color:var(--ink);
+      display:inline-flex;align-items:center;gap:.35rem;
+      white-space:nowrap;
     }
-    .country-path:hover{fill:#cfe3fb;}
-    .country-path.active{fill:rgba(11,95,165,.85);stroke:#0b5fa5;}
+    .b-good{border-color:rgba(17,138,78,.25); background:rgba(17,138,78,.08); color:var(--good)}
+    .b-warn{border-color:rgba(183,121,31,.25); background:rgba(183,121,31,.08); color:var(--warn)}
+    .b-bad{border-color:rgba(197,48,48,.25); background:rgba(197,48,48,.08); color:var(--bad)}
+    .b-info{border-color:rgba(0,114,188,.25); background:rgba(0,114,188,.08); color:var(--who-blue)}
 
-    /* Modals */
-    .modal-card{max-width:980px;width:100%;max-height:90vh;overflow:auto;border-radius:1rem;}
-    .hidden{display:none !important;}
+    /* Accessibility helpers */
+    .caption-overlay{
+      position:absolute; left:12px; right:12px; bottom:12px;
+      padding:.5rem .75rem;
+      border-radius:12px;
+      background:rgba(0,0,0,.65);
+      color:#fff;
+      font-size:13px;
+      line-height:1.2;
+      border:1px solid rgba(255,255,255,.15);
+      backdrop-filter: blur(6px);
+    }
+    .caption-overlay .label{ font-size:11px; opacity:.8; font-weight:800; margin-bottom:.25rem; }
+    .caption-overlay .text{ font-weight:700; }
 
-    /* Print/PDF export helper */
+    /* Modal */
+    .modal-backdrop{position:fixed; inset:0; background:rgba(11,18,32,.55); backdrop-filter:blur(6px); z-index:60; display:flex; align-items:center; justify-content:center; padding:18px;}
+    .modal{max-width:980px; width:100%; max-height:90vh; overflow:auto; border-radius:18px; background:#fff; border:1px solid var(--border); box-shadow:var(--shadow);}
+    .modal-h{padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
+    .modal-b{padding:18px;}
+    .hidden{display:none!important}
+    .no-print{}
     @media print{
-      nav, .no-print{display:none!important;}
-      body{background:#fff;}
-      .glass, .kpi-card{box-shadow:none!important;}
-      main{padding-top:0!important;}
+      .no-print{display:none!important}
+      body{background:#fff}
+      .card{box-shadow:none}
+      th{position:static}
     }
   </style>
-
-  <base target="_blank">
 </head>
 
-<body class="text-slate-800">
-
-  <!-- NAV -->
-  <nav class="fixed w-full z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-xl"
-               style="background:var(--primary);">
-            <i class="fas fa-heartbeat"></i>
+<body>
+  <!-- TOP BAR -->
+  <header class="topbar fixed w-full z-50">
+    <div class="shell">
+      <div class="h-16 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
+            <i class="fa-solid fa-globe"></i>
           </div>
-          <div>
-            <h1 class="text-lg font-bold text-slate-900 tracking-tight">AfyaAI</h1>
-            <p class="text-xs text-slate-500 font-medium">WHO/WB-Style Monitoring Dashboard (Demo)</p>
+          <div class="leading-tight">
+            <div class="text-white font-extrabold tracking-tight" data-i18n="app_name">AfyaAI</div>
+            <div class="text-white/80 text-xs font-semibold" data-i18n="app_tagline">WHO / World Bank-style Monitoring Dashboard (Demo)</div>
           </div>
-        </div>
-
-        <div class="hidden md:flex items-center space-x-8">
-          <a href="#dashboard" class="nav-link text-slate-700 hover:text-slate-900 font-medium transition-colors">Dashboard</a>
-          <a href="#telehealth" class="nav-link text-slate-700 hover:text-slate-900 font-medium transition-colors">Telehealth</a>
-          <a href="#partners" class="nav-link text-slate-700 hover:text-slate-900 font-medium transition-colors">Partners</a>
-        </div>
-
-        <div class="flex items-center space-x-3">
-          <!-- connectivity -->
-          <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
+          <span class="chip border-white/20 bg-white/10 text-white/90 ml-2">
             <span id="netDot" class="status-dot status-live"></span>
-            <span id="netText" class="text-sm font-medium text-slate-700">Online</span>
+            <span id="netText" data-i18n="online">Online</span>
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 no-print">
+          <!-- Language dropdown -->
+          <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
+            <i class="fa-solid fa-language text-white/90"></i>
+            <select id="langSelect" class="bg-transparent text-white text-sm font-bold outline-none">
+              <!-- injected by JS -->
+            </select>
           </div>
 
           <!-- Country filter -->
-          <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
-            <i class="fa-solid fa-globe text-slate-500"></i>
-            <select id="countryFilter" class="bg-transparent text-sm font-semibold text-slate-800 outline-none" onchange="setCountryFilter(this.value)">
-              <option value="all">All Countries</option>
+          <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20">
+            <i class="fa-solid fa-flag text-white/90"></i>
+            <select id="countryFilter" class="bg-transparent text-white text-sm font-bold outline-none">
+              <option value="ALL">All countries</option>
               <option value="Kenya">Kenya</option>
               <option value="Nigeria">Nigeria</option>
               <option value="Rwanda">Rwanda</option>
@@ -187,587 +193,129 @@
             </select>
           </div>
 
-          <!-- Export -->
-          <button class="btn btn-soft no-print" onclick="exportPDF()"><i class="fa-solid fa-file-pdf"></i>Export PDF</button>
-
-          <!-- Audit -->
-          <button class="btn btn-soft no-print" onclick="openAuditPanel()"><i class="fa-solid fa-clipboard-list"></i>Audit Logs</button>
-
-          <!-- Login / User -->
-          <button id="loginBtn" class="btn btn-primary no-print" onclick="openLogin()">
-            <i class="fas fa-user-shield"></i><span>Login</span>
+          <button id="pdfBtn" class="btn btn-soft" title="Export dashboard to PDF">
+            <i class="fa-solid fa-file-pdf"></i><span class="hidden sm:inline" data-i18n="export_pdf">Export PDF</span>
           </button>
 
-          <div id="userChip" class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
-            <span class="role-badge" id="roleBadge">Clinician</span>
-            <span class="text-sm font-semibold text-slate-800" id="userNameChip">Demo User</span>
-            <button class="text-slate-500 hover:text-slate-700" onclick="logout()" title="Logout">
-              <i class="fas fa-right-from-bracket"></i>
-            </button>
-          </div>
+          <button id="loginBtn" class="btn btn-primary">
+            <i class="fa-solid fa-user-shield"></i><span class="hidden sm:inline" data-i18n="login">Login</span>
+          </button>
         </div>
       </div>
     </div>
-  </nav>
+  </header>
 
-  <!-- MAIN -->
-  <main id="exportArea" class="pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  <main class="shell pt-20 pb-12">
+    <section id="pdfCapture">
 
-    <!-- Dashboard header -->
-    <section id="dashboard" class="mb-6">
-      <div class="glass rounded-2xl p-6">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-bold tracking-tight text-slate-900">AfyaAI Monitoring Dashboard</h2>
-            <p class="text-sm text-slate-600 mt-1">
-              Telehealth Operations • AI Evaluation • Clinical Safety Monitoring
+      <!-- HERO -->
+      <section class="card p-6 md:p-7">
+        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
+          <div class="max-w-3xl">
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="chip"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="chip_safety">Safety & Quality</span></span>
+              <span class="chip"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="chip_indicators">Indicator Monitoring</span></span>
+              <span class="chip"><i class="fa-solid fa-video"></i> <span data-i18n="chip_telehealth">Telehealth</span></span>
+              <span class="chip"><i class="fa-solid fa-scale-balanced"></i> <span data-i18n="chip_regulatory">Regulatory Readiness</span></span>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight" data-i18n="hero_title">
+              National AI Health Program Monitoring (Demo)
+            </h1>
+            <p class="mt-2 text-sm md:text-base muted" data-i18n="hero_subtitle">
+              Institutional dashboard layout: scorecard, indicator tables, data sources, definitions, audit logs, and workflows — single HTML file.
             </p>
+
+            <div class="mt-4 flex flex-wrap gap-2 no-print">
+              <button class="btn btn-primary" id="openPortalBtn">
+                <i class="fa-solid fa-hospital-user"></i> Patient Portal
+              </button>
+              <button class="btn btn-soft" id="runAiBtn">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Recommendation (Mock)
+              </button>
+            </div>
           </div>
-          <div class="flex flex-wrap gap-2 no-print">
-            <button class="btn btn-soft" onclick="seedTelehealthDemoActivity()"><i class="fas fa-bolt"></i>Seed Demo Data</button>
-            <button class="btn btn-soft" onclick="resetAllDemo()"><i class="fas fa-rotate"></i>Reset</button>
+
+          <div class="lg:w-[380px] card-flat p-4 gridline">
+            <div class="flex items-center justify-between">
+              <div class="font-extrabold" data-i18n="scorecard_title">National Summary Scorecard</div>
+              <span class="badge b-info"><i class="fa-solid fa-database"></i> <span data-i18n="aggregated">Aggregated</span></span>
+            </div>
+            <p class="tiny muted mt-1" data-i18n="scorecard_note">
+              Composite is a demo-weighted index across core indicators.
+            </p>
+
+            <div class="mt-3 grid grid-cols-2 gap-3">
+              <div class="card-flat p-3">
+                <div class="tiny muted font-extrabold" data-i18n="composite_score">Composite Score</div>
+                <div class="text-2xl font-extrabold" id="nationalComposite">72</div>
+                <div class="tiny muted" id="nationalCompositeNote">Across all countries</div>
+              </div>
+              <div class="card-flat p-3">
+                <div class="tiny muted font-extrabold" data-i18n="safety_signal">Safety Signal Rate</div>
+                <div class="text-2xl font-extrabold" id="nationalSafetyRate">12.4%</div>
+                <div class="tiny muted" data-i18n="overrides_per_ai">Overrides per AI run</div>
+              </div>
+            </div>
+
+            <div class="mt-3 tiny muted">
+              <span class="font-extrabold" data-i18n="data_source_label">Data source:</span>
+              <span data-i18n="data_source_demo">Demo synthetic + local activity logs (browser localStorage).</span>
+            </div>
           </div>
         </div>
-        <div class="mt-4 text-xs text-slate-500">
-          <strong>Data source:</strong> Demo dataset (localStorage). Replace with consortium reporting feeds + facility submissions for production.
+      </section>
+
+      <!-- AI Recommendation + TTS -->
+      <section class="mt-6 card p-6 md:p-7">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg md:text-xl font-extrabold">AI Recommendation (Mock)</h2>
+            <span class="badge b-info"><i class="fa-solid fa-brain"></i> Care Plan</span>
+          </div>
+          <span class="text-xs muted" id="aiLatency">—</span>
         </div>
-      </div>
+
+        <div id="aiView" class="mt-3 text-sm text-slate-700">
+          <div class="text-slate-400">Run AI to generate recommendations.</div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap gap-2 no-print">
+          <button class="btn btn-slate" type="button" id="ttsReadPlanBtn">
+            <i class="fa-solid fa-volume-high"></i> Read Plan Aloud (Patient-friendly)
+          </button>
+          <button class="btn btn-soft" type="button" id="ttsStopBtn">
+            <i class="fa-solid fa-stop"></i> Stop
+          </button>
+        </div>
+        <div class="text-xs muted mt-2" id="ttsStatus">—</div>
+      </section>
+
+      <!-- Comparison table -->
+      <section class="mt-6 card p-6 md:p-7">
+        <div class="flex items-center gap-2">
+          <h2 class="text-lg md:text-xl font-extrabold" data-i18n="comparison_title">Country Comparison Table</h2>
+          <span class="badge b-info"><i class="fa-solid fa-table"></i> <span data-i18n="side_by_side">Side-by-side</span></span>
+        </div>
+        <div class="mt-4 overflow-auto card-flat">
+          <table class="min-w-[980px]" id="comparisonTable"></table>
+        </div>
+      </section>
+
     </section>
-
-    <!-- National Summary Scorecard -->
-    <section class="glass rounded-2xl p-6 mb-8">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-        <div>
-          <h3 class="text-lg font-bold text-slate-900">National Summary Scorecard</h3>
-          <div class="text-xs text-slate-500">Aggregated indicators for selected country (or All).</div>
-        </div>
-        <div class="text-xs text-slate-500">
-          <span class="font-semibold text-slate-700" id="scorecardScope">Scope: All Countries</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="kpi-card">
-          <div class="kpi-top">
-            <div>
-              <div class="kpi-label">Active Evaluations</div>
-              <div class="kpi-value" id="kpiActiveEvals">12</div>
-            </div>
-            <i class="fa-solid fa-flask text-slate-400"></i>
-          </div>
-          <div class="kpi-note">
-            <strong>Definition:</strong> Evaluations tagged Live/Pilot/Setup within scope.<br>
-            <strong>Source:</strong> Demo evaluation registry.
-          </div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-top">
-            <div>
-              <div class="kpi-label">Patients Enrolled</div>
-              <div class="kpi-value" id="kpiPatients">128,450</div>
-            </div>
-            <i class="fa-solid fa-users text-slate-400"></i>
-          </div>
-          <div class="kpi-note">
-            <strong>Definition:</strong> Total enrolled patients in evaluation sites (demo).<br>
-            <strong>Source:</strong> Demo enrollment totals.
-          </div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-top">
-            <div>
-              <div class="kpi-label">Telehealth Sessions</div>
-              <div class="kpi-value" id="kpiTeleSessions">0</div>
-            </div>
-            <i class="fa-solid fa-video text-slate-400"></i>
-          </div>
-          <div class="kpi-note">
-            <strong>Definition:</strong> Count of session_start events (demo).<br>
-            <strong>Source:</strong> Telehealth activity log (localStorage).
-          </div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-top">
-            <div>
-              <div class="kpi-label">Override Rate</div>
-              <div class="kpi-value" id="kpiOverrideRate">12.4%</div>
-            </div>
-            <i class="fa-solid fa-triangle-exclamation text-slate-400"></i>
-          </div>
-          <div class="kpi-note">
-            <strong>Definition:</strong> overrides / AI recommendations (demo).<br>
-            <strong>Source:</strong> Telehealth activity log (localStorage).
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-5 bg-slate-50 border border-slate-200 rounded-xl p-4">
-        <div class="text-sm font-semibold text-slate-900 mb-2">Indicator Definitions</div>
-        <table class="table-clean">
-          <thead>
-            <tr>
-              <th style="width:28%">Indicator</th>
-              <th style="width:52%">Definition</th>
-              <th style="width:20%">Target (example)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Override Rate</strong></td>
-              <td>Percent of AI recommendations overridden by clinician with documented reason.</td>
-              <td>&lt; 15%</td>
-            </tr>
-            <tr>
-              <td><strong>Telehealth Sessions</strong></td>
-              <td>Count of clinician-started video sessions (session_start).</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><strong>Active Evaluations</strong></td>
-              <td>Evaluations in Live/Pilot/Setup (excludes Planned).</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="text-xs text-slate-500 mt-2">
-          <strong>Data source:</strong> Demo values. For production: link to MoH reporting feeds + evaluation registry approvals.
-        </div>
-      </div>
-    </section>
-
-    <!-- DASH GRID (MAP + EVALS) -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-      <!-- Map -->
-      <div class="lg:col-span-2 glass rounded-2xl p-6">
-        <div class="flex justify-between items-center mb-4">
-          <div>
-            <h3 class="text-lg font-bold text-slate-900">Deployment Coverage</h3>
-            <div class="text-xs text-slate-500">Click a country to view summary. Filter dropdown applies across dashboard.</div>
-          </div>
-          <div class="flex space-x-2 no-print">
-            <button onclick="filterMap('all')" class="btn btn-soft text-xs">All</button>
-            <button onclick="filterMap('active')" class="btn btn-soft text-xs">Active</button>
-            <button onclick="filterMap('pilot')" class="btn btn-soft text-xs">Pilot</button>
-          </div>
-        </div>
-        <div class="relative h-96 bg-slate-50 rounded-xl overflow-hidden border border-slate-200">
-          <svg viewBox="0 0 800 600" class="w-full h-full">
-            <path id="kenya" class="country-path" d="M 420 280 L 450 270 L 480 280 L 490 320 L 470 350 L 430 340 L 410 310 Z" onclick="selectCountry('Kenya')" />
-            <path id="nigeria" class="country-path" d="M 280 260 L 320 250 L 340 280 L 330 320 L 290 330 L 270 300 Z" onclick="selectCountry('Nigeria')" />
-            <path id="rwanda" class="country-path" d="M 380 320 L 400 315 L 405 330 L 395 340 L 385 335 Z" onclick="selectCountry('Rwanda')" />
-            <path id="sa" class="country-path" d="M 350 450 L 400 440 L 420 480 L 400 520 L 360 510 L 340 480 Z" onclick="selectCountry('South Africa')" />
-            <path id="ethiopia" class="country-path" d="M 440 220 L 480 210 L 500 250 L 480 270 L 450 260 L 435 240 Z" onclick="selectCountry('Ethiopia')" />
-            <path id="ghana" class="country-path" d="M 250 290 L 270 285 L 275 305 L 260 315 L 245 305 Z" onclick="selectCountry('Ghana')" />
-          </svg>
-
-          <div class="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-sm border border-slate-200">
-            <div class="flex items-center space-x-4 text-xs text-slate-700">
-              <div class="flex items-center"><span class="w-3 h-3 rounded-full mr-1" style="background:rgba(11,95,165,.85)"></span> In scope</div>
-              <div class="flex items-center"><span class="w-3 h-3 bg-slate-200 rounded-full mr-1"></span> Out of scope</div>
-            </div>
-          </div>
-        </div>
-        <div class="text-xs text-slate-500 mt-3">
-          <strong>Data source:</strong> Demo deployment map. Production: link to facility registry and approvals.
-        </div>
-      </div>
-
-      <!-- Active Evaluations (table-based) -->
-      <div class="glass rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-bold text-slate-900">Evaluation Registry</h3>
-            <div class="text-xs text-slate-500">Indicator table view (WHO/WB style).</div>
-          </div>
-          <button class="btn btn-soft text-xs no-print" onclick="openNewEval()"><i class="fas fa-plus"></i>New</button>
-        </div>
-
-        <div class="overflow-auto border border-slate-200 rounded-xl bg-white">
-          <table class="table-clean" id="evalTable">
-            <thead>
-              <tr>
-                <th>Program</th>
-                <th>Country</th>
-                <th>Status</th>
-                <th>Patients</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-        <div class="mt-3 text-xs text-slate-500">
-          <strong>Definitions:</strong> Status reflects phase (Live/Pilot/Setup/Planned). Patients = demo totals per program.
-        </div>
-        <div class="text-xs text-slate-500 mt-1">
-          <strong>Data source:</strong> Demo registry + local “New Evaluation” entries (localStorage).
-        </div>
-      </div>
-    </section>
-
-    <!-- TELEHEALTH MODULE (kept intact) -->
-    <section id="telehealth" class="glass rounded-2xl p-6 mb-8">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
-        <div>
-          <h3 class="text-lg font-bold text-slate-900">Telehealth Command Center (Demo)</h3>
-          <p class="text-sm text-slate-600">
-            Patient intake → video room → AI support → referral + eRx → FHIR export + compliance log.
-          </p>
-          <div class="text-xs text-slate-500 mt-2">
-            <strong>Data source:</strong> Telehealth events stored locally (localStorage).
-          </div>
-        </div>
-        <div class="flex flex-wrap gap-2 no-print">
-          <button class="btn btn-primary" onclick="openTeleRoomCreate()"><i class="fas fa-video"></i>Create Video Room</button>
-          <button class="btn btn-soft" onclick="openPatientPortal()"><i class="fas fa-id-card"></i>Patient Portal</button>
-          <button class="btn btn-soft" onclick="openCompliance()"><i class="fas fa-scale-balanced"></i>Compliance</button>
-          <button class="btn btn-soft" onclick="openFHIR()"><i class="fas fa-file-medical"></i>FHIR Preview</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Queue -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-200">
-          <div class="flex items-center justify-between mb-3">
-            <div class="font-bold text-slate-900">Telehealth Queue</div>
-            <span class="text-xs text-slate-500" id="queueCount">0 waiting</span>
-          </div>
-          <input class="input mb-3" id="queueSearch" placeholder="Search patient name / ID..." oninput="renderQueue()" />
-
-          <div class="space-y-3 max-h-72 overflow-auto" id="queueList"></div>
-
-          <div class="mt-3 flex gap-2 no-print">
-            <button class="btn btn-soft w-full" onclick="seedQueue()"><i class="fas fa-user-plus"></i>Add Demo Patients</button>
-            <button class="btn btn-danger w-full" onclick="clearQueue()"><i class="fas fa-trash"></i>Clear</button>
-          </div>
-
-          <div class="text-xs text-slate-500 mt-3">
-            <strong>Definition:</strong> Queue is local demo state. Production: facility triage / scheduling integration.
-          </div>
-        </div>
-
-        <!-- Encounter workspace -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 lg:col-span-2">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
-            <div>
-              <div class="font-bold text-slate-900">Encounter Workspace</div>
-              <div class="text-xs text-slate-500">Select a patient from the queue to start.</div>
-            </div>
-            <div class="flex flex-wrap gap-2 no-print">
-              <button class="btn btn-slate" onclick="startSession()" id="startSessionBtn" disabled><i class="fas fa-play"></i>Start</button>
-              <button class="btn btn-soft" onclick="runAI()" id="aiBtn" disabled><i class="fas fa-wand-magic-sparkles"></i>Run AI</button>
-              <button class="btn btn-soft" onclick="openReferral()" id="refBtn" disabled><i class="fas fa-share"></i>Refer</button>
-              <button class="btn btn-soft" onclick="openRx()" id="rxBtn" disabled><i class="fas fa-prescription-bottle-medical"></i>eRx</button>
-              <button class="btn btn-primary" onclick="completeSession()" id="completeBtn" disabled><i class="fas fa-check"></i>Complete</button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="border border-slate-200 rounded-xl p-3">
-              <div class="flex items-center justify-between mb-2">
-                <div class="font-semibold text-slate-900">Patient Intake</div>
-                <span class="text-xs text-slate-500" id="selectedPatientChip">No patient</span>
-              </div>
-              <div id="intakeView" class="text-sm text-slate-600">
-                <div class="text-slate-400">No intake loaded.</div>
-              </div>
-              <div class="text-[11px] text-slate-500 mt-2">
-                <strong>Data source:</strong> Patient intake entries (localStorage).
-              </div>
-            </div>
-
-            <div class="border border-slate-200 rounded-xl p-3">
-              <div class="flex items-center justify-between mb-2">
-                <div class="font-semibold text-slate-900">AI Recommendation (Mock)</div>
-                <span class="text-xs text-slate-500" id="aiLatency">—</span>
-              </div>
-              <div id="aiView" class="text-sm text-slate-600">
-                <div class="text-slate-400">Run AI to generate recommendations.</div>
-              </div>
-
-              <div class="mt-3 border-t border-slate-100 pt-3">
-                <div class="flex items-center justify-between">
-                  <div class="font-semibold text-slate-900 text-sm">Clinician Action</div>
-                  <span class="text-xs text-slate-500" id="overrideRateChip">Override Rate: 12.4%</span>
-                </div>
-                <div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2 no-print">
-                  <button class="btn btn-primary" onclick="acceptAI()" id="acceptBtn" disabled><i class="fas fa-check"></i>Accept</button>
-                  <button class="btn btn-soft" onclick="modifyAI()" id="modifyBtn" disabled><i class="fas fa-pen"></i>Modify</button>
-                  <button class="btn btn-danger" onclick="overrideAI()" id="overrideBtn" disabled><i class="fas fa-ban"></i>Override</button>
-                </div>
-                <div id="actionLog" class="mt-3 text-xs text-slate-500"></div>
-
-                <div class="text-[11px] text-slate-500 mt-2">
-                  <strong>Indicator definition:</strong> Override requires documented reason (audit).
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Video Room (simulated) -->
-          <div class="mt-4 border border-slate-200 rounded-xl p-4">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-              <div>
-                <div class="font-semibold text-slate-900">Video Room (Simulated)</div>
-                <div class="text-xs text-slate-500">Room code lets patient “join” this demo room.</div>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-500">Room:</span>
-                <span class="pill bg-slate-50 border border-slate-200 text-slate-800" id="roomCodeChip">—</span>
-                <button class="btn btn-soft text-xs no-print" onclick="copyRoomCode()"><i class="fas fa-copy"></i>Copy</button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[120px] flex items-center justify-center">
-                <div class="text-center">
-                  <i class="fas fa-user-doctor text-2xl mb-2"></i>
-                  <div class="text-sm font-semibold">Clinician Video Tile</div>
-                  <div class="text-xs text-slate-300">Simulated</div>
-                </div>
-              </div>
-              <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[120px] flex items-center justify-center">
-                <div class="text-center">
-                  <i class="fas fa-user text-2xl mb-2"></i>
-                  <div class="text-sm font-semibold">Patient Video Tile</div>
-                  <div class="text-xs text-slate-300" id="patientJoinStatus">Waiting for patient…</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-3 flex flex-wrap gap-2 no-print">
-              <button class="btn btn-soft" onclick="toggleMute()"><i class="fas fa-microphone-slash"></i>Mute</button>
-              <button class="btn btn-soft" onclick="toggleCam()"><i class="fas fa-video-slash"></i>Camera</button>
-              <button class="btn btn-danger" onclick="endRoom()"><i class="fas fa-phone-slash"></i>End Room</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- SAFETY + HEATMAP (institutional grid style) -->
-    <section class="glass rounded-2xl p-6 mb-8">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-        <div>
-          <h3 class="text-lg font-bold text-slate-900">Safety & Utilization Monitoring</h3>
-          <div class="text-xs text-slate-500">
-            Institutional grid view (last 12 weeks). Click a cell to view daily counts.
-          </div>
-        </div>
-        <div class="flex items-center space-x-2">
-          <span class="status-dot status-live"></span>
-          <span class="text-sm text-slate-600">System Operational</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-xl p-4 border border-slate-200">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-medium text-slate-700">Override Rate</span>
-            <i class="fas fa-triangle-exclamation text-slate-400"></i>
-          </div>
-          <div class="text-2xl font-bold text-slate-900" id="overrideRateBig">12.4%</div>
-          <div class="text-xs text-slate-500 mt-1">Target: &lt;15%</div>
-          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-            <div class="h-full rounded-full" id="overrideBar" style="width:82%; background:var(--warning)"></div>
-          </div>
-          <div class="text-[11px] text-slate-500 mt-2">
-            <strong>Definition:</strong> Overrides / AI recommendations (within scope).
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-4 border border-slate-200">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-medium text-slate-700">AI Response Time</span>
-            <i class="fas fa-clock text-slate-400"></i>
-          </div>
-          <div class="text-2xl font-bold text-slate-900" id="aiRespTime">2.3s</div>
-          <div class="text-xs text-slate-500 mt-1">Avg. recommendation display (demo)</div>
-          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-            <div class="h-full rounded-full" id="respBar" style="width:95%; background:var(--accent)"></div>
-          </div>
-          <div class="text-[11px] text-slate-500 mt-2">
-            <strong>Source:</strong> Demo latency sampling.
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-4 border border-slate-200">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-medium text-slate-700">Data Quality Score</span>
-            <i class="fas fa-check-circle text-slate-400"></i>
-          </div>
-          <div class="text-2xl font-bold text-slate-900" id="dqs">94.7%</div>
-          <div class="text-xs text-slate-500 mt-1">Completeness & validity (demo)</div>
-          <div class="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-            <div class="h-full rounded-full" id="dqsBar" style="width:94.7%; background:var(--success)"></div>
-          </div>
-          <div class="text-[11px] text-slate-500 mt-2">
-            <strong>Source:</strong> Demo KPI.
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <div class="flex items-center justify-between">
-          <h4 class="text-sm font-bold text-slate-900">12-Week Institutional Activity Grid</h4>
-          <div class="heat-legend">
-            <span>Low</span>
-            <span class="legend-swatch" style="background:#f1f5fb"></span>
-            <span class="legend-swatch" style="background:#dbeafe"></span>
-            <span class="legend-swatch" style="background:#93c5fd"></span>
-            <span class="legend-swatch" style="background:#3b82f6"></span>
-            <span>High</span>
-            <span class="ml-2 text-xs">• Amber dot = override(s)</span>
-          </div>
-        </div>
-        <div class="mt-3" id="heatmapInstitutional"></div>
-        <div class="text-xs text-slate-500 mt-2">
-          <strong>Data source:</strong> Activity events (localStorage). Production: event streaming + audit store.
-        </div>
-      </div>
-    </section>
-
-    <!-- PARTNERS -->
-    <section id="partners" class="glass rounded-2xl p-6">
-      <h3 class="text-lg font-bold text-slate-900 mb-4">Consortium Partners</h3>
-      <div class="text-xs text-slate-500 mb-5">
-        <strong>Data source:</strong> Demo partner list.
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
-          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-hospital text-2xl text-slate-400"></i>
-          </div>
-          <span class="text-xs font-medium text-slate-700 text-center">Penda Health</span>
-          <span class="text-xs text-slate-400">Kenya</span>
-        </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
-          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-baby text-2xl text-slate-400"></i>
-          </div>
-          <span class="text-xs font-medium text-slate-700 text-center">Ubenwa</span>
-          <span class="text-xs text-slate-400">Nigeria</span>
-        </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
-          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-heartbeat text-2xl text-slate-400"></i>
-          </div>
-          <span class="text-xs font-medium text-slate-700 text-center">Babylon</span>
-          <span class="text-xs text-slate-400">Rwanda</span>
-        </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
-          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-x-ray text-2xl text-slate-400"></i>
-          </div>
-          <span class="text-xs font-medium text-slate-700 text-center">Qure.ai</span>
-          <span class="text-xs text-slate-400">South Africa</span>
-        </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
-          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-university text-2xl text-slate-400"></i>
-          </div>
-          <span class="text-xs font-medium text-slate-700 text-center">Univ. of Cape Town</span>
-          <span class="text-xs text-slate-400">Research</span>
-        </div>
-        <div class="flex flex-col items-center p-4 bg-white rounded-xl border border-slate-200">
-          <div class="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-landmark text-2xl text-slate-400"></i>
-          </div>
-          <span class="text-xs font-medium text-slate-700 text-center">Min. of Health</span>
-          <span class="text-xs text-slate-400">Kenya</span>
-        </div>
-      </div>
-    </section>
-
   </main>
 
-  <!-- MODALS -->
-
-  <!-- Audit Panel Modal -->
-  <div id="auditModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">Regulatory Audit Logs (Demo)</h3>
-        <button onclick="closeModal('auditModal')" class="text-slate-400 hover:text-slate-600">
-          <i class="fas fa-times text-xl"></i>
-        </button>
-      </div>
-      <div class="p-6 space-y-4">
-        <div class="flex flex-col md:flex-row gap-2 no-print">
-          <input class="input" id="auditSearch" placeholder="Search (type, user, patientId, country)..." oninput="renderAudit()" />
-          <select class="input md:max-w-xs" id="auditTypeFilter" onchange="renderAudit()">
-            <option value="all">All event types</option>
-            <option value="login">login</option>
-            <option value="logout">logout</option>
-            <option value="intake_submit">intake_submit</option>
-            <option value="session_start">session_start</option>
-            <option value="ai_recommendation">ai_recommendation</option>
-            <option value="override">override</option>
-            <option value="referral">referral</option>
-            <option value="eprescription">eprescription</option>
-            <option value="compliance_save">compliance_save</option>
-            <option value="export_pdf">export_pdf</option>
-            <option value="new_evaluation">new_evaluation</option>
-          </select>
-          <button class="btn btn-soft" onclick="copyAuditJson()"><i class="fa-solid fa-copy"></i>Copy JSON</button>
-          <button class="btn btn-danger" onclick="clearAudit()"><i class="fa-solid fa-trash"></i>Clear</button>
-        </div>
-
-        <div class="text-xs text-slate-500">
-          <strong>Purpose:</strong> Demonstrates required audit trail fields (timestamp, actor, action, metadata). Production: write-once log store + access controls.
-        </div>
-
-        <div class="overflow-auto border border-slate-200 rounded-xl">
-          <table class="table-clean" id="auditTable">
-            <thead>
-              <tr>
-                <th style="width:18%">Time</th>
-                <th style="width:14%">Type</th>
-                <th style="width:14%">Actor</th>
-                <th style="width:14%">Role</th>
-                <th style="width:40%">Details</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-        <div class="text-xs text-slate-500">
-          <strong>Data source:</strong> Demo audit store (localStorage). Export and compliance actions are logged.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Evaluation modal (Indicator table format) -->
-  <div id="evaluationModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 id="modalTitle" class="text-xl font-bold text-slate-900">Evaluation Details</h3>
-        <button onclick="closeModal('evaluationModal')" class="text-slate-400 hover:text-slate-600">
-          <i class="fas fa-times text-xl"></i>
-        </button>
-      </div>
-      <div id="modalContent" class="p-6"></div>
-    </div>
-  </div>
-
   <!-- Login modal -->
-  <div id="loginModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">Login (Demo)</h3>
-        <button onclick="closeModal('loginModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+  <div id="loginModal" class="modal-backdrop hidden no-print">
+    <div class="modal">
+      <div class="modal-h">
+        <div class="font-extrabold" data-i18n="login_demo">Login (Demo)</div>
+        <button id="closeLogin" class="btn btn-soft" style="padding:.45rem .7rem"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="p-6 space-y-4">
+      <div class="modal-b space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="text-sm font-medium text-slate-700">Role</label>
-            <select class="input mt-1" id="loginRole">
+            <label class="tiny muted font-extrabold" data-i18n="role">Role</label>
+            <select class="input mt-1 font-bold" id="loginRole">
               <option value="Clinician">Clinician</option>
               <option value="Patient">Patient</option>
               <option value="Ministry">Ministry</option>
@@ -775,393 +323,461 @@
             </select>
           </div>
           <div>
-            <label class="text-sm font-medium text-slate-700">Name</label>
-            <input class="input mt-1" id="loginName" placeholder="e.g., Dr. Amina" />
+            <label class="tiny muted font-extrabold" data-i18n="name">Name</label>
+            <input class="input mt-1 font-bold" id="loginName" placeholder="e.g., Dr. Amina" />
           </div>
         </div>
-
-        <div id="patientLoginExtra" class="hidden">
-          <label class="text-sm font-medium text-slate-700">Patient ID</label>
-          <input class="input mt-1" id="loginPatientId" placeholder="e.g., PT-1029" />
-          <p class="text-xs text-slate-500 mt-2">Demo: use any Patient ID. Intake records will be linked to this ID.</p>
-        </div>
-
         <div class="flex gap-2">
-          <button class="btn btn-primary w-full" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i>Login</button>
-          <button class="btn btn-soft w-full" onclick="closeModal('loginModal')">Cancel</button>
+          <button class="btn btn-primary w-full" id="doLoginBtn"><i class="fa-solid fa-right-to-bracket"></i><span data-i18n="login">Login</span></button>
+          <button class="btn btn-soft w-full" id="cancelLogin" data-i18n="cancel">Cancel</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Patient Portal modal -->
-  <div id="patientPortalModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">Patient Portal (Intake + Join Video Room)</h3>
-        <button onclick="closeModal('patientPortalModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+  <div id="patientPortalModal" class="modal-backdrop hidden no-print">
+    <div class="modal">
+      <div class="modal-h">
+        <div class="font-extrabold">Patient Portal (Intake + Join Video Room)</div>
+        <button class="btn btn-soft" style="padding:.45rem .7rem" onclick="closeModal('patientPortalModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
-      <div class="p-6">
+
+      <div class="modal-b">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Intake -->
           <div class="space-y-3">
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-              <div class="text-sm font-semibold text-slate-900 mb-2">Patient Intake Form</div>
+            <div class="card-flat p-4">
+              <div class="text-sm font-extrabold mb-2">Patient Intake Form</div>
+
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label class="text-xs font-medium text-slate-700">Patient ID</label>
-                  <input class="input mt-1" id="ptId" placeholder="PT-1029" />
+                  <label class="tiny muted font-extrabold">Full Name</label>
+                  <input class="input mt-1" id="ptName" placeholder="e.g., Mary N." />
                 </div>
                 <div>
-                  <label class="text-xs font-medium text-slate-700">Name</label>
-                  <input class="input mt-1" id="ptName" placeholder="Asha N." />
+                  <label class="tiny muted font-extrabold">Age</label>
+                  <input class="input mt-1" id="ptAge" placeholder="e.g., 34" />
                 </div>
                 <div>
-                  <label class="text-xs font-medium text-slate-700">Age</label>
-                  <input class="input mt-1" id="ptAge" type="number" placeholder="32" />
+                  <label class="tiny muted font-extrabold">Phone</label>
+                  <input class="input mt-1" id="ptPhone" placeholder="+254..." />
                 </div>
                 <div>
-                  <label class="text-xs font-medium text-slate-700">Sex</label>
-                  <select class="input mt-1" id="ptSex">
-                    <option>Female</option><option>Male</option><option>Other</option>
-                  </select>
+                  <label class="tiny muted font-extrabold">Chief Complaint</label>
+                  <input class="input mt-1" id="ptComplaint" placeholder="e.g., fever and cough" />
                 </div>
               </div>
+
               <div class="mt-3">
-                <label class="text-xs font-medium text-slate-700">Chief Complaint</label>
-                <input class="input mt-1" id="ptComplaint" placeholder="e.g., Fever + cough" />
-              </div>
-              <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div>
-                  <label class="text-xs font-medium text-slate-700">Temp (°C)</label>
-                  <input class="input mt-1" id="ptTemp" placeholder="38.5" />
-                </div>
-                <div>
-                  <label class="text-xs font-medium text-slate-700">HR</label>
-                  <input class="input mt-1" id="ptHr" placeholder="102" />
-                </div>
-                <div>
-                  <label class="text-xs font-medium text-slate-700">SpO₂</label>
-                  <input class="input mt-1" id="ptSpo2" placeholder="94" />
-                </div>
-                <div>
-                  <label class="text-xs font-medium text-slate-700">BP</label>
-                  <input class="input mt-1" id="ptBp" placeholder="120/80" />
-                </div>
-              </div>
-              <div class="mt-3">
-                <label class="text-xs font-medium text-slate-700">Allergies / Notes</label>
+                <label class="tiny muted font-extrabold">Allergies / Notes</label>
                 <textarea class="input mt-1" id="ptNotes" rows="3" placeholder="e.g., Penicillin allergy"></textarea>
               </div>
 
+              <!-- Accessibility: Voice-to-Text + Translation + Read Aloud -->
+              <div class="mt-3 card-flat p-3">
+                <div class="flex items-center justify-between gap-2">
+                  <div>
+                    <div class="font-extrabold text-sm">
+                      <i class="fa-solid fa-microphone-lines"></i>
+                      <span>Voice Symptom Capture</span>
+                    </div>
+                    <div class="tiny muted">
+                      Speak your symptoms. We’ll transcribe and (optionally) translate to the selected UI language.
+                    </div>
+                  </div>
+                  <span class="badge b-info" id="sttSupportBadge">
+                    <i class="fa-solid fa-universal-access"></i> STT: Checking…
+                  </span>
+                </div>
+
+                <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <button class="btn btn-primary" type="button" id="sttStartBtn">
+                    <i class="fa-solid fa-microphone"></i><span>Start</span>
+                  </button>
+                  <button class="btn btn-soft" type="button" id="sttStopBtn" disabled>
+                    <i class="fa-solid fa-stop"></i><span>Stop</span>
+                  </button>
+                  <button class="btn btn-soft" type="button" id="sttClearBtn">
+                    <i class="fa-solid fa-eraser"></i><span>Clear</span>
+                  </button>
+                </div>
+
+                <div class="mt-3">
+                  <div class="tiny muted font-extrabold">Live transcript</div>
+                  <div id="sttTranscript"
+                    class="mt-1 p-3 rounded-xl border border-slate-200 bg-white text-sm"
+                    style="min-height:72px"
+                    aria-live="polite">—</div>
+
+                  <div class="mt-3 flex items-center justify-between">
+                    <div class="tiny muted font-extrabold">Translated (UI language)</div>
+                    <label class="flex items-center gap-2 tiny muted">
+                      <input type="checkbox" id="sttAutoTranslate" checked />
+                      Auto-translate
+                    </label>
+                  </div>
+                  <div id="sttTranslated"
+                    class="mt-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-sm"
+                    style="min-height:64px"
+                    aria-live="polite">—</div>
+
+                  <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <button class="btn btn-soft" type="button" id="sttApplyToComplaintBtn">
+                      <i class="fa-solid fa-arrow-turn-down"></i><span>→ Chief Complaint</span>
+                    </button>
+                    <button class="btn btn-soft" type="button" id="sttApplyToNotesBtn">
+                      <i class="fa-solid fa-arrow-turn-down"></i><span>→ Notes</span>
+                    </button>
+                    <button class="btn btn-slate" type="button" id="sttSpeakTranslatedBtn">
+                      <i class="fa-solid fa-volume-high"></i><span>Read Aloud</span>
+                    </button>
+                  </div>
+
+                  <div class="tiny muted mt-2" id="sttStatus">—</div>
+                </div>
+              </div>
+
               <div class="mt-3 flex gap-2 no-print">
-                <button class="btn btn-primary w-full" onclick="submitIntake()"><i class="fas fa-paper-plane"></i>Submit Intake</button>
+                <button class="btn btn-primary w-full" onclick="submitIntake()"><i class="fa-solid fa-paper-plane"></i> Submit Intake</button>
                 <button class="btn btn-soft w-full" onclick="fillSampleIntake()">Auto-fill</button>
               </div>
-              <div class="text-xs text-slate-500 mt-2" id="intakeStatus">—</div>
-
-              <div class="text-[11px] text-slate-500 mt-2">
-                <strong>Data source:</strong> localStorage. Production: patient identity + consent + secure intake.
-              </div>
+              <div class="text-xs muted mt-2" id="intakeStatus">—</div>
             </div>
           </div>
 
+          <!-- Video room -->
           <div class="space-y-3">
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-              <div class="text-sm font-semibold text-slate-900 mb-2">Join Video Room (Demo)</div>
-              <label class="text-xs font-medium text-slate-700">Room Code</label>
-              <input class="input mt-1" id="joinRoomCode" placeholder="e.g., K3F9Q" />
-              <div class="mt-3 flex gap-2 no-print">
-                <button class="btn btn-slate w-full" onclick="patientJoinRoom()"><i class="fas fa-video"></i>Join</button>
-                <button class="btn btn-soft w-full" onclick="closeModal('patientPortalModal')">Close</button>
+            <div class="card-flat p-4">
+              <div class="flex items-center justify-between">
+                <div class="text-sm font-extrabold">Video Room (Simulated)</div>
+                <span class="badge b-info" id="ccSupportBadge"><i class="fa-solid fa-universal-access"></i> CC: Checking…</span>
               </div>
-              <div class="text-xs text-slate-500 mt-2" id="joinStatus">—</div>
-            </div>
+              <div class="tiny muted mt-1">Captions use browser SpeechRecognition (simulated clinician speech).</div>
 
-            <div class="bg-white border border-slate-200 rounded-xl p-4">
-              <div class="text-sm font-semibold text-slate-900 mb-2">My Care Actions (Demo)</div>
-              <div class="text-xs text-slate-600">See if prescriptions or referrals were created for your Patient ID.</div>
-              <div class="mt-3 flex gap-2 no-print">
-                <button class="btn btn-soft w-full" onclick="viewPatientRecord()"><i class="fas fa-folder-open"></i>View My Record</button>
-                <button class="btn btn-soft w-full" onclick="copyFHIRForPatient()"><i class="fas fa-copy"></i>Copy FHIR</button>
+              <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <!-- Clinician tile with captions overlay -->
+                <div class="relative rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center overflow-hidden">
+                  <div class="text-center">
+                    <i class="fa-solid fa-user-doctor text-2xl mb-2"></i>
+                    <div class="text-sm font-extrabold">Clinician Video Tile</div>
+                    <div class="text-xs text-slate-300">Simulated</div>
+
+                    <div class="mt-3 flex flex-wrap gap-2 justify-center">
+                      <button class="btn btn-soft text-xs" type="button" id="ccStartBtn">
+                        <i class="fa-solid fa-closed-captioning"></i> Start Captions
+                      </button>
+                      <button class="btn btn-soft text-xs" type="button" id="ccStopBtn" disabled>
+                        <i class="fa-solid fa-stop"></i> Stop
+                      </button>
+                      <button class="btn btn-soft text-xs" type="button" id="ccClearBtn">
+                        <i class="fa-solid fa-eraser"></i> Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="caption-overlay" id="ccOverlay" style="display:none;">
+                    <div class="label">Closed Captions (Simulated)</div>
+                    <div class="text" id="ccText">—</div>
+                  </div>
+                </div>
+
+                <!-- Patient tile -->
+                <div class="rounded-xl bg-slate-900 text-white p-4 min-h-[160px] flex items-center justify-center">
+                  <div class="text-center">
+                    <i class="fa-solid fa-user text-2xl mb-2"></i>
+                    <div class="text-sm font-extrabold">Patient Video Tile</div>
+                    <div class="text-xs text-slate-300" id="patientJoinStatus">Waiting for patient…</div>
+                    <button class="btn btn-primary text-xs mt-3" type="button" onclick="joinVideoRoom()">
+                      <i class="fa-solid fa-video"></i> Join Room
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div class="text-xs text-slate-500 mt-2" id="recordStatus">—</div>
+
+              <div class="mt-3 text-xs muted">
+                Privacy note: STT/CC stops when you close this modal.
+              </div>
             </div>
           </div>
 
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Referral modal -->
-  <div id="referralModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">Facility Referral (Telehealth → Facility)</h3>
-        <button onclick="closeModal('referralModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
-      </div>
-      <div class="p-6 space-y-3">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="text-sm font-medium text-slate-700">Referral Facility</label>
-            <select class="input mt-1" id="refFacility">
-              <option>District Hospital</option>
-              <option>County Referral Hospital</option>
-              <option>Specialist Clinic</option>
-              <option>Emergency Unit</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-sm font-medium text-slate-700">Urgency</label>
-            <select class="input mt-1" id="refUrgency">
-              <option>Routine (48–72h)</option>
-              <option>Urgent (Same day)</option>
-              <option>Emergent (Immediate)</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="text-sm font-medium text-slate-700">Reason / Notes</label>
-          <textarea class="input mt-1" id="refReason" rows="4" placeholder="Clinical reasoning, tests requested, warning signs..."></textarea>
-        </div>
-
-        <div class="flex gap-2 no-print">
-          <button class="btn btn-primary w-full" onclick="createReferral()"><i class="fas fa-share"></i>Create Referral</button>
-          <button class="btn btn-soft w-full" onclick="closeModal('referralModal')">Cancel</button>
-        </div>
-
-        <div class="text-xs text-slate-500" id="refStatus">—</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Rx modal -->
-  <div id="rxModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">Pharmacy e-Prescription (Mock)</h3>
-        <button onclick="closeModal('rxModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
-      </div>
-      <div class="p-6 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="text-sm font-medium text-slate-700">Medication</label>
-            <input class="input mt-1" id="rxMed" placeholder="e.g., Amoxicillin (or substitute)" />
-          </div>
-          <div>
-            <label class="text-sm font-medium text-slate-700">Dose</label>
-            <input class="input mt-1" id="rxDose" placeholder="e.g., 500mg" />
-          </div>
-          <div>
-            <label class="text-sm font-medium text-slate-700">Frequency</label>
-            <input class="input mt-1" id="rxFreq" placeholder="e.g., 3x daily" />
-          </div>
-          <div>
-            <label class="text-sm font-medium text-slate-700">Duration</label>
-            <input class="input mt-1" id="rxDur" placeholder="e.g., 5 days" />
-          </div>
-        </div>
-        <div>
-          <label class="text-sm font-medium text-slate-700">Pharmacy Notes</label>
-          <textarea class="input mt-1" id="rxNotes" rows="3" placeholder="Substitution guidance, allergy notes, counseling points..."></textarea>
-        </div>
-        <div class="flex gap-2 no-print">
-          <button class="btn btn-primary w-full" onclick="createRx()"><i class="fas fa-prescription-bottle-medical"></i>Create eRx</button>
-          <button class="btn btn-soft w-full" onclick="closeModal('rxModal')">Cancel</button>
-        </div>
-        <div class="text-xs text-slate-500" id="rxStatus">—</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FHIR modal -->
-  <div id="fhirModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">FHIR Integration Preview (Mock)</h3>
-        <button onclick="closeModal('fhirModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
-      </div>
-      <div class="p-6 space-y-3">
-        <div class="text-sm text-slate-600">
-          This preview simulates a FHIR Bundle payload you can send to an EHR/HIE gateway. (Demo only)
-        </div>
-        <textarea class="input font-mono text-xs" id="fhirPayload" rows="16"></textarea>
-        <div class="flex gap-2 no-print">
-          <button class="btn btn-slate w-full" onclick="copyFHIR()"><i class="fas fa-copy"></i>Copy</button>
-          <button class="btn btn-soft w-full" onclick="closeModal('fhirModal')">Close</button>
-        </div>
-        <div class="text-xs text-slate-500">
-          <strong>Data source:</strong> Built from local demo encounter records.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Compliance modal -->
-  <div id="complianceModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">Regulatory Compliance Tracker (Demo)</h3>
-        <button onclick="closeModal('complianceModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
-      </div>
-      <div class="p-6 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-            <div class="font-semibold text-slate-900 mb-2">Checklist</div>
-            <div class="space-y-2 text-sm">
-              <label class="flex items-center gap-2"><input type="checkbox" class="w-4 h-4" onchange="saveCompliance()" id="c1"> Patient consent captured</label>
-              <label class="flex items-center gap-2"><input type="checkbox" class="w-4 h-4" onchange="saveCompliance()" id="c2"> Data minimization applied</label>
-              <label class="flex items-center gap-2"><input type="checkbox" class="w-4 h-4" onchange="saveCompliance()" id="c3"> Audit trail enabled</label>
-              <label class="flex items-center gap-2"><input type="checkbox" class="w-4 h-4" onchange="saveCompliance()" id="c4"> AI override reason captured</label>
-              <label class="flex items-center gap-2"><input type="checkbox" class="w-4 h-4" onchange="saveCompliance()" id="c5"> Clinical validation protocol documented</label>
-              <label class="flex items-center gap-2"><input type="checkbox" class="w-4 h-4" onchange="saveCompliance()" id="c6"> Adverse event reporting pathway</label>
-            </div>
-          </div>
-
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-            <div class="font-semibold text-slate-900 mb-2">Evidence / Notes</div>
-            <textarea class="input mt-1" rows="10" id="complianceNotes" placeholder="Paste policy notes, approvals, audit references..." oninput="saveCompliance()"></textarea>
-            <div class="text-xs text-slate-500 mt-2">Saved locally in browser for demo.</div>
-          </div>
-        </div>
-
-        <div class="flex gap-2 no-print">
-          <button class="btn btn-slate w-full" onclick="exportCompliance()"><i class="fas fa-file-export"></i>Export Compliance Report</button>
-          <button class="btn btn-danger w-full" onclick="resetCompliance()"><i class="fas fa-rotate"></i>Reset</button>
-        </div>
-
-        <div class="text-xs text-slate-500" id="complianceStatus">—</div>
-
-        <div class="text-xs text-slate-500">
-          <strong>Indicator definitions:</strong> Checklist items map to baseline compliance requirements. Production: attach evidence IDs + approval references.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- New eval modal -->
-  <div id="newEvalModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white modal-card shadow-2xl">
-      <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="text-xl font-bold text-slate-900">New Evaluation (Demo)</h3>
-        <button onclick="closeModal('newEvalModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
-      </div>
-      <div class="p-6 space-y-3">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="text-sm font-medium text-slate-700">Project Name</label>
-            <input class="input mt-1" id="evalName" placeholder="e.g., Malaria Decision Support" />
-          </div>
-          <div>
-            <label class="text-sm font-medium text-slate-700">Country</label>
-            <select class="input mt-1" id="evalCountry">
-              <option>Kenya</option><option>Nigeria</option><option>Rwanda</option><option>South Africa</option><option>Ethiopia</option><option>Ghana</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="text-sm font-medium text-slate-700">Description</label>
-          <textarea class="input mt-1" id="evalDesc" rows="4" placeholder="Short evaluation purpose, endpoints, and safety monitoring..."></textarea>
-        </div>
-        <div class="flex gap-2 no-print">
-          <button class="btn btn-primary w-full" onclick="createEvaluation()"><i class="fas fa-plus"></i>Create</button>
-          <button class="btn btn-soft w-full" onclick="closeModal('newEvalModal')">Cancel</button>
-        </div>
-        <div class="text-xs text-slate-500" id="evalStatus">—</div>
-        <div class="text-xs text-slate-500">
-          <strong>Data source:</strong> Stored locally in browser (demo). Production: registry approval workflow.
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    /***************************************************************
+     * i18n + Language Dropdown (Single-File)
+     ***************************************************************/
+    const AFYA_LANG_KEY = "afyaai-lang-v2";
+
+    const LANGS = [
+      { code:"en", label:"English", native:"English", dir:"ltr" },
+      { code:"sw", label:"Swahili", native:"Kiswahili", dir:"ltr" },
+      { code:"ha", label:"Hausa", native:"Hausa", dir:"ltr" },
+      { code:"yo", label:"Yoruba", native:"Yorùbá", dir:"ltr" },
+      { code:"ig", label:"Igbo", native:"Igbo", dir:"ltr" },
+      { code:"am", label:"Amharic", native:"አማርኛ", dir:"ltr" },
+      { code:"om", label:"Oromo", native:"Afaan Oromoo", dir:"ltr" },
+      { code:"ti", label:"Tigrinya", native:"ትግርኛ", dir:"ltr" },
+      { code:"so", label:"Somali", native:"Soomaali", dir:"ltr" },
+      { code:"rw", label:"Kinyarwanda", native:"Ikinyarwanda", dir:"ltr" },
+      { code:"rn", label:"Kirundi", native:"Ikirundi", dir:"ltr" },
+      { code:"ln", label:"Lingala", native:"Lingála", dir:"ltr" },
+      { code:"lu", label:"Luganda", native:"Luganda", dir:"ltr" },
+      { code:"sn", label:"Shona", native:"chiShona", dir:"ltr" },
+      { code:"zu", label:"Zulu", native:"isiZulu", dir:"ltr" },
+      { code:"xh", label:"Xhosa", native:"isiXhosa", dir:"ltr" },
+      { code:"fr", label:"French", native:"Français", dir:"ltr" },
+      { code:"pt", label:"Portuguese", native:"Português", dir:"ltr" },
+      { code:"ar", label:"Arabic", native:"العربية", dir:"rtl" }
+    ];
+
+    const I18N = {
+      en: {
+        app_name:"AfyaAI",
+        app_tagline:"WHO / World Bank-style Monitoring Dashboard (Demo)",
+        online:"Online",
+        export_pdf:"Export PDF",
+        login:"Login",
+        chip_safety:"Safety & Quality",
+        chip_indicators:"Indicator Monitoring",
+        chip_telehealth:"Telehealth",
+        chip_regulatory:"Regulatory Readiness",
+        hero_title:"National AI Health Program Monitoring (Demo)",
+        hero_subtitle:"Institutional dashboard layout: scorecard, indicator tables, data sources, definitions, audit logs, and workflows — single HTML file.",
+        scorecard_title:"National Summary Scorecard",
+        aggregated:"Aggregated",
+        scorecard_note:"Composite is a demo-weighted index across core indicators.",
+        composite_score:"Composite Score",
+        safety_signal:"Safety Signal Rate",
+        overrides_per_ai:"Overrides per AI run",
+        data_source_label:"Data source:",
+        data_source_demo:"Demo synthetic + local activity logs (browser localStorage).",
+        comparison_title:"Country Comparison Table",
+        side_by_side:"Side-by-side",
+        login_demo:"Login (Demo)",
+        role:"Role",
+        name:"Name",
+        cancel:"Cancel"
+      },
+      sw: {
+        app_tagline:"Dashibodi ya ufuatiliaji (WHO / Benki ya Dunia) — Demo",
+        online:"Mtandaoni",
+        export_pdf:"Hamisha PDF",
+        login:"Ingia",
+        chip_safety:"Usalama & Ubora",
+        chip_indicators:"Ufuatiliaji wa Viashiria",
+        chip_telehealth:"Telehealth",
+        chip_regulatory:"Utayari wa Udhibiti",
+        hero_title:"Ufuatiliaji wa Mpango wa Taifa wa Afya wa AI (Demo)",
+        hero_subtitle:"Muundo wa taasisi: scorecard, jedwali la viashiria, vyanzo vya data, ufafanuzi, na kumbukumbu za ukaguzi — faili moja ya HTML.",
+        scorecard_title:"Kadi ya Muhtasari wa Taifa",
+        aggregated:"Jumla",
+        scorecard_note:"Alama ya muhtasari ni faharasa ya demo yenye uzito.",
+        composite_score:"Alama ya Muhtasari",
+        safety_signal:"Kiwango cha Ishara ya Usalama",
+        overrides_per_ai:"Overrides kwa AI",
+        data_source_label:"Chanzo cha data:",
+        data_source_demo:"Data ya demo + kumbukumbu za ndani (localStorage).",
+        comparison_title:"Jedwali la Ulinganisho wa Nchi",
+        side_by_side:"Pembeni kwa pembeni",
+        login_demo:"Ingia (Demo)",
+        role:"Jukumu",
+        name:"Jina",
+        cancel:"Ghairi"
+      },
+      fr: {
+        app_tagline:"Tableau de bord (OMS / Banque mondiale) — Démo",
+        online:"En ligne",
+        export_pdf:"Exporter PDF",
+        login:"Connexion",
+        chip_safety:"Sécurité & Qualité",
+        chip_indicators:"Suivi des indicateurs",
+        chip_telehealth:"Télésanté",
+        chip_regulatory:"Préparation réglementaire",
+        hero_title:"Suivi du programme national de santé IA (Démo)",
+        hero_subtitle:"Mise en page institutionnelle: scorecard, tableaux d’indicateurs, sources, définitions et journaux — fichier HTML unique.",
+        scorecard_title:"Scorecard national",
+        aggregated:"Agrégé",
+        scorecard_note:"Indice composite pondéré (démo).",
+        composite_score:"Score composite",
+        safety_signal:"Taux de signal de sécurité",
+        overrides_per_ai:"Overrides par IA",
+        data_source_label:"Source de données:",
+        data_source_demo:"Données synthétiques + journaux locaux (localStorage).",
+        comparison_title:"Tableau comparatif des pays",
+        side_by_side:"Côte à côte",
+        login_demo:"Connexion (Démo)",
+        role:"Rôle",
+        name:"Nom",
+        cancel:"Annuler"
+      },
+      pt: {
+        app_tagline:"Painel (OMS / Banco Mundial) — Demo",
+        online:"Online",
+        export_pdf:"Exportar PDF",
+        login:"Entrar",
+        chip_safety:"Segurança & Qualidade",
+        chip_indicators:"Monitoramento de Indicadores",
+        chip_telehealth:"Tele-saúde",
+        chip_regulatory:"Prontidão Regulatória",
+        hero_title:"Monitoramento do Programa Nacional de Saúde com IA (Demo)",
+        hero_subtitle:"Layout institucional: scorecard, tabelas de indicadores, fontes, definições e logs — arquivo HTML único.",
+        scorecard_title:"Scorecard Nacional",
+        aggregated:"Agregado",
+        scorecard_note:"Índice composto ponderado (demo).",
+        composite_score:"Pontuação composta",
+        safety_signal:"Taxa de sinal de segurança",
+        overrides_per_ai:"Overrides por IA",
+        data_source_label:"Fonte de dados:",
+        data_source_demo:"Dados sintéticos + logs locais (localStorage).",
+        comparison_title:"Tabela de comparação por país",
+        side_by_side:"Lado a lado",
+        login_demo:"Entrar (Demo)",
+        role:"Função",
+        name:"Nome",
+        cancel:"Cancelar"
+      },
+      ar: {
+        app_tagline:"لوحة متابعة (منظمة الصحة/البنك الدولي) — تجريبي",
+        online:"متصل",
+        export_pdf:"تصدير PDF",
+        login:"تسجيل الدخول",
+        chip_safety:"السلامة والجودة",
+        chip_indicators:"متابعة المؤشرات",
+        chip_telehealth:"الصحة عن بعد",
+        chip_regulatory:"الجاهزية التنظيمية",
+        hero_title:"متابعة البرنامج الوطني للصحة بالذكاء الاصطناعي (تجريبي)",
+        hero_subtitle:"تصميم مؤسسي: بطاقة وطنية، جداول مؤشرات، مصادر بيانات، تعريفات وسجلات — ملف HTML واحد.",
+        scorecard_title:"بطاقة ملخص وطنية",
+        aggregated:"مجمّع",
+        scorecard_note:"مؤشر مركّب موزون (تجريبي).",
+        composite_score:"النتيجة المركبة",
+        safety_signal:"معدل إشارة السلامة",
+        overrides_per_ai:"التجاوزات لكل IA",
+        data_source_label:"مصدر البيانات:",
+        data_source_demo:"بيانات تجريبية + سجلات محلية (localStorage).",
+        comparison_title:"جدول مقارنة الدول",
+        side_by_side:"جنبًا إلى جنب",
+        login_demo:"تسجيل الدخول (تجريبي)",
+        role:"الدور",
+        name:"الاسم",
+        cancel:"إلغاء"
+      },
+      am: { app_tagline:"የWHO/የዓለም ባንክ ዳሽቦርድ — ሙከራ", online:"በመስመር ላይ", export_pdf:"PDF ላክ", login:"ግባ", hero_title:"የብሔራዊ የAI ጤና ፕሮግራም ክትትል (ሙከራ)", comparison_title:"የአገሮች ንፅፅር ሰንጠረዥ", data_source_label:"የዳታ ምንጭ:" },
+      ha: { app_tagline:"Dashboard (WHO / Bankin Duniya) — Demo", online:"Kan layi", export_pdf:"Fitar da PDF", login:"Shiga", hero_title:"Sa-ido kan Shirin Lafiya na AI na Ƙasa (Demo)", comparison_title:"Teburin Kwatanta Ƙasashe", data_source_label:"Tushen bayanai:" },
+      yo: { app_tagline:"Dásíbọ́ọ̀dù (WHO / World Bank) — Demo", online:"Lórí ayélujára", export_pdf:"Gbé PDF jáde", login:"Wọlé", hero_title:"Ìtẹ̀lé Ètò Ìlera AI ti Orílẹ̀-èdè (Demo)", comparison_title:"Tábìlì Afíwèránṣẹ́ Orílẹ̀-èdè", data_source_label:"Orísun data:" },
+      ig: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"N'ịntanetị", export_pdf:"Wepụ PDF", login:"Banye", hero_title:"Nlekọta Mmemme Ahụike AI nke Mba (Demo)", comparison_title:"Tebụl Ntụnyere Mba", data_source_label:"Isi data:" },
+      so: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Onleen", export_pdf:"Dhoofinta PDF", login:"Gal", hero_title:"La-socodka Barnaamijka Caafimaadka AI ee Qaranka (Demo)", comparison_title:"Jadwal Isbarbardhig Dalal", data_source_label:"Isha xogta:" },
+      rw: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Kuri interineti", export_pdf:"Ohereza PDF", login:"Injira", hero_title:"Gukurikirana gahunda y’igihugu y’ubuzima bwa AI (Demo)", comparison_title:"Imbonerahamwe yo kugereranya ibihugu", data_source_label:"Inkomoko y’ amakuru:" },
+      rn: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Ku rubuga", export_pdf:"Ohereza PDF", login:"Injira", hero_title:"Gukurikirana Porogaramu y’Igihugu y’Ubuzima bwa AI (Demo)", comparison_title:"Imbonerahamwe yo kugereranya ibihugu", data_source_label:"Inkomoko y’amakuru:" },
+      ln: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Na internet", export_pdf:"Bimisa PDF", login:"Kota", hero_title:"Kolanda Programu ya bokolongono ya AI ya bokilo (Demo)", comparison_title:"Tabela ya kokokanisa mikili", data_source_label:"Esika ya ba données:" },
+      lu: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Ku mutimbagano", export_pdf:"Tuma PDF", login:"Yingira", hero_title:"Okugoberera pulogulaamu y'ebyobulamu ya AI ey'eggwanga (Demo)", comparison_title:"Olupapula lw’okugeraageranya amawanga", data_source_label:"Ensibuko ya data:" },
+      sn: { app_tagline:"Dashboard (WHO / World Bank) — Demo", online:"Pamhepo", export_pdf:"Buritsa PDF", login:"Pinda", hero_title:"Kutevera Chirongwa cheHutano cheAI cheNyika (Demo)", comparison_title:"Tafura yekuenzanisa Nyika", data_source_label:"Kunobva data:" },
+      zu: { app_tagline:"I-Dashboard (WHO / World Bank) — Demo", online:"Ku-inthanethi", export_pdf:"Thumela i-PDF", login:"Ngena", hero_title:"Ukuqapha uhlelo lukazwelonke lwe-AI lwezempilo (Demo)", comparison_title:"Itafula lokuqhathanisa amazwe", data_source_label:"Umthombo wedatha:" },
+      xh: { app_tagline:"Ibhodi (WHO / World Bank) — Demo", online:"Kwi-intanethi", export_pdf:"Khupha i-PDF", login:"Ngena", hero_title:"Ukulandelela inkqubo yezempilo ye-AI yesizwe (Demo)", comparison_title:"Itheyibhile yokuthelekisa amazwe", data_source_label:"Umthombo wedatha:" },
+      om: { app_tagline:"Daashboordii (WHO / World Bank) — Demo", online:"Marsariitii irratti", export_pdf:"PDF baasi", login:"Seeni", hero_title:"Hordoffii Sagantaa Fayyaa AI Biyyaalessaa (Demo)", comparison_title:"Gabatee wal-bira qabuu biyyoota", data_source_label:"Madda deetaa:" },
+      ti: { app_tagline:"ዳሽቦርድ (WHO / World Bank) — ሙከራ", online:"ኣብ መስመር ላይ", export_pdf:"PDF ላክ", login:"እቶ", hero_title:"ምክትታል መደብ ጥዕና AI ብሄራዊ (ሙከራ)", comparison_title:"ሰንጠረዥ ንፅፅር ሃገራት", data_source_label:"ምንጪ ዳታ:" }
+    };
+
+    function getLang(){ return localStorage.getItem(AFYA_LANG_KEY) || "en"; }
+    function setLang(code){
+      if(!LANGS.some(l=>l.code===code)) code="en";
+      localStorage.setItem(AFYA_LANG_KEY, code);
+      applyLang(code);
+      // keep speech recognizers aligned
+      try { if(sttRecognition) sttRecognition.lang = getLocaleFromLang(code); } catch {}
+      try { if(ccRecognition) ccRecognition.lang = getLocaleFromLang(code); } catch {}
+    }
+    function t(key){
+      const lang = getLang();
+      return (I18N[lang] && I18N[lang][key]) || (I18N.en[key] || key);
+    }
+    function applyLang(code){
+      const lang = LANGS.find(l=>l.code===code) || LANGS[0];
+      document.documentElement.lang = lang.code;
+      document.body.setAttribute("dir", lang.dir || "ltr");
+
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.getAttribute("data-i18n");
+        el.textContent = t(key);
+        if(code==="am") el.classList.add("amharic-text"); else el.classList.remove("amharic-text");
+      });
+
+      const sel = document.getElementById("langSelect");
+      if(sel && sel.value !== code) sel.value = code;
+      updateOnlineStatus();
+    }
+
+    function populateLangDropdown(){
+      const sel = document.getElementById("langSelect");
+      sel.innerHTML = LANGS.map(l=>{
+        const label = `${l.native}${l.native!==l.label ? " • "+l.label : ""}`;
+        return `<option value="${l.code}">${label}</option>`;
+      }).join("");
+      sel.value = getLang();
+      sel.addEventListener("change", (e)=>setLang(e.target.value));
+    }
+
     /********************
-     * STORAGE KEYS
+     * Minimal demo data for comparison table
      ********************/
-    const AFYA_ACTIVITY_KEY = "afyaai-activity-events-v1";
-    const AFYA_QUEUE_KEY = "afyaai-telequeue-v1";
-    const AFYA_RECORDS_KEY = "afyaai-patient-records-v1";
-    const AFYA_COMPLIANCE_KEY = "afyaai-compliance-v1";
-    const AFYA_EVALS_KEY = "afyaai-new-evals-v1";
-    const AFYA_AUDIT_KEY = "afyaai-audit-logs-v1";
-    const AFYA_COUNTRY_FILTER_KEY = "afyaai-country-filter-v1";
+    const COUNTRIES = ["Kenya","Nigeria","Rwanda","South Africa","Ethiopia","Ghana"];
+    const BASE = {
+      "Kenya":       { status:"Active", facilities:12, patients:39849, outcome:16, adoption:74, safety:12.4, dqs:94.7 },
+      "Nigeria":     { status:"Active", facilities:15, patients:24500, outcome:12, adoption:61, safety:14.8, dqs:92.1 },
+      "Rwanda":      { status:"Active", facilities:8,  patients:15600, outcome:14, adoption:68, safety:10.2, dqs:95.4 },
+      "South Africa":{ status:"Active", facilities:12, patients:48501, outcome:11, adoption:59, safety:9.6,  dqs:96.2 },
+      "Ethiopia":    { status:"Pilot",  facilities:6,  patients:0,     outcome:8,  adoption:41, safety:15.9, dqs:90.8 },
+      "Ghana":       { status:"Planned",facilities:4,  patients:0,     outcome:6,  adoption:33, safety:null, dqs:null }
+    };
 
-    /********************
-     * HELPERS
-     ********************/
-    function openModal(id){ document.getElementById(id).classList.remove("hidden"); }
-    function closeModal(id){ document.getElementById(id).classList.add("hidden"); }
-    function safeJsonParse(str, fallback){ try { return JSON.parse(str); } catch { return fallback; } }
-    function getQueue(){ return safeJsonParse(localStorage.getItem(AFYA_QUEUE_KEY) || "[]", []); }
-    function saveQueue(q){ localStorage.setItem(AFYA_QUEUE_KEY, JSON.stringify(q)); }
-    function getRecords(){ return safeJsonParse(localStorage.getItem(AFYA_RECORDS_KEY) || "{}", {}); }
-    function saveRecords(r){ localStorage.setItem(AFYA_RECORDS_KEY, JSON.stringify(r)); }
-    function getActivityEvents(){ return safeJsonParse(localStorage.getItem(AFYA_ACTIVITY_KEY) || "[]", []); }
-    function saveActivityEvents(e){ localStorage.setItem(AFYA_ACTIVITY_KEY, JSON.stringify(e)); }
+    function renderComparison(){
+      const tbl = document.getElementById("comparisonTable");
+      const rows = [
+        { label:"Status", key:"status" },
+        { label:"Facilities", key:"facilities" },
+        { label:"Patients Enrolled", key:"patients" },
+        { label:"Clinical Outcome Index (% improvement)", key:"outcome" },
+        { label:"Clinician Adoption (% active use)", key:"adoption" },
+        { label:"Safety Signal Rate (% overrides/AI)", key:"safety" },
+        { label:"Data Quality Score (%)", key:"dqs" }
+      ];
 
-    function getAudit(){ return safeJsonParse(localStorage.getItem(AFYA_AUDIT_KEY) || "[]", []); }
-    function saveAudit(a){ localStorage.setItem(AFYA_AUDIT_KEY, JSON.stringify(a)); }
-
-    function toast(msg){ alert(msg); }
-
-    function nowIso(){ return new Date().toISOString(); }
-
-    /********************
-     * COUNTRY FILTER (GLOBAL)
-     ********************/
-    let selectedCountryFilter = "all";
-
-    function setCountryFilter(country){
-      selectedCountryFilter = country;
-      localStorage.setItem(AFYA_COUNTRY_FILTER_KEY, country);
-      document.getElementById("scorecardScope").textContent = `Scope: ${country==="all" ? "All Countries" : country}`;
-      applyCountryFilterUI();
-      renderEvalTable();
-      refreshScorecard();
-      renderInstitutionalHeatmap();
-      auditLog("filter_change", { country });
-    }
-
-    function applyCountryFilterUI(){
-      // Highlight map countries in scope
-      const mapIds = { "Kenya":"kenya", "Nigeria":"nigeria", "Rwanda":"rwanda", "South Africa":"sa", "Ethiopia":"ethiopia", "Ghana":"ghana" };
-      document.querySelectorAll(".country-path").forEach(p => p.classList.remove("active"));
-
-      if(selectedCountryFilter==="all"){
-        Object.values(mapIds).forEach(id => document.getElementById(id)?.classList.add("active"));
-      } else {
-        const id = mapIds[selectedCountryFilter];
-        if(id) document.getElementById(id)?.classList.add("active");
-      }
-    }
-
-    function selectCountry(country){
-      // Clicking map sets global filter
-      const dd = document.getElementById("countryFilter");
-      if(dd){ dd.value = country; }
-      setCountryFilter(country);
-      const details = getCountrySummary(country);
-      alert(`${details.name}\nFacilities: ${details.facilities}\nPatients: ${details.patients.toLocaleString()}\nStatus: ${details.status}\n\nSource: Demo coverage registry`);
-    }
-
-    function filterMap(type){ console.log("Filtering map:", type, "(demo placeholder)"); }
-
-    function getCountrySummary(country){
-      const details = {
-        "Kenya":{ name:"Kenya", facilities:12, patients:39849, status:"Active"},
-        "Nigeria":{ name:"Nigeria", facilities:15, patients:24500, status:"Active"},
-        "Rwanda":{ name:"Rwanda", facilities:8, patients:15600, status:"Active"},
-        "South Africa":{ name:"South Africa", facilities:12, patients:48501, status:"Active"},
-        "Ethiopia":{ name:"Ethiopia", facilities:6, patients:0, status:"Pilot"},
-        "Ghana":{ name:"Ghana", facilities:4, patients:0, status:"Planned"}
-      };
-      return details[country] || { name:country, facilities:0, patients:0, status:"—" };
+      tbl.innerHTML = `
+        <thead>
+          <tr>
+            <th style="width:260px">Metric</th>
+            ${COUNTRIES.map(c=>`<th>${c}</th>`).join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r=>{
+            return `
+              <tr>
+                <td class="font-extrabold">${r.label}</td>
+                ${COUNTRIES.map(c=>{
+                  const v = BASE[c][r.key];
+                  let show = (v===null || v===undefined) ? "—" : v;
+                  if(r.key==="patients" && typeof v==="number") show = v.toLocaleString();
+                  if(r.key==="safety" && typeof v==="number") show = v.toFixed(1)+"%";
+                  if((r.key==="outcome"||r.key==="adoption"||r.key==="dqs") && typeof v==="number") show = v.toString()+"%";
+                  return `<td>${show}</td>`;
+                }).join("")}
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      `;
     }
 
     /********************
-     * CONNECTIVITY UI
+     * Connectivity
      ********************/
     function updateOnlineStatus(){
       const online = navigator.onLine;
@@ -1169,7 +785,7 @@
       const txt = document.getElementById("netText");
       if(online){
         dot.className = "status-dot status-live";
-        txt.textContent = "Online";
+        txt.textContent = t("online");
       } else {
         dot.className = "status-dot status-offline";
         txt.textContent = "Offline (local demo)";
@@ -1179,1339 +795,376 @@
     window.addEventListener("offline", updateOnlineStatus);
 
     /********************
-     * AUDIT LOGGING (Regulatory panel)
+     * Modals
      ********************/
-    let currentUser = { role:null, name:null, patientId:null };
-
-    function auditLog(type, meta={}){
-      const a = getAudit();
-      a.push({
-        ts: Date.now(),
-        iso: nowIso(),
-        type,
-        actor: currentUser?.name || "Anonymous",
-        role: currentUser?.role || "—",
-        scopeCountry: selectedCountryFilter,
-        meta
-      });
-      saveAudit(a);
-    }
-
-    function openAuditPanel(){
-      openModal("auditModal");
-      renderAudit();
-    }
-
-    function renderAudit(){
-      const tbody = document.querySelector("#auditTable tbody");
-      if(!tbody) return;
-      const q = (document.getElementById("auditSearch")?.value || "").toLowerCase().trim();
-      const typeFilter = document.getElementById("auditTypeFilter")?.value || "all";
-      const rows = getAudit().slice().reverse();
-
-      const filtered = rows.filter(r=>{
-        if(typeFilter !== "all" && r.type !== typeFilter) return false;
-        const hay = `${r.iso} ${r.type} ${r.actor} ${r.role} ${JSON.stringify(r.meta||{})} ${r.scopeCountry}`.toLowerCase();
-        return !q || hay.includes(q);
-      });
-
-      tbody.innerHTML = "";
-      for(const r of filtered.slice(0, 400)){
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(new Date(r.ts).toLocaleString())}</td>
-          <td><span class="pill bg-slate-50 border border-slate-200 text-slate-800">${escapeHtml(r.type)}</span></td>
-          <td>${escapeHtml(r.actor||"—")}</td>
-          <td>${escapeHtml(r.role||"—")}</td>
-          <td class="text-xs text-slate-600">${escapeHtml(JSON.stringify({ scope:r.scopeCountry, ...r.meta }))}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function copyAuditJson(){
-      const data = getAudit();
-      navigator.clipboard?.writeText(JSON.stringify(data, null, 2));
-      toast("Audit logs copied (JSON).");
-      auditLog("audit_export_copy", { count:data.length });
-    }
-
-    function clearAudit(){
-      if(!confirm("Clear audit logs (demo)?")) return;
-      localStorage.removeItem(AFYA_AUDIT_KEY);
-      renderAudit();
-      toast("Audit logs cleared.");
-      // Don't log to cleared store.
+    function openModal(id){ document.getElementById(id).classList.remove("hidden"); }
+    function closeModal(id){
+      document.getElementById(id).classList.add("hidden");
+      // Privacy: stop listening when modals close
+      try { sttStop(); } catch {}
+      try { ccStop(); } catch {}
     }
 
     /********************
-     * LOGIN
-     ********************/
-    function openLogin(){
-      openModal("loginModal");
-      document.getElementById("patientLoginExtra").classList.add("hidden");
-      document.getElementById("loginRole").value = "Clinician";
-      document.getElementById("loginName").value = "";
-      document.getElementById("loginPatientId").value = "";
-    }
-
-    document.addEventListener("change", (e)=>{
-      if(e.target && e.target.id==="loginRole"){
-        const role = e.target.value;
-        if(role==="Patient") document.getElementById("patientLoginExtra").classList.remove("hidden");
-        else document.getElementById("patientLoginExtra").classList.add("hidden");
-      }
-    });
-
-    function doLogin(){
-      const role = document.getElementById("loginRole").value;
-      const name = (document.getElementById("loginName").value || "").trim() || (role==="Patient" ? "Patient" : "Demo User");
-      const pid = (document.getElementById("loginPatientId").value || "").trim();
-
-      currentUser = { role, name, patientId: role==="Patient" ? (pid || "PT-DEMO") : null };
-      localStorage.setItem("afyaai-user", JSON.stringify(currentUser));
-
-      document.getElementById("loginBtn").classList.add("hidden");
-      document.getElementById("userChip").classList.remove("hidden");
-      document.getElementById("roleBadge").textContent = role;
-      document.getElementById("userNameChip").textContent = name;
-
-      closeModal("loginModal");
-
-      auditLog("login", { role, patientId: currentUser.patientId || null });
-
-      if(role==="Patient"){
-        openPatientPortal();
-        document.getElementById("ptId").value = currentUser.patientId;
-        document.getElementById("ptName").value = name;
-      }
-    }
-
-    function logout(){
-      auditLog("logout", {});
-      currentUser = { role:null, name:null, patientId:null };
-      localStorage.removeItem("afyaai-user");
-      document.getElementById("loginBtn").classList.remove("hidden");
-      document.getElementById("userChip").classList.add("hidden");
-      toast("Logged out (demo).");
-    }
-
-    /********************
-     * EVALUATION REGISTRY (Indicator tables)
-     ********************/
-    const BASE_EVALS = [
-      { key:"penda", program:"Penda Health CDSS", country:"Kenya", status:"Live", patients:39849, clinics:12, type:"CDSS",
-        indicators:{
-          "Diagnostic errors (Δ%)":{ current:"-16%", target:"≤ -10%", trend:"Improving" },
-          "Treatment errors (Δ%)":{ current:"-13%", target:"≤ -8%", trend:"Improving" },
-          "Clinician satisfaction":{ current:"94%", target:"≥ 85%", trend:"Stable" }
-        },
-        notes:"Stepped-wedge cluster randomized design (demo)."
-      },
-      { key:"ubenwa", program:"Ubenwa Birth Asphyxia", country:"Nigeria", status:"Pilot", patients:2400, clinics:8, type:"Neonatal AI",
-        indicators:{
-          "Sensitivity":{ current:"—", target:"≥ 90%", trend:"—" },
-          "Safety events":{ current:"0", target:"0", trend:"Stable" },
-          "Adoption (active users)":{ current:"—", target:"≥ 70%", trend:"—" }
-        },
-        notes:"Pilot phase with safety monitoring (demo)."
-      },
-      { key:"babylon", program:"Babylon Triage", country:"Rwanda", status:"Live", patients:15600, clinics:5, type:"Triage",
-        indicators:{
-          "Appropriate referral rate":{ current:"—", target:"↑", trend:"—" },
-          "Time-to-triage":{ current:"—", target:"↓", trend:"—" },
-          "User satisfaction":{ current:"—", target:"≥ 80%", trend:"—" }
-        },
-        notes:"National rollout context (demo)."
-      },
-      { key:"qure", program:"Qure.ai CXR TB Screening", country:"South Africa", status:"Setup", patients:8200, clinics:3, type:"Imaging AI",
-        indicators:{
-          "Turnaround time":{ current:"—", target:"↓", trend:"—" },
-          "Radiologist concordance":{ current:"—", target:"≥ 90%", trend:"—" },
-          "Data quality":{ current:"—", target:"≥ 95%", trend:"—" }
-        },
-        notes:"Setup/integration activities (demo)."
-      }
-    ];
-
-    function getNewEvals(){
-      return safeJsonParse(localStorage.getItem(AFYA_EVALS_KEY) || "[]", []);
-    }
-
-    function getAllEvals(){
-      const added = getNewEvals().map((e, idx)=>({
-        key:`new_${idx}_${e.ts}`,
-        program:e.name,
-        country:e.country,
-        status:"Setup",
-        patients:0,
-        clinics:0,
-        type:"New",
-        indicators:{
-          "Primary endpoint":{ current:"—", target:"—", trend:"—" },
-          "Safety monitoring":{ current:"Active", target:"Active", trend:"Stable" }
-        },
-        notes:e.desc || "—"
-      }));
-      return [...BASE_EVALS, ...added];
-    }
-
-    function evalInScope(ev){
-      return selectedCountryFilter==="all" || ev.country===selectedCountryFilter;
-    }
-
-    function renderEvalTable(){
-      const tbody = document.querySelector("#evalTable tbody");
-      if(!tbody) return;
-      const evals = getAllEvals().filter(evalInScope);
-
-      tbody.innerHTML = "";
-      for(const ev of evals){
-        const tr = document.createElement("tr");
-        const statusPill = ev.status==="Live"
-          ? `bg-teal-50 border border-teal-200 text-teal-800`
-          : ev.status==="Pilot"
-            ? `bg-amber-50 border border-amber-200 text-amber-900`
-            : ev.status==="Setup"
-              ? `bg-blue-50 border border-blue-200 text-blue-900`
-              : `bg-slate-50 border border-slate-200 text-slate-800`;
-
-        tr.innerHTML = `
-          <td class="font-semibold text-slate-900">
-            <button class="text-left hover:underline" onclick="showEvaluationDetail('${escapeHtml(ev.key)}')">${escapeHtml(ev.program)}</button>
-            <div class="text-[11px] text-slate-500">Type: ${escapeHtml(ev.type || "—")}</div>
-          </td>
-          <td>${escapeHtml(ev.country)}</td>
-          <td><span class="pill ${statusPill}">${escapeHtml(ev.status)}</span></td>
-          <td>${Number(ev.patients||0).toLocaleString()}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function showEvaluationDetail(key){
-      const modal = document.getElementById("evaluationModal");
-      const content = document.getElementById("modalContent");
-      const title = document.getElementById("modalTitle");
-      const ev = getAllEvals().find(x=>x.key===key);
-      if(!ev) return;
-
-      title.textContent = `${ev.program} — Indicator Table`;
-      const indicRows = Object.entries(ev.indicators || {}).map(([name, v])=>`
-        <tr>
-          <td><strong>${escapeHtml(name)}</strong></td>
-          <td>${escapeHtml(v.current || "—")}</td>
-          <td>${escapeHtml(v.target || "—")}</td>
-          <td>${escapeHtml(v.trend || "—")}</td>
-        </tr>
-      `).join("");
-
-      content.innerHTML = `
-        <div class="space-y-4">
-          <div class="flex flex-wrap gap-2">
-            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Country: ${escapeHtml(ev.country)}</span>
-            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Status: ${escapeHtml(ev.status)}</span>
-            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Patients: ${Number(ev.patients||0).toLocaleString()}</span>
-            <span class="pill bg-slate-50 border border-slate-200 text-slate-800">Sites: ${Number(ev.clinics||0).toLocaleString()}</span>
-          </div>
-
-          <div class="bg-white border border-slate-200 rounded-xl overflow-auto">
-            <table class="table-clean">
-              <thead>
-                <tr>
-                  <th>Indicator</th>
-                  <th>Current</th>
-                  <th>Target</th>
-                  <th>Trend</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${indicRows || `<tr><td colspan="4" class="text-slate-500">No indicators</td></tr>`}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-            <div class="text-sm font-semibold text-slate-900 mb-1">Indicator Definitions</div>
-            <ul class="text-sm text-slate-700 list-disc list-inside">
-              <li><strong>Δ%</strong> indicates change vs baseline period (demo).</li>
-              <li><strong>Trend</strong> is qualitative and for demonstration only.</li>
-              <li><strong>Targets</strong> are example thresholds for presentation.</li>
-            </ul>
-          </div>
-
-          <div class="text-xs text-slate-500">
-            <strong>Notes:</strong> ${escapeHtml(ev.notes || "—")}
-          </div>
-          <div class="text-xs text-slate-500">
-            <strong>Data source:</strong> Demo evaluation registry + local additions (localStorage). Production: protocol registry + ethics approvals + monitoring reports.
-          </div>
-        </div>
-      `;
-
-      openModal("evaluationModal");
-      auditLog("eval_view", { key:ev.key, program:ev.program, country:ev.country });
-    }
-
-    /********************
-     * SCORECARD (national)
-     ********************/
-    function refreshScorecard(){
-      const evals = getAllEvals().filter(evalInScope);
-      document.getElementById("kpiActiveEvals").textContent = String(evals.length);
-
-      // Patients (demo aggregate from evals + base national rollup)
-      const patients = evals.reduce((sum,e)=>sum + (Number(e.patients)||0), 0);
-      document.getElementById("kpiPatients").textContent = patients ? patients.toLocaleString() : "0";
-
-      // Telehealth sessions within scope: for demo, scope means meta.country if present; otherwise count all
-      const events = getActivityEvents();
-      const starts = events.filter(e=>e.type==="session_start" && inScopeEvent(e)).length;
-      document.getElementById("kpiTeleSessions").textContent = String(starts);
-
-      // Override rate
-      const overrides = events.filter(e=>e.type==="override" && inScopeEvent(e)).length;
-      const aiRuns = events.filter(e=>e.type==="ai_recommendation" && inScopeEvent(e)).length;
-      const rate = aiRuns ? Math.round((overrides/aiRuns)*1000)/10 : 12.4;
-      document.getElementById("kpiOverrideRate").textContent = rate.toFixed(1)+"%";
-    }
-
-    function inScopeEvent(e){
-      if(selectedCountryFilter==="all") return true;
-      const c = e?.meta?.country || e?.meta?.scopeCountry || null;
-      // If event has no country metadata, keep it in scope (demo). In production, enforce strict scoping.
-      return !c || c === selectedCountryFilter;
-    }
-
-    /********************
-     * TELEHEALTH: QUEUE + ENCOUNTER (unchanged logic, + audit tags)
-     ********************/
-    let selectedPatient = null;
-    let currentRoomCode = null;
-    let aiResult = null;
-    let aiAction = null;
-
-    function seedQueue(){
-      const q = getQueue();
-      const demo = [
-        { id:"PT-1029", name:"Asha N.", age:32, sex:"Female", complaint:"Fever + cough", status:"Waiting", created:Date.now() },
-        { id:"PT-2044", name:"Kofi A.", age:54, sex:"Male", complaint:"Chest tightness", status:"Waiting", created:Date.now()-3600000 },
-        { id:"PT-3301", name:"Imani R.", age:19, sex:"Female", complaint:"Abdominal pain", status:"Waiting", created:Date.now()-7200000 }
-      ];
-      const merged = [...demo, ...q].slice(0, 12);
-      saveQueue(merged);
-      renderQueue();
-      toast("Demo patients added to telehealth queue.");
-      auditLog("seed_queue", { count:demo.length });
-    }
-
-    function clearQueue(){
-      saveQueue([]);
-      selectedPatient = null;
-      renderQueue();
-      clearEncounter();
-      toast("Queue cleared.");
-      auditLog("queue_clear", {});
-    }
-
-    function renderQueue(){
-      const q = getQueue();
-      const search = (document.getElementById("queueSearch").value || "").toLowerCase().trim();
-      const list = document.getElementById("queueList");
-
-      const filtered = q.filter(p=>{
-        const hay = `${p.id} ${p.name} ${p.complaint}`.toLowerCase();
-        return hay.includes(search);
-      });
-
-      document.getElementById("queueCount").textContent = `${filtered.length} waiting`;
-      list.innerHTML = "";
-
-      filtered.forEach(p=>{
-        const card = document.createElement("div");
-        card.className = "p-3 rounded-xl border border-slate-200 hover:border-slate-300 cursor-pointer transition-all bg-white";
-        card.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div>
-              <div class="font-semibold text-slate-900">${escapeHtml(p.name)} <span class="text-xs text-slate-500">(${escapeHtml(p.id)})</span></div>
-              <div class="text-xs text-slate-600">${escapeHtml(p.complaint)}</div>
-              <div class="text-xs text-slate-400 mt-1">Age ${escapeHtml(p.age)} • ${escapeHtml(p.sex)}</div>
-            </div>
-            <span class="pill ${p.status==="Waiting" ? "bg-amber-50 border border-amber-200 text-amber-900" : "bg-slate-50 border border-slate-200 text-slate-700"}">${escapeHtml(p.status)}</span>
-          </div>
-        `;
-        card.onclick = ()=>selectPatient(p.id);
-        list.appendChild(card);
-      });
-    }
-
-    function selectPatient(patientId){
-      const q = getQueue();
-      const p = q.find(x=>x.id===patientId);
-      if(!p) return;
-
-      selectedPatient = p;
-      document.getElementById("selectedPatientChip").textContent = `${p.name} (${p.id})`;
-      document.getElementById("startSessionBtn").disabled = false;
-      document.getElementById("aiBtn").disabled = false;
-      document.getElementById("refBtn").disabled = false;
-      document.getElementById("rxBtn").disabled = false;
-      document.getElementById("completeBtn").disabled = false;
-
-      const records = getRecords();
-      const rec = records[p.id] || {};
-      const intake = rec.intake || {
-        id:p.id, name:p.name, age:p.age, sex:p.sex,
-        complaint:p.complaint, vitals:{ temp:"—", hr:"—", spo2:"—", bp:"—" }, notes:"—"
-      };
-
-      document.getElementById("intakeView").innerHTML = intakeHtml(intake);
-      refreshFHIRPayload();
-      auditLog("patient_select", { patientId:p.id });
-    }
-
-    function intakeHtml(intake){
-      return `
-        <div class="space-y-2">
-          <div class="text-sm font-semibold text-slate-900">${escapeHtml(intake.name)} <span class="text-xs text-slate-500">(${escapeHtml(intake.id)})</span></div>
-          <div class="text-xs text-slate-700"><span class="font-semibold">Complaint:</span> ${escapeHtml(intake.complaint || "—")}</div>
-          <div class="grid grid-cols-2 gap-2 text-xs text-slate-700">
-            <div><span class="font-semibold">Temp:</span> ${escapeHtml(intake.vitals?.temp || "—")}°C</div>
-            <div><span class="font-semibold">HR:</span> ${escapeHtml(intake.vitals?.hr || "—")}</div>
-            <div><span class="font-semibold">SpO₂:</span> ${escapeHtml(intake.vitals?.spo2 || "—")}%</div>
-            <div><span class="font-semibold">BP:</span> ${escapeHtml(intake.vitals?.bp || "—")}</div>
-          </div>
-          <div class="text-xs text-slate-700"><span class="font-semibold">Notes:</span> ${escapeHtml(intake.notes || "—")}</div>
-        </div>
-      `;
-    }
-
-    function clearEncounter(){
-      document.getElementById("selectedPatientChip").textContent = "No patient";
-      document.getElementById("intakeView").innerHTML = `<div class="text-slate-400">No intake loaded.</div>`;
-      document.getElementById("aiView").innerHTML = `<div class="text-slate-400">Run AI to generate recommendations.</div>`;
-      document.getElementById("aiLatency").textContent = "—";
-      document.getElementById("actionLog").innerHTML = "";
-      aiResult = null;
-      aiAction = null;
-      selectedPatient = null;
-
-      ["startSessionBtn","aiBtn","refBtn","rxBtn","completeBtn","acceptBtn","modifyBtn","overrideBtn"].forEach(id=>{
-        const b = document.getElementById(id);
-        if(b) b.disabled = true;
-      });
-    }
-
-    function startSession(){
-      if(!selectedPatient){ toast("Select a patient first."); return; }
-      if(!currentRoomCode){
-        currentRoomCode = makeRoomCode();
-        document.getElementById("roomCodeChip").textContent = currentRoomCode;
-      }
-      const q = getQueue();
-      q.forEach(p=>{ if(p.id===selectedPatient.id) p.status="In Session"; });
-      saveQueue(q);
-      renderQueue();
-
-      logActivity("session_start", { patientId:selectedPatient.id, room:currentRoomCode, country:selectedCountryFilter });
-      toast(`Session started for ${selectedPatient.name}. Room: ${currentRoomCode}`);
-    }
-
-    function runAI(){
-      if(!selectedPatient){ toast("Select a patient first."); return; }
-      setTimeout(()=>{
-        const latencyMs = Math.round(500 + Math.random()*1200);
-        const latencyS = (latencyMs/1000).toFixed(1)+"s";
-        document.getElementById("aiLatency").textContent = `Latency: ${latencyS}`;
-
-        const rec = generateAiMock(selectedPatient.id);
-        aiResult = rec;
-        document.getElementById("aiView").innerHTML = aiHtml(rec);
-
-        ["acceptBtn","modifyBtn","overrideBtn"].forEach(id=>document.getElementById(id).disabled=false);
-
-        logActivity("ai_recommendation", { patientId:selectedPatient.id, latency:latencyS, risk:rec.risk, country:selectedCountryFilter });
-        updateSafetyKPIs();
-        refreshFHIRPayload();
-      }, 450);
-    }
-
-    function generateAiMock(pid){
-      const records = getRecords();
-      const intake = records[pid]?.intake;
-
-      const temp = parseFloat(intake?.vitals?.temp || "0") || 0;
-      const spo2 = parseFloat(intake?.vitals?.spo2 || "99") || 99;
-      const hr = parseFloat(intake?.vitals?.hr || "80") || 80;
-
-      let risk = "Low";
-      let triage = "Home care + follow-up";
-      let dx = "Viral upper respiratory infection";
-      let tests = ["None required"];
-      let meds = ["Oral fluids", "Paracetamol PRN"];
-
-      if(temp >= 38.5 && hr >= 100){
-        risk = "Medium";
-        triage = "Telehealth follow-up in 24–48h";
-        dx = "Febrile illness (rule out malaria / pneumonia)";
-        tests = ["Rapid malaria test (if endemic)", "Respiratory exam", "Pulse oximetry repeat"];
-        meds = ["Antipyretic", "Consider empiric therapy per protocol"];
-      }
-      if(spo2 <= 92){
-        risk = "High";
-        triage = "Urgent facility referral (same day)";
-        dx = "Possible lower respiratory infection";
-        tests = ["CXR", "CBC", "Oxygen saturation monitoring"];
-        meds = ["Oxygen if available", "Antibiotics per guidelines if bacterial suspected"];
-      }
-
-      return {
-        risk, triage, suggestedDx: dx,
-        recommendedTests: tests,
-        suggestedPlan: meds,
-        safetyFlags: risk==="High" ? ["Hypoxia risk", "Escalate level of care"] : (risk==="Medium" ? ["Monitor deterioration"] : ["Standard monitoring"]),
-        disclaimer: "Demo AI. Not for clinical use."
-      };
-    }
-
-    function aiHtml(rec){
-      const riskColor = rec.risk==="High" ? "text-red-700 bg-red-50 border-red-200" :
-                        rec.risk==="Medium" ? "text-amber-800 bg-amber-50 border-amber-200" :
-                        "text-teal-800 bg-teal-50 border-teal-200";
-      return `
-        <div class="space-y-3">
-          <div class="p-3 rounded-xl border ${riskColor}">
-            <div class="text-xs font-semibold">Risk: <span class="font-bold">${escapeHtml(rec.risk)}</span></div>
-            <div class="text-xs mt-1"><span class="font-semibold">Triage:</span> ${escapeHtml(rec.triage)}</div>
-          </div>
-          <div class="text-xs text-slate-700">
-            <div><span class="font-semibold">Suggested Dx:</span> ${escapeHtml(rec.suggestedDx)}</div>
-          </div>
-          <div class="text-xs text-slate-700">
-            <div class="font-semibold">Recommended Tests</div>
-            <ul class="list-disc list-inside">${rec.recommendedTests.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
-          </div>
-          <div class="text-xs text-slate-700">
-            <div class="font-semibold">Suggested Plan</div>
-            <ul class="list-disc list-inside">${rec.suggestedPlan.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
-          </div>
-          <div class="text-xs text-slate-500 italic">${escapeHtml(rec.disclaimer)}</div>
-        </div>
-      `;
-    }
-
-    function acceptAI(){
-      if(!aiResult){ toast("Run AI first."); return; }
-      aiAction = { type:"Accepted", reason:"Aligned with clinical assessment", ts:Date.now() };
-      document.getElementById("actionLog").innerHTML = actionHtml(aiAction);
-      toast("AI recommendation accepted (logged).");
-      logActionEvent("accept");
-      refreshFHIRPayload();
-    }
-
-    function modifyAI(){
-      if(!aiResult){ toast("Run AI first."); return; }
-      const reason = prompt("Modification note (demo):", "Adjusted plan based on local guidelines");
-      if(reason===null) return;
-      aiAction = { type:"Modified", reason, ts:Date.now() };
-      document.getElementById("actionLog").innerHTML = actionHtml(aiAction);
-      toast("AI recommendation modified (logged).");
-      logActionEvent("modify");
-      refreshFHIRPayload();
-    }
-
-    function overrideAI(){
-      if(!aiResult){ toast("Run AI first."); return; }
-      const reason = prompt("Override reason (required for safety log):", "AI recommendation not appropriate for this case");
-      if(!reason){ toast("Override requires a reason."); return; }
-      aiAction = { type:"Override", reason, ts:Date.now() };
-      document.getElementById("actionLog").innerHTML = actionHtml(aiAction);
-      toast("AI recommendation overridden (logged).");
-      logActivity("override", { patientId:selectedPatient?.id, reason, country:selectedCountryFilter });
-      updateSafetyKPIs();
-      refreshFHIRPayload();
-      renderInstitutionalHeatmap();
-    }
-
-    function actionHtml(a){
-      const c = a.type==="Override" ? "bg-amber-50 border-amber-200 text-amber-900" :
-                a.type==="Modified" ? "bg-blue-50 border-blue-200 text-blue-900" :
-                "bg-teal-50 border-teal-200 text-teal-900";
-      const dt = new Date(a.ts).toLocaleString();
-      return `
-        <div class="p-3 rounded-xl border ${c}">
-          <div class="font-semibold text-xs">${escapeHtml(a.type)}</div>
-          <div class="text-xs mt-1">${escapeHtml(a.reason)}</div>
-          <div class="text-[11px] opacity-70 mt-1">${escapeHtml(dt)}</div>
-        </div>
-      `;
-    }
-
-    function logActionEvent(kind){
-      logActivity("ai_recommendation", { action:kind, patientId:selectedPatient?.id, country:selectedCountryFilter });
-      renderInstitutionalHeatmap();
-      updateSafetyKPIs();
-    }
-
-    function completeSession(){
-      if(!selectedPatient){ toast("Select a patient first."); return; }
-      const q = getQueue();
-      q.forEach(p=>{ if(p.id===selectedPatient.id) p.status = "Completed"; });
-      saveQueue(q);
-      renderQueue();
-
-      const recs = getRecords();
-      const rec = recs[selectedPatient.id] || {};
-      rec.lastEncounter = { ts: Date.now(), room: currentRoomCode || null, aiRisk: aiResult?.risk || null, aiAction: aiAction?.type || null };
-      recs[selectedPatient.id] = rec;
-      saveRecords(recs);
-
-      logActivity("session_complete", { patientId:selectedPatient.id, country:selectedCountryFilter });
-      renderInstitutionalHeatmap();
-      refreshFHIRPayload();
-
-      toast("Session completed (demo).");
-    }
-
-    function openTeleRoomCreate(){
-      currentRoomCode = makeRoomCode();
-      document.getElementById("roomCodeChip").textContent = currentRoomCode;
-      document.getElementById("patientJoinStatus").textContent = "Waiting for patient…";
-      toast(`Video room created. Code: ${currentRoomCode}`);
-      auditLog("room_create", { room:currentRoomCode });
-    }
-
-    function makeRoomCode(){
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let s = "";
-      for(let i=0;i<5;i++) s += chars[Math.floor(Math.random()*chars.length)];
-      return s;
-    }
-
-    function copyRoomCode(){
-      const code = document.getElementById("roomCodeChip").textContent;
-      if(!code || code==="—"){ toast("Create a room first."); return; }
-      navigator.clipboard?.writeText(code);
-      toast("Room code copied.");
-      auditLog("room_copy", { room:code });
-    }
-
-    function patientJoinRoom(){
-      const code = (document.getElementById("joinRoomCode").value || "").trim().toUpperCase();
-      if(!code){ document.getElementById("joinStatus").textContent = "Enter a room code."; return; }
-      if(document.getElementById("roomCodeChip").textContent !== code){
-        document.getElementById("joinStatus").textContent = "Room not found (demo). Ask clinician for the current code.";
-        return;
-      }
-      document.getElementById("joinStatus").textContent = "Joined room (simulated).";
-      document.getElementById("patientJoinStatus").textContent = "Patient joined (simulated).";
-      logActivity("session_join", { room:code, patientId: document.getElementById("ptId").value || "PT-UNKNOWN", country:selectedCountryFilter });
-      renderInstitutionalHeatmap();
-      bumpTeleSessionCount();
-    }
-
-    function toggleMute(){ toast("Mute toggled (simulated)."); }
-    function toggleCam(){ toast("Camera toggled (simulated)."); }
-    function endRoom(){
-      auditLog("room_end", { room:currentRoomCode || null });
-      currentRoomCode = null;
-      document.getElementById("roomCodeChip").textContent = "—";
-      document.getElementById("patientJoinStatus").textContent = "Waiting for patient…";
-      toast("Room ended (simulated).");
-    }
-
-    function openPatientPortal(){
-      openModal("patientPortalModal");
-      const u = currentUser;
-      if(u?.role==="Patient"){
-        document.getElementById("ptId").value = u.patientId || "PT-DEMO";
-        document.getElementById("ptName").value = u.name || "Patient";
-      }
-      auditLog("patient_portal_open", {});
-    }
-
-    function fillSampleIntake(){
-      document.getElementById("ptId").value = "PT-1029";
-      document.getElementById("ptName").value = "Asha N.";
-      document.getElementById("ptAge").value = 32;
-      document.getElementById("ptSex").value = "Female";
-      document.getElementById("ptComplaint").value = "Fever + cough";
-      document.getElementById("ptTemp").value = "38.6";
-      document.getElementById("ptHr").value = "104";
-      document.getElementById("ptSpo2").value = "94";
-      document.getElementById("ptBp").value = "118/76";
-      document.getElementById("ptNotes").value = "No known allergies.";
-      document.getElementById("intakeStatus").textContent = "Auto-filled sample values.";
-    }
-
-    function submitIntake(){
-      const id = (document.getElementById("ptId").value || "").trim();
-      const name = (document.getElementById("ptName").value || "").trim();
-      if(!id || !name){
-        document.getElementById("intakeStatus").textContent = "Patient ID and Name are required.";
-        return;
-      }
-
-      const intake = {
-        id, name,
-        age: parseInt(document.getElementById("ptAge").value || "0", 10) || null,
-        sex: document.getElementById("ptSex").value || null,
-        complaint: document.getElementById("ptComplaint").value || "",
-        vitals: {
-          temp: document.getElementById("ptTemp").value || "",
-          hr: document.getElementById("ptHr").value || "",
-          spo2: document.getElementById("ptSpo2").value || "",
-          bp: document.getElementById("ptBp").value || ""
-        },
-        notes: document.getElementById("ptNotes").value || ""
-      };
-
-      const records = getRecords();
-      const rec = records[id] || {};
-      rec.intake = intake;
-      records[id] = rec;
-      saveRecords(records);
-
-      const q = getQueue();
-      if(!q.some(p=>p.id===id)){
-        q.unshift({ id, name, age:intake.age||"—", sex:intake.sex||"—", complaint:intake.complaint||"—", status:"Waiting", created:Date.now() });
-        saveQueue(q);
-      } else {
-        q.forEach(p=>{
-          if(p.id===id){
-            p.name=name;
-            p.age=intake.age||p.age;
-            p.sex=intake.sex||p.sex;
-            p.complaint=intake.complaint||p.complaint;
-          }
-        });
-        saveQueue(q);
-      }
-
-      renderQueue();
-      document.getElementById("intakeStatus").textContent = "Intake submitted. You are now in the telehealth queue.";
-      logActivity("intake_submit", { patientId:id, country:selectedCountryFilter });
-      renderInstitutionalHeatmap();
-      refreshFHIRPayload();
-    }
-
-    function viewPatientRecord(){
-      const id = (document.getElementById("ptId").value || "").trim();
-      if(!id){ document.getElementById("recordStatus").textContent = "Enter Patient ID first."; return; }
-      const records = getRecords();
-      const rec = records[id];
-      if(!rec){
-        document.getElementById("recordStatus").textContent = "No record found (demo). Submit intake first.";
-        return;
-      }
-      const rx = rec.prescriptions || [];
-      const refs = rec.referrals || [];
-      const last = rec.lastEncounter ? new Date(rec.lastEncounter.ts).toLocaleString() : "—";
-      toast(`Patient: ${id}\nLast Encounter: ${last}\nReferrals: ${refs.length}\nPrescriptions: ${rx.length}`);
-      document.getElementById("recordStatus").textContent = `Found record. Referrals: ${refs.length}, eRx: ${rx.length}`;
-      auditLog("patient_record_view", { patientId:id, referrals:refs.length, rx:rx.length });
-    }
-
-    function bumpTeleSessionCount(){
-      const events = getActivityEvents();
-      const sessions = events.filter(e=>e.type==="session_start" && inScopeEvent(e)).length;
-      // scorecard
-      document.getElementById("kpiTeleSessions").textContent = String(sessions);
-    }
-
-    /********************
-     * REFERRAL + RX
-     ********************/
-    function openReferral(){
-      if(!selectedPatient){ toast("Select a patient first."); return; }
-      openModal("referralModal");
-      document.getElementById("refReason").value = aiResult?.risk==="High"
-        ? "High risk flagged (hypoxia). Recommend urgent in-person evaluation."
-        : "Telehealth triage for follow-up evaluation.";
-      document.getElementById("refStatus").textContent = "—";
-      auditLog("referral_open", { patientId:selectedPatient.id });
-    }
-
-    function createReferral(){
-      if(!selectedPatient){ toast("Select a patient first."); return; }
-      const facility = document.getElementById("refFacility").value;
-      const urgency = document.getElementById("refUrgency").value;
-      const reason = document.getElementById("refReason").value || "";
-
-      const records = getRecords();
-      const rec = records[selectedPatient.id] || {};
-      rec.referrals = rec.referrals || [];
-      rec.referrals.push({ ts: Date.now(), facility, urgency, reason, room: currentRoomCode || null });
-      records[selectedPatient.id] = rec;
-      saveRecords(records);
-
-      document.getElementById("refStatus").textContent = "Referral created and saved.";
-      logActivity("referral", { patientId:selectedPatient.id, facility, urgency, country:selectedCountryFilter });
-      renderInstitutionalHeatmap();
-      refreshFHIRPayload();
-      toast("Referral created (demo).");
-    }
-
-    function openRx(){
-      if(!selectedPatient){ toast("Select a patient first."); return; }
-      openModal("rxModal");
-      document.getElementById("rxMed").value = aiResult?.risk==="High" ? "Oxygen + facility protocol meds" : "Paracetamol";
-      document.getElementById("rxDose").value = aiResult?.risk==="High" ? "Per protocol" : "500mg";
-      document.getElementById("rxFreq").value = aiResult?.risk==="High" ? "As directed" : "Every 6–8 hours PRN";
-      document.getElementById("rxDur").value = "3–5 days";
-      document.getElementById("rxNotes").value = "Demo eRx. Verify allergies and local formulary.";
-      document.getElementById("rxStatus").textContent = "—";
-      auditLog("rx_open", { patientId:selectedPatient.id });
-    }
-
-    function createRx(){
-      if(!selectedPatient){ toast("Select a patient first."); return; }
-      const med = document.getElementById("rxMed").value || "";
-      const dose = document.getElementById("rxDose").value || "";
-      const freq = document.getElementById("rxFreq").value || "";
-      const dur = document.getElementById("rxDur").value || "";
-      const notes = document.getElementById("rxNotes").value || "";
-
-      const records = getRecords();
-      const rec = records[selectedPatient.id] || {};
-      rec.prescriptions = rec.prescriptions || [];
-      rec.prescriptions.push({ ts:Date.now(), med, dose, freq, dur, notes });
-      records[selectedPatient.id] = rec;
-      saveRecords(records);
-
-      document.getElementById("rxStatus").textContent = "eRx created and saved.";
-      logActivity("eprescription", { patientId:selectedPatient.id, med, country:selectedCountryFilter });
-      renderInstitutionalHeatmap();
-      refreshFHIRPayload();
-      toast("e-Prescription created (demo).");
-    }
-
-    /********************
-     * FHIR
-     ********************/
-    function openFHIR(){
-      refreshFHIRPayload();
-      openModal("fhirModal");
-      auditLog("fhir_open", {});
-    }
-
-    function refreshFHIRPayload(){
-      const payload = buildFHIRBundle();
-      const ta = document.getElementById("fhirPayload");
-      if(ta) ta.value = JSON.stringify(payload, null, 2);
-    }
-
-    function buildFHIRBundle(){
-      const pid = selectedPatient?.id || document.getElementById("ptId")?.value || "PT-DEMO";
-      const records = getRecords();
-      const rec = records[pid] || {};
-      const intake = rec.intake || {
-        id:pid, name:selectedPatient?.name || "Demo Patient",
-        complaint:selectedPatient?.complaint || "—",
-        vitals:{ temp:"", hr:"", spo2:"", bp:"" },
-        notes:""
-      };
-
-      const lastRx = (rec.prescriptions || []).slice(-1)[0] || null;
-      const lastRef = (rec.referrals || []).slice(-1)[0] || null;
-
-      return {
-        resourceType:"Bundle",
-        type:"collection",
-        timestamp:new Date().toISOString(),
-        entry:[
-          { resource:{ resourceType:"Patient", id: pid, name:[{ text:intake.name || "Demo Patient" }] } },
-          {
-            resource:{
-              resourceType:"Encounter",
-              id:"enc-"+pid,
-              status:"finished",
-              class:{ code:"VR", display:"virtual" },
-              subject:{ reference:"Patient/"+pid },
-              period:{ start:new Date(Date.now()-3600000).toISOString(), end:new Date().toISOString() },
-              reasonCode:[{ text:intake.complaint || "—" }]
-            }
-          },
-          {
-            resource:{
-              resourceType:"Observation",
-              id:"obs-vitals-"+pid,
-              status:"final",
-              subject:{ reference:"Patient/"+pid },
-              code:{ text:"Vitals" },
-              valueString:`Temp:${intake.vitals?.temp || "—"}C; HR:${intake.vitals?.hr || "—"}; SpO2:${intake.vitals?.spo2 || "—"}; BP:${intake.vitals?.bp || "—"}`
-            }
-          },
-          ...(lastRx ? [{
-            resource:{
-              resourceType:"MedicationRequest",
-              id:"rx-"+pid,
-              status:"active",
-              intent:"order",
-              subject:{ reference:"Patient/"+pid },
-              medicationCodeableConcept:{ text:lastRx.med },
-              dosageInstruction:[{ text:`${lastRx.dose} • ${lastRx.freq} • ${lastRx.dur}` }],
-              note:[{ text:lastRx.notes }]
-            }
-          }] : []),
-          ...(lastRef ? [{
-            resource:{
-              resourceType:"ServiceRequest",
-              id:"ref-"+pid,
-              status:"active",
-              intent:"order",
-              subject:{ reference:"Patient/"+pid },
-              code:{ text:"Facility referral" },
-              note:[{ text:`Facility: ${lastRef.facility}; Urgency: ${lastRef.urgency}; Reason: ${lastRef.reason}` }]
-            }
-          }] : [])
-        ]
-      };
-    }
-
-    function copyFHIR(){
-      const ta = document.getElementById("fhirPayload");
-      navigator.clipboard?.writeText(ta.value);
-      toast("FHIR payload copied.");
-      auditLog("fhir_copy", {});
-    }
-
-    function copyFHIRForPatient(){
-      refreshFHIRPayload();
-      const ta = document.getElementById("fhirPayload");
-      navigator.clipboard?.writeText(ta.value);
-      document.getElementById("recordStatus").textContent = "Copied FHIR payload to clipboard (demo).";
-      auditLog("fhir_copy_patient", { patientId:(document.getElementById("ptId").value||"").trim() });
-    }
-
-    /********************
-     * COMPLIANCE
-     ********************/
-    function openCompliance(){
-      openModal("complianceModal");
-      loadCompliance();
-      auditLog("compliance_open", {});
-    }
-
-    function loadCompliance(){
-      const c = safeJsonParse(localStorage.getItem(AFYA_COMPLIANCE_KEY) || "{}", {});
-      ["c1","c2","c3","c4","c5","c6"].forEach(id=>{
-        const el = document.getElementById(id);
-        if(el) el.checked = !!c[id];
-      });
-      document.getElementById("complianceNotes").value = c.notes || "";
-      document.getElementById("complianceStatus").textContent = "Loaded saved checklist (demo).";
-    }
-
-    function saveCompliance(){
-      const obj = {};
-      ["c1","c2","c3","c4","c5","c6"].forEach(id=> obj[id] = !!document.getElementById(id).checked );
-      obj.notes = document.getElementById("complianceNotes").value || "";
-      obj.updated = Date.now();
-      localStorage.setItem(AFYA_COMPLIANCE_KEY, JSON.stringify(obj));
-      document.getElementById("complianceStatus").textContent = "Saved.";
-      auditLog("compliance_save", { checklist:obj, notesLen:(obj.notes||"").length });
-    }
-
-    function exportCompliance(){
-      const obj = safeJsonParse(localStorage.getItem(AFYA_COMPLIANCE_KEY) || "{}", {});
-      const report = {
-        platform:"AfyaAI Demo",
-        exportedAt:new Date().toISOString(),
-        scopeCountry:selectedCountryFilter,
-        checklist: {
-          consent:!!obj.c1,
-          minimization:!!obj.c2,
-          auditTrail:!!obj.c3,
-          overrideReason:!!obj.c4,
-          validationProtocol:!!obj.c5,
-          adverseEventPathway:!!obj.c6
-        },
-        notes: obj.notes || ""
-      };
-      navigator.clipboard?.writeText(JSON.stringify(report, null, 2));
-      document.getElementById("complianceStatus").textContent = "Compliance report copied to clipboard.";
-      toast("Compliance report copied (JSON).");
-      auditLog("compliance_export_copy", { reportSummary:report.checklist });
-    }
-
-    function resetCompliance(){
-      localStorage.removeItem(AFYA_COMPLIANCE_KEY);
-      loadCompliance();
-      document.getElementById("complianceStatus").textContent = "Reset.";
-      auditLog("compliance_reset", {});
-    }
-
-    /********************
-     * SAFETY KPIs (simple demo)
-     ********************/
-    function updateSafetyKPIs(){
-      const events = getActivityEvents().filter(inScopeEvent);
-      const overrides = events.filter(e=>e.type==="override").length;
-      const aiRuns = events.filter(e=>e.type==="ai_recommendation").length;
-
-      const rate = aiRuns ? Math.min(99, Math.round((overrides/aiRuns)*1000)/10) : 12.4;
-      document.getElementById("overrideRateBig").textContent = rate.toFixed(1)+"%";
-      document.getElementById("overrideRateChip").textContent = "Override Rate: "+rate.toFixed(1)+"%";
-      document.getElementById("overrideBar").style.width = Math.min(100, Math.max(5, rate*6))+"%";
-
-      const resp = (2.0 + Math.random()*0.8).toFixed(1)+"s";
-      document.getElementById("aiRespTime").textContent = resp;
-
-      bumpTeleSessionCount();
-      refreshScorecard();
-    }
-
-    /********************
-     * HEATMAP (Institutional grid style)
-     ********************/
-    const HEAT_WEIGHTS = {
-      session_start: 3,
-      session_join: 2,
-      intake_submit: 2,
-      ai_recommendation: 2,
-      override: 4,
-      referral: 3,
-      eprescription: 3,
-      session_complete: 2
-    };
-
-    function logActivity(type, meta={}){
-      const events = getActivityEvents();
-      events.push({ ts: Date.now(), type, meta });
-      saveActivityEvents(events);
-      renderInstitutionalHeatmap();
-      updateSafetyKPIs();
-      refreshFHIRPayload();
-      auditLog(type, meta); // regulatory audit
-    }
-
-    function dayKeyFromTs(ts){
-      const d = new Date(ts);
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const dd = String(d.getDate()).padStart(2,"0");
-      return `${yyyy}-${mm}-${dd}`;
-    }
-    function startOfDay(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
-    function lastNDays(n){
-      const today = startOfDay(new Date());
-      const days = [];
-      for(let i=n-1;i>=0;i--){
-        const d = new Date(today);
-        d.setDate(d.getDate()-i);
-        days.push(d);
-      }
-      return days;
-    }
-
-    function computeDailyScores(daysBack=84){
-      const events = getActivityEvents().filter(inScopeEvent);
-      const cutoff = Date.now() - daysBack*24*60*60*1000;
-      const scores = {};
-      for(const e of events){
-        if(!e.ts || e.ts < cutoff) continue;
-        const key = dayKeyFromTs(e.ts);
-        if(!scores[key]) scores[key] = { score:0, counts:{} };
-        const w = HEAT_WEIGHTS[e.type] ?? 1;
-        scores[key].score += w;
-        scores[key].counts[e.type] = (scores[key].counts[e.type] || 0) + 1;
-      }
-      return scores;
-    }
-
-    function cellColor(score){
-      // Institutional blues
-      if(score<=0) return "#f1f5fb";
-      if(score<=3) return "#dbeafe";
-      if(score<=7) return "#93c5fd";
-      return "#3b82f6";
-    }
-
-    function renderInstitutionalHeatmap(){
-      const host = document.getElementById("heatmapInstitutional");
-      if(!host) return;
-
-      host.innerHTML = "";
-
-      const daysBack = 84; // 12 weeks
-      const days = lastNDays(daysBack);
-      const daily = computeDailyScores(daysBack);
-
-      // Build weeks (rows), aligned Monday
-      const weeks = [];
-      let week = [];
-      const first = days[0];
-      const firstDow = (first.getDay()+6)%7; // Mon=0
-      for(let i=0;i<firstDow;i++) week.push(null);
-
-      for(const d of days){
-        week.push(d);
-        if(week.length===7){
-          weeks.push(week);
-          week = [];
-        }
-      }
-      if(week.length){
-        while(week.length<7) week.push(null);
-        weeks.push(week);
-      }
-
-      const grid = document.createElement("div");
-      grid.className = "heat-grid";
-
-      // Header row
-      const headBlank = document.createElement("div");
-      headBlank.className="heat-head";
-      headBlank.textContent="Week";
-      grid.appendChild(headBlank);
-
-      ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d=>{
-        const h = document.createElement("div");
-        h.className="heat-head";
-        h.textContent=d;
-        grid.appendChild(h);
-      });
-
-      // Rows
-      weeks.forEach((w, idx)=>{
-        const label = document.createElement("div");
-        label.className="heat-week";
-        const anyDay = w.find(x=>x);
-        label.textContent = anyDay ? `Wk of ${anyDay.toLocaleDateString(undefined,{month:"short",day:"numeric"})}` : `Week ${idx+1}`;
-        grid.appendChild(label);
-
-        w.forEach(d=>{
-          const cell = document.createElement("div");
-          cell.className="heat-cell";
-
-          if(!d){
-            cell.style.background="#fff";
-            cell.style.borderColor="transparent";
-            cell.style.cursor="default";
-            grid.appendChild(cell);
-            return;
-          }
-
-          const key = dayKeyFromTs(d.getTime());
-          const dayData = daily[key] || { score:0, counts:{} };
-          cell.style.background = cellColor(dayData.score);
-
-          // override marker
-          const o = dayData.counts?.override || 0;
-          if(o>0){
-            const dot = document.createElement("span");
-            dot.style.position="absolute";
-            dot.style.right="6px";
-            dot.style.top="6px";
-            dot.style.width="8px";
-            dot.style.height="8px";
-            dot.style.borderRadius="999px";
-            dot.style.background="var(--warning)";
-            dot.style.border="1px solid rgba(0,0,0,.12)";
-            cell.appendChild(dot);
-          }
-
-          const formatted = d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
-          const c = dayData.counts || {};
-          const lines = [
-            `${formatted}`,
-            `Score: ${dayData.score}`,
-            `Sessions: ${c.session_start||0}`,
-            `Joins: ${c.session_join||0}`,
-            `Intakes: ${c.intake_submit||0}`,
-            `AI used: ${c.ai_recommendation||0}`,
-            `Overrides: ${c.override||0}`,
-            `Referrals: ${c.referral||0}`,
-            `eRx: ${c.eprescription||0}`,
-            `Completed: ${c.session_complete||0}`,
-            `Scope: ${selectedCountryFilter==="all" ? "All Countries" : selectedCountryFilter}`
-          ];
-          cell.title = lines.join("\n");
-          cell.addEventListener("click", ()=>alert(lines.join("\n")));
-          grid.appendChild(cell);
-        });
-      });
-
-      host.appendChild(grid);
-    }
-
-    /********************
-     * DEMO SEED
-     ********************/
-    function seedTelehealthDemoActivity(){
-      const now = Date.now();
-      const events = [];
-      for(let i=0;i<140;i++){
-        const daysAgo = Math.floor(Math.random()*80);
-        const ts = now - daysAgo*24*60*60*1000 - Math.floor(Math.random()*8*60*60*1000);
-        const roll = Math.random();
-        let t = "session_start";
-        if(roll < 0.35) t = "session_start";
-        else if(roll < 0.5) t = "intake_submit";
-        else if(roll < 0.68) t = "ai_recommendation";
-        else if(roll < 0.78) t = "referral";
-        else if(roll < 0.9) t = "eprescription";
-        else t = "override";
-
-        events.push({ ts, type:t, meta:{ seeded:true, country:selectedCountryFilter } });
-      }
-
-      const merged = [...getActivityEvents(), ...events];
-      saveActivityEvents(merged);
-
-      seedQueue();
-      renderInstitutionalHeatmap();
-      updateSafetyKPIs();
-      refreshScorecard();
-      toast("Seeded demo utilization + safety activity.");
-      auditLog("seed_activity", { added:events.length });
-    }
-
-    /********************
-     * NEW EVALUATION (demo)
-     ********************/
-    function openNewEval(){ openModal("newEvalModal"); document.getElementById("evalStatus").textContent="—"; }
-    function createEvaluation(){
-      const name = (document.getElementById("evalName").value||"").trim();
-      const country = document.getElementById("evalCountry").value;
-      const desc = (document.getElementById("evalDesc").value||"").trim();
-      if(!name){ document.getElementById("evalStatus").textContent="Name is required."; return; }
-
-      const evs = safeJsonParse(localStorage.getItem(AFYA_EVALS_KEY) || "[]", []);
-      evs.unshift({ name, country, desc, ts:Date.now() });
-      localStorage.setItem(AFYA_EVALS_KEY, JSON.stringify(evs));
-      document.getElementById("evalStatus").textContent="Created (stored locally).";
-      toast("New evaluation created (demo).");
-      auditLog("new_evaluation", { name, country });
-      renderEvalTable();
-      refreshScorecard();
-    }
-
-    /********************
-     * PDF EXPORT (single-file, GitHub Pages friendly)
+     * PDF Export
      ********************/
     async function exportPDF(){
-      try{
-        auditLog("export_pdf", { scope:selectedCountryFilter });
-        // Use html2canvas -> jsPDF (client side)
-        const el = document.getElementById("exportArea");
-        const canvas = await html2canvas(el, { scale: 2, useCORS:true, backgroundColor:"#ffffff" });
-        const imgData = canvas.toDataURL("image/png");
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        // Fit width, paginate vertically
-        const imgProps = pdf.getImageProperties(imgData);
-        const imgWidth = pageWidth;
-        const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
-        let y = 0;
-        let remaining = imgHeight;
-
-        pdf.addImage(imgData, "PNG", 0, y, imgWidth, imgHeight);
-
-        while(remaining > pageHeight){
-          remaining -= pageHeight;
-          pdf.addPage();
-          y = -((imgHeight - remaining));
-          pdf.addImage(imgData, "PNG", 0, y, imgWidth, imgHeight);
-        }
-
-        const name = `AfyaAI_Dashboard_${selectedCountryFilter==="all"?"All":selectedCountryFilter}_${new Date().toISOString().slice(0,10)}.pdf`;
-        pdf.save(name);
-      }catch(e){
-        console.error(e);
-        toast("PDF export failed (browser limits). You can still use Print → Save as PDF.");
+      const { jsPDF } = window.jspdf;
+      const el = document.getElementById("pdfCapture");
+      const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+      const img = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p","pt","a4");
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const imgW = pageW;
+      const imgH = canvas.height * (pageW / canvas.width);
+      let y = 0, remaining = imgH;
+      pdf.addImage(img, "PNG", 0, y, imgW, imgH);
+      remaining -= pageH;
+      while(remaining > 0){
+        pdf.addPage();
+        y = - (imgH - remaining);
+        pdf.addImage(img, "PNG", 0, y, imgW, imgH);
+        remaining -= pageH;
       }
+      pdf.save(`AfyaAI_Dashboard_${new Date().toISOString().slice(0,10)}.pdf`);
     }
 
-    /********************
-     * RESET
-     ********************/
-    function resetAllDemo(){
-      if(!confirm("Reset all demo data (queue, records, activity, compliance, user, evals, audit)?")) return;
-      localStorage.removeItem(AFYA_QUEUE_KEY);
-      localStorage.removeItem(AFYA_RECORDS_KEY);
-      localStorage.removeItem(AFYA_ACTIVITY_KEY);
-      localStorage.removeItem(AFYA_COMPLIANCE_KEY);
-      localStorage.removeItem(AFYA_EVALS_KEY);
-      localStorage.removeItem(AFYA_AUDIT_KEY);
-      localStorage.removeItem("afyaai-user");
+    /***************************************************************
+     * ACCESSIBILITY SUITE (STT / CC / TTS) + demo translation
+     ***************************************************************/
+    let sttRecognition = null;
+    let sttIsRunning = false;
+    let sttFinalText = "";
+    let sttInterimText = "";
 
-      currentRoomCode = null;
-      document.getElementById("roomCodeChip").textContent="—";
-      document.getElementById("patientJoinStatus").textContent="Waiting for patient…";
-      clearEncounter();
-      renderQueue();
-      renderInstitutionalHeatmap();
-      updateSafetyKPIs();
-      refreshScorecard();
-      renderEvalTable();
+    let ccRecognition = null;
+    let ccIsRunning = false;
+    let ccFinalText = "";
+    let ccInterimText = "";
 
-      toast("Reset complete.");
-      document.getElementById("loginBtn").classList.remove("hidden");
-      document.getElementById("userChip").classList.add("hidden");
-      currentUser = { role:null, name:null, patientId:null };
+    function getLocaleFromLang(langCode){
+      const map = { en:"en-US", fr:"fr-FR", sw:"sw-KE", ha:"ha-NG", yo:"yo-NG", am:"am-ET", zu:"zu-ZA", ar:"ar-SA", pt:"pt-PT" };
+      return map[langCode] || "en-US";
     }
+    function speechSupported(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
 
-    /********************
-     * ESCAPE HTML
-     ********************/
-    function escapeHtml(s){
-      return String(s||"")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    /********************
-     * CLOSE MODALS OUTSIDE CLICK
-     ********************/
-    ["evaluationModal","loginModal","patientPortalModal","referralModal","rxModal","fhirModal","complianceModal","newEvalModal","auditModal"].forEach(id=>{
+    function setBadge(id, ok, okText, badText){
       const el = document.getElementById(id);
-      if(el){
-        el.addEventListener("click", function(e){
-          if(e.target === this) this.classList.add("hidden");
-        });
+      if(!el) return;
+      if(ok){
+        el.className = "badge b-good";
+        el.innerHTML = `<i class="fa-solid fa-check"></i> ${okText}`;
+      } else {
+        el.className = "badge b-bad";
+        el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${badText}`;
       }
-    });
+    }
+
+    // Offline-friendly demo translation dictionary (not a real translator)
+    const DEMO_TRANSLATE = {
+      sw:{ "fever":"homa","cough":"kikohozi","headache":"maumivu ya kichwa","pain":"maumivu","chest":"kifua","breathing":"kupumua","shortness of breath":"upungufu wa pumzi","sore throat":"koo kuuma","vomiting":"kutapika","diarrhea":"kuhara","dizzy":"kizunguzungu","nausea":"kichefuchefu","weakness":"udhaifu","days":"siku","hours":"saa","since":"tangu","for":"kwa" },
+      ha:{ "fever":"zazzabi","cough":"tari","headache":"ciwon kai","pain":"ciwo","chest":"kirji","breathing":"numfashi","shortness of breath":"karancin numfashi","vomiting":"amai","diarrhea":"gudawa","nausea":"tashin zuciya","weakness":"rauni","days":"kwanaki","hours":"awanni","since":"tun","for":"na" },
+      yo:{ "fever":"ìbà","cough":"ikọ́-fèé","headache":"orififo","pain":"irora","chest":"àyà","breathing":"mímì","shortness of breath":"kíkúrú ẹ̀mí","vomiting":"ìgbẹ́gbọ̀n","diarrhea":"ìgbéyà","nausea":"ìforígbárí","weakness":"àìlera","days":"ọjọ́","hours":"wákàtí","since":"láti","for":"fún" },
+      am:{ "fever":"ትኩሳት","cough":"ሳል","headache":"ራስ ምታት","pain":"ህመም","chest":"ደረት","breathing":"መተንፈስ","shortness of breath":"እስትንፋስ እጥረት","vomiting":"ማስመለስ","diarrhea":"ተቅማጥ","nausea":"ማቅለሽለሽ","weakness":"ድካም","days":"ቀናት","hours":"ሰዓታት","since":"ከ","for":"ለ" },
+      zu:{ "fever":"umkhuhlane","cough":"ukukhwehlela","headache":"ikhanda elibuhlungu","pain":"ubuhlungu","chest":"isifuba","breathing":"ukuphefumula","shortness of breath":"ukushoda umoya","vomiting":"ukuhlanza","diarrhea":"isifo sohudo","nausea":"isicanucanu","weakness":"ubuthakathaka","days":"izinsuku","hours":"amahora","since":"kusukela","for":"ngoba" },
+      fr:{ "fever":"fièvre","cough":"toux","headache":"mal de tête","pain":"douleur","chest":"poitrine","breathing":"respiration","shortness of breath":"essoufflement","vomiting":"vomissements","diarrhea":"diarrhée","nausea":"nausée","weakness":"faiblesse","days":"jours","hours":"heures","since":"depuis","for":"pour" }
+    };
+
+    function demoTranslate(text, lang){
+      if(!text) return "";
+      if(!lang || lang==="en") return text;
+      const dict = DEMO_TRANSLATE[lang];
+      if(!dict) return text;
+      const lower = text.toLowerCase();
+      let out = lower.replaceAll("shortness of breath", dict["shortness of breath"] || "shortness of breath");
+      Object.keys(dict).forEach(k=>{
+        if(k==="shortness of breath") return;
+        const re = new RegExp(`\\b${k.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')}\\b`, "g");
+        out = out.replace(re, dict[k]);
+      });
+      return out;
+    }
+
+    /* STT */
+    function sttInit(){
+      setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
+      if(!speechSupported()) return;
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      sttRecognition = new SR();
+      sttRecognition.continuous = true;
+      sttRecognition.interimResults = true;
+      sttRecognition.maxAlternatives = 1;
+      sttRecognition.lang = getLocaleFromLang(getLang());
+
+      sttRecognition.onstart = ()=>{
+        sttIsRunning = true;
+        document.getElementById("sttStartBtn")?.setAttribute("disabled","true");
+        document.getElementById("sttStopBtn")?.removeAttribute("disabled");
+        sttSetStatus("Listening… Speak now.");
+      };
+      sttRecognition.onend = ()=>{
+        sttIsRunning = false;
+        document.getElementById("sttStartBtn")?.removeAttribute("disabled");
+        document.getElementById("sttStopBtn")?.setAttribute("disabled","true");
+        sttInterimText = "";
+        sttUpdateUi();
+        sttSetStatus("Stopped.");
+      };
+      sttRecognition.onerror = (e)=> sttSetStatus("Speech error: " + (e.error || "unknown"));
+      sttRecognition.onresult = (event)=>{
+        let interim = "";
+        for(let i=event.resultIndex;i<event.results.length;i++){
+          const res = event.results[i];
+          const txt = res[0]?.transcript || "";
+          if(res.isFinal) sttFinalText += " " + txt;
+          else interim += " " + txt;
+        }
+        sttInterimText = interim.trim();
+        sttFinalText = sttFinalText.trim();
+        sttUpdateUi();
+      };
+    }
+    function sttSetStatus(msg){ const el=document.getElementById("sttStatus"); if(el) el.textContent=msg; }
+    function sttCombined(){ return (sttFinalText + (sttInterimText ? (" " + sttInterimText) : "")).trim(); }
+    function sttUpdateUi(){
+      const box = document.getElementById("sttTranscript");
+      if(box) box.textContent = sttCombined() || "—";
+      const translateBox = document.getElementById("sttTranslated");
+      const auto = document.getElementById("sttAutoTranslate");
+      const lang = getLang();
+      if(translateBox){
+        if(auto && auto.checked){
+          const translated = demoTranslate(sttCombined(), lang);
+          translateBox.textContent = translated || "—";
+        } else translateBox.textContent = "—";
+      }
+    }
+    function sttStart(){
+      if(!speechSupported()){ alert("Speech-to-text not supported in this browser."); return; }
+      if(!sttRecognition) sttInit();
+      try { sttRecognition.lang = getLocaleFromLang(getLang()); } catch {}
+      if(!sttIsRunning){
+        sttSetStatus("Starting…");
+        try { sttRecognition.start(); } catch(e){ sttSetStatus("Could not start: " + e.message); }
+      }
+    }
+    function sttStop(){ if(sttRecognition && sttIsRunning){ try { sttRecognition.stop(); } catch {} } }
+    function sttClear(){ sttFinalText=""; sttInterimText=""; sttUpdateUi(); sttSetStatus("Cleared."); }
+    function sttApplyToComplaint(){
+      const el = document.getElementById("ptComplaint");
+      if(!el) return;
+      const lang = getLang();
+      const auto = document.getElementById("sttAutoTranslate");
+      const txt = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
+      if(!txt){ sttSetStatus("No transcript to apply."); return; }
+      el.value = txt;
+      sttSetStatus("Applied to Chief Complaint.");
+    }
+    function sttApplyToNotes(){
+      const el = document.getElementById("ptNotes");
+      if(!el) return;
+      const lang = getLang();
+      const auto = document.getElementById("sttAutoTranslate");
+      const txt = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
+      if(!txt){ sttSetStatus("No transcript to apply."); return; }
+      const prev = (el.value || "").trim();
+      el.value = prev ? (prev + "\n" + txt) : txt;
+      sttSetStatus("Applied to Notes.");
+    }
+
+    /* Captions (CC) */
+    function ccInit(){
+      setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
+      if(!speechSupported()) return;
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      ccRecognition = new SR();
+      ccRecognition.continuous = true;
+      ccRecognition.interimResults = true;
+      ccRecognition.maxAlternatives = 1;
+      ccRecognition.lang = getLocaleFromLang(getLang());
+
+      ccRecognition.onstart = ()=>{
+        ccIsRunning = true;
+        document.getElementById("ccStartBtn")?.setAttribute("disabled","true");
+        document.getElementById("ccStopBtn")?.removeAttribute("disabled");
+        ccShowOverlay(true);
+        ccRender();
+      };
+      ccRecognition.onend = ()=>{
+        ccIsRunning = false;
+        document.getElementById("ccStartBtn")?.removeAttribute("disabled");
+        document.getElementById("ccStopBtn")?.setAttribute("disabled","true");
+        ccInterimText = "";
+        ccRender();
+      };
+      ccRecognition.onerror = (e)=> ccSetOverlayText("Caption error: " + (e.error || "unknown"));
+      ccRecognition.onresult = (event)=>{
+        let interim = "";
+        for(let i=event.resultIndex;i<event.results.length;i++){
+          const res = event.results[i];
+          const txt = res[0]?.transcript || "";
+          if(res.isFinal) ccFinalText += " " + txt;
+          else interim += " " + txt;
+        }
+        ccInterimText = interim.trim();
+        ccFinalText = ccFinalText.trim();
+        ccRender();
+      };
+    }
+    function ccCombined(){ return (ccFinalText + (ccInterimText ? (" " + ccInterimText) : "")).trim(); }
+    function ccShowOverlay(show){ const o=document.getElementById("ccOverlay"); if(o) o.style.display=show?"block":"none"; }
+    function ccSetOverlayText(txt){ const t=document.getElementById("ccText"); if(t) t.textContent=txt||"—"; }
+    function ccRender(){ const txt=ccCombined(); ccSetOverlayText(txt || "…"); }
+    function ccStart(){
+      if(!speechSupported()){ alert("Captions not supported in this browser."); return; }
+      if(!ccRecognition) ccInit();
+      try { ccRecognition.lang = getLocaleFromLang(getLang()); } catch {}
+      if(!ccIsRunning){ try { ccRecognition.start(); } catch(e){ ccSetOverlayText("Could not start captions: " + e.message); } }
+    }
+    function ccStop(){ if(ccRecognition && ccIsRunning){ try { ccRecognition.stop(); } catch {} } }
+    function ccClear(){ ccFinalText=""; ccInterimText=""; ccRender(); }
+
+    /* TTS */
+    function ttsSupported(){ return !!window.speechSynthesis; }
+    function ttsStopAll(){
+      try { window.speechSynthesis?.cancel(); } catch {}
+      const s = document.getElementById("ttsStatus");
+      if(s) s.textContent = "Stopped.";
+    }
+    function ttsSpeak(text, langCode){
+      if(!ttsSupported()){ alert("Text-to-speech not supported in this browser."); return; }
+      if(!text) return;
+      ttsStopAll();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1.0; utter.pitch = 1.0; utter.volume = 1.0;
+      utter.lang = getLocaleFromLang(langCode || "en");
+      const status = document.getElementById("ttsStatus");
+      if(status) status.textContent = "Reading aloud…";
+      utter.onend = ()=>{ if(status) status.textContent = "Done."; };
+      utter.onerror = ()=>{ if(status) status.textContent = "TTS error."; };
+      window.speechSynthesis.speak(utter);
+    }
+    function extractAiPlanPlainText(){
+      const el = document.getElementById("aiView");
+      if(!el) return "";
+      const txt = (el.innerText || "").trim();
+      if(!txt) return "";
+      return "Here is your care plan. " + txt.replace(/\s+/g," ").trim();
+    }
+
+    function bindAccessibilityButtons(){
+      document.getElementById("sttStartBtn")?.addEventListener("click", sttStart);
+      document.getElementById("sttStopBtn")?.addEventListener("click", sttStop);
+      document.getElementById("sttClearBtn")?.addEventListener("click", sttClear);
+      document.getElementById("sttApplyToComplaintBtn")?.addEventListener("click", sttApplyToComplaint);
+      document.getElementById("sttApplyToNotesBtn")?.addEventListener("click", sttApplyToNotes);
+      document.getElementById("sttAutoTranslate")?.addEventListener("change", sttUpdateUi);
+      document.getElementById("sttSpeakTranslatedBtn")?.addEventListener("click", ()=>{
+        const lang = getLang();
+        const auto = document.getElementById("sttAutoTranslate");
+        const spoken = (auto && auto.checked) ? demoTranslate(sttCombined(), lang) : sttCombined();
+        ttsSpeak(spoken || "No text available.", lang);
+      });
+
+      document.getElementById("ccStartBtn")?.addEventListener("click", ccStart);
+      document.getElementById("ccStopBtn")?.addEventListener("click", ccStop);
+      document.getElementById("ccClearBtn")?.addEventListener("click", ccClear);
+
+      document.getElementById("ttsReadPlanBtn")?.addEventListener("click", ()=>{
+        const lang = getLang();
+        const text = extractAiPlanPlainText();
+        ttsSpeak(text || "No plan to read yet. Please run the AI recommendation first.", lang);
+      });
+      document.getElementById("ttsStopBtn")?.addEventListener("click", ttsStopAll);
+
+      setBadge("sttSupportBadge", speechSupported(), "STT: Supported", "STT: Not supported");
+      setBadge("ccSupportBadge", speechSupported(), "CC: Supported", "CC: Not supported");
+    }
+
+    function initAccessibilitySuite(){
+      bindAccessibilityButtons();
+      sttInit();
+      ccInit();
+      sttUpdateUi();
+    }
 
     /********************
-     * INIT
+     * Patient portal demo actions
      ********************/
+    function fillSampleIntake(){
+      document.getElementById("ptName").value = "Mary N.";
+      document.getElementById("ptAge").value = "34";
+      document.getElementById("ptPhone").value = "+254700000000";
+      document.getElementById("ptComplaint").value = "fever and cough for 2 days";
+      document.getElementById("ptNotes").value = "No known allergies.";
+      document.getElementById("intakeStatus").textContent = "Auto-filled sample intake.";
+    }
+    function submitIntake(){
+      const name = document.getElementById("ptName").value.trim();
+      const cc = document.getElementById("ptComplaint").value.trim();
+      document.getElementById("intakeStatus").textContent =
+        name && cc ? `Submitted. Thank you, ${name}.` : "Please complete Name and Chief Complaint.";
+    }
+    function joinVideoRoom(){
+      document.getElementById("patientJoinStatus").textContent = "Patient joined (simulated).";
+    }
+
+    /********************
+     * AI recommendation mock
+     ********************/
+    function runAiMock(){
+      const t0 = performance.now();
+      const complaint = (document.getElementById("ptComplaint")?.value || "").trim();
+      const notes = (document.getElementById("ptNotes")?.value || "").trim();
+      const summary = complaint ? `Reported symptoms: ${complaint}.` : "No symptom details captured yet.";
+      const extra = notes ? ` Notes: ${notes}` : "";
+      const plan = [
+        "1) Triage: Check temperature, pulse, and oxygen saturation.",
+        "2) If fever persists > 48 hours or breathing issues: seek in-person evaluation.",
+        "3) Supportive care: fluids, rest, and follow clinician guidance.",
+        "4) Safety: If chest pain, severe shortness of breath, confusion, or dehydration — go to emergency care."
+      ].join("\n");
+
+      document.getElementById("aiView").innerText = `${summary}${extra}\n\nRecommended next steps:\n${plan}`;
+      const t1 = performance.now();
+      document.getElementById("aiLatency").textContent = `Latency: ${(t1 - t0).toFixed(0)} ms (mock)`;
+    }
+
+    /********************
+     * Login wiring (minimal)
+     ********************/
+    function openLogin(){ document.getElementById("loginModal").classList.remove("hidden"); }
+    function closeLogin(){ document.getElementById("loginModal").classList.add("hidden"); }
+
     document.addEventListener("DOMContentLoaded", ()=>{
+      // Language dropdown + apply
+      populateLangDropdown();
+      applyLang(getLang());
+
+      // Render core content
+      renderComparison();
       updateOnlineStatus();
 
-      // restore filter
-      const savedFilter = localStorage.getItem(AFYA_COUNTRY_FILTER_KEY) || "all";
-      selectedCountryFilter = savedFilter;
-      const dd = document.getElementById("countryFilter");
-      if(dd) dd.value = savedFilter;
-      document.getElementById("scorecardScope").textContent = `Scope: ${savedFilter==="all" ? "All Countries" : savedFilter}`;
+      // Init accessibility
+      initAccessibilitySuite();
 
-      // restore user
-      const u = safeJsonParse(localStorage.getItem("afyaai-user") || "null", null);
-      if(u){
-        currentUser = u;
-        document.getElementById("loginBtn").classList.add("hidden");
-        document.getElementById("userChip").classList.remove("hidden");
-        document.getElementById("roleBadge").textContent = u.role;
-        document.getElementById("userNameChip").textContent = u.name;
-      }
+      // Buttons
+      document.getElementById("pdfBtn").addEventListener("click", exportPDF);
+      document.getElementById("loginBtn").addEventListener("click", openLogin);
+      document.getElementById("cancelLogin").addEventListener("click", closeLogin);
+      document.getElementById("closeLogin").addEventListener("click", closeLogin);
 
-      applyCountryFilterUI();
-      renderQueue();
-      renderEvalTable();
-      renderInstitutionalHeatmap();
-      updateSafetyKPIs();
-      refreshScorecard();
-      refreshFHIRPayload();
+      document.getElementById("openPortalBtn").addEventListener("click", ()=>openModal("patientPortalModal"));
+      document.getElementById("runAiBtn").addEventListener("click", runAiMock);
+
+      // Click outside modal to close
+      document.getElementById("loginModal").addEventListener("click", function(e){
+        if(e.target === this) closeLogin();
+      });
+      document.getElementById("patientPortalModal").addEventListener("click", function(e){
+        if(e.target === this) closeModal("patientPortalModal");
+      });
     });
   </script>
 </body>

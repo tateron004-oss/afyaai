@@ -1891,14 +1891,27 @@ function applyLang(code){
       applyLang(code);
       updateI18nQuality();
     }
-function populateLangDropdown(){
+function setLang(code){
+      if(!LANGS.some(l=>l.code===code)) code = detectDefaultLang();
+      localStorage.setItem(AFYA_LANG_KEY, code);
+      applyLang(code);
+      updateI18nQuality();
+    }
+
+    function populateLangDropdown(){
       const sel = document.getElementById("langSelect");
+      if(!sel) return;
       sel.innerHTML = LANGS.map(l=>{
-        const label = `${l.native}
+        const label = `${l.native}${(l.native!==l.label ? " • "+l.label : "")}`;
+        return `<option value="${l.code}">${label}</option>`;
+      }).join("");
+      sel.value = getLang();
+      sel.addEventListener("change", (e)=>setLang(e.target.value));
+    }
 
     function validateI18n(code){
       const pack = I18N[code] || {};
-      const baseKeys = Object.keys(I18N.en);
+      const baseKeys = Object.keys(I18N.en || {});
       const missing = baseKeys.filter(k => typeof pack[k] !== "string" || !pack[k].trim());
       const ok = missing.length === 0;
       return { ok, missing };
@@ -1922,14 +1935,7 @@ function populateLangDropdown(){
         badge.title = "Missing keys: " + res.missing.join(", ");
       }
     }
-${l.native!==l.label ? " • "+l.label : ""}`;
-        return `<option value="${l.code}">${label}</option>`;
-      }).join("");
-      sel.value = getLang();
-      sel.addEventListener("change", (e)=>setLang(e.target.value));
-    }
-
-    /********************
+/********************
      * DEMO DATA
      ********************/
     const COUNTRIES = ["Kenya","Nigeria","Rwanda","South Africa","Ethiopia","Ghana"];
@@ -2789,6 +2795,82 @@ ${l.native!==l.label ? " • "+l.label : ""}`;
       document.getElementById("pdfBtn")?.addEventListener("click", exportPDF);
     });
   </script>
+
+<script>
+/* Donor-demo actions for the HERO chips (Safety & Quality / Indicators / Telehealth / Regulatory).
+   Keeps everything working: we only add navigation + optional demo triggers. */
+(function(){
+  const $ = (id)=>document.getElementById(id);
+
+  function flash(el){
+    if(!el) return;
+    const prev = el.style.boxShadow;
+    el.style.transition = 'box-shadow 180ms ease';
+    el.style.boxShadow = '0 0 0 4px rgba(59,130,246,.35)';
+    setTimeout(()=>{ el.style.boxShadow = prev || ''; }, 900);
+  }
+
+  function scrollTo(id){
+    const el = $(id);
+    if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(()=>flash(el), 220);
+  }
+
+  function safeClick(id){
+    const el = $(id);
+    if(el) el.click();
+  }
+
+  // Safety & Quality -> Heat Index Data Sheet (Safety section)
+  const chipSafety = $('chipSafety');
+  if(chipSafety){
+    chipSafety.addEventListener('click', ()=>{
+      scrollTo('sectionSafety');
+      // Optional: ensure table is visible
+      const heat = $('heatTable');
+      if(heat) flash(heat);
+    });
+  }
+
+  // Indicator Monitoring -> Map + Inspector
+  const chipIndicators = $('chipIndicators');
+  if(chipIndicators){
+    chipIndicators.addEventListener('click', ()=>{
+      scrollTo('sectionIndicators');
+      const inspector = document.querySelector('#inspectorPanel') || document.querySelector('[data-inspector]') || null;
+      if(inspector) flash(inspector);
+    });
+  }
+
+  // Telehealth -> Telehealth + AI section AND start simulated call if not already started
+  const chipTelehealth = $('chipTelehealth');
+  if(chipTelehealth){
+    chipTelehealth.addEventListener('click', ()=>{
+      scrollTo('sectionTelehealth');
+      // Start the simulated call if idle (donor-friendly "it just works")
+      const callState = $('callStateText');
+      const isIdle = callState && (callState.textContent || '').toLowerCase().includes('idle');
+      if(isIdle){
+        safeClick('startCallBtn');
+      }else{
+        flash($('startCallBtn'));
+      }
+    });
+  }
+
+  // Regulatory Readiness -> Country Comparison Table / regulatory section
+  const chipRegulatory = $('chipRegulatory');
+  if(chipRegulatory){
+    chipRegulatory.addEventListener('click', ()=>{
+      scrollTo('sectionRegulatory');
+      const table = document.querySelector('#countryComparisonTable') || document.querySelector('#comparisonTable') || null;
+      if(table) flash(table);
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
 
